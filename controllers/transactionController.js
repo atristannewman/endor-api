@@ -32,6 +32,7 @@ module.exports = ({ transactionService }) => {
       throw error;
     }
   };
+
   return Object.freeze({
     getTransactionHistory,
     getTokenList,

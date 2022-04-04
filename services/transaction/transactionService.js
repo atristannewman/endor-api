@@ -19,11 +19,12 @@ module.exports = ({ fetchRequest }) => {
   const getListOfTokensOfAddress = async (address) => {
     try {
       const options = {
+        method: "GET",
         Headers: {
           "content-type": "application/json",
         },
       };
-      const url = `https://api.etherscan.io/api?module=account&action=tokentx&address=${address}&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=${process.env.ETHSCAN_TOKEN}`;
+      const url = `https://api.ethplorer.io/getAddressInfo/${address}?apiKey=${process.env.ETHPLORER_TOKEN}`;
 
       const response = await fetchRequest(url, options);
       return response;
