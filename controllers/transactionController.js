@@ -24,9 +24,17 @@ module.exports = ({ transactionService }) => {
       );
 
       const { data } = response;
+      const tokenList = [];
+      data.tokens.forEach((token) => {
+        tokenList.push({
+          address: token.tokenInfo.address,
+          balance: token.balance,
+        });
+      });
+
       return {
         status: 200,
-        data,
+        data: tokenList,
       };
     } catch (error) {
       throw error;
