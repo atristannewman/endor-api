@@ -5,7 +5,7 @@ HOW TO RUN SERVER:
 Pre-requisite
 
 1. create .env file in the root folder.
-2. Add the following environment variables:
+2. Add the following environment variables:]
    ETHSCAN_TOKEN="AEFAZJQYPJPXWD3YU7U5D8Y5E7YTVR7JNU"
    PORT="8500"
 3. ETHPLORER_TOKEN="EK-fa7oj-AETzsf3-LJUmS"
