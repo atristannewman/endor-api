@@ -8,4 +8,9 @@ transactionRouter.get(
   requestHandler(transactionController.getTransactionHistory)
 );
 
+transactionRouter.get(
+  "/tokenlist",
+  requestHandler(transactionController.getTokenList)
+);
+
 module.exports = transactionRouter;

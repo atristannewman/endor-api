@@ -16,7 +16,26 @@ module.exports = ({ fetchRequest }) => {
     }
   };
 
+  const getListOfTokensOfAddress = async (address) => {
+    try {
+      const options = {
+        method: "GET",
+        Headers: {
+          "content-type": "application/json",
+        },
+      };
+      const url = `https://api.ethplorer.io/getAddressInfo/${address}?apiKey=${process.env.ETHPLORER_TOKEN}`;
+
+      const response = await fetchRequest(url, options);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  };
+
   return Object.freeze({
     getAddressTransactionHistory,
+    getListOfTokensOfAddress,
   });
 };

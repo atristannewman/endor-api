@@ -8,7 +8,7 @@ require("dotenv").config();
 const PORT = process.env.PORT;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://griph.xyz", credentials: true }));
 
 app.use("/api/transactions", transactionRouter);
 
