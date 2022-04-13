@@ -13,14 +13,19 @@ module.exports = ({ transactionService }) => {
         hasProof: false,
         hasMoonbird: false,
       };
-      const exist = data.tokens.find(
-        (token) => token.tokenInfo.address === PROOF_COLLECTIVE_PASS_ADDRESS
-      );
 
-      if (exist) {
-        profile.hasMoonbird = true;
-        profile.hasProof = true;
+      if(data.tokens && data.tokens.length) {
+        const exist = data.tokens.find(
+          (token) => token.tokenInfo.address === PROOF_COLLECTIVE_PASS_ADDRESS
+        );
+        
+        if (exist) {
+          profile.hasMoonbird = true;
+          profile.hasProof = true;
+        }
       }
+
+
       return {
         status: 200,
         data: {
