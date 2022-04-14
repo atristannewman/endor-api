@@ -20,7 +20,6 @@ module.exports = ({ transactionService }) => {
         );
         
         if (exist) {
-          profile.hasMoonbird = true;
           profile.hasProof = true;
         }
       }
