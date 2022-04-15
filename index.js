@@ -3,7 +3,6 @@ const app = express();
 const cors = require("cors");
 const transactionRouter = require("./routes/transactionRouter");
 const userRouter = require("./routes/userRouter");
-const whitelistDomain = ["http://griph.xyz"];
 require("dotenv").config();
 
 const PORT = process.env.PORT;
