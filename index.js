@@ -9,7 +9,7 @@ require("dotenv").config();
 const PORT = process.env.PORT;
 
 app.use(express.json());
-app.use(cors({ origin: whitelistDomain, credentials: true }));
+app.use(cors());
 
 app.use("/api/transactions", transactionRouter);
 app.use("/api/users", userRouter);
