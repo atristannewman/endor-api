@@ -1,11 +1,16 @@
 const Sequelize = require("sequelize");
-const db = require("../dbConfig");
+const db = require("../sequelize");
 const makeUser = require("../../../model/user");
 
 const User = db.define("user", {
+  uuid: {
+    type: Sequelize.UUID,
+    defaultValue: Sequelize.UUIDV1,
+    primaryKey: true,
+  },
   address: Sequelize.STRING,
-  proof: Sequelize.BOOLEAN,
-  moonbird: Sequelize.BOOLEAN,
+  hasProof: Sequelize.BOOLEAN,
+  hasMoonbird: Sequelize.BOOLEAN,
 });
 
 db.sync();
@@ -15,10 +20,11 @@ const create = async (args) => {
   try {
     return await User.create({
       address: userInstance.getAddress(),
-      proof: userInstance.getProof(),
-      moonbird: userInstance.getMoonBird(),
+      hasProof: userInstance.getHasProof(),
+      hasMoonbird: userInstance.getHasMoonBird(),
     });
   } catch (error) {
+    console.log(error);
     throw error;
   }
 };

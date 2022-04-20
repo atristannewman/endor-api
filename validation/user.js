@@ -2,8 +2,8 @@ const Joi = require("joi");
 
 const schema = Joi.object({
   address: Joi.string().required(),
-  proof: Joi.boolean().required(),
-  moonbird: Joi.boolean().required(),
+  hasProof: Joi.boolean().required(),
+  hasMoonbird: Joi.boolean().required(),
 });
 
 exports.validate = (args) => {

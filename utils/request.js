@@ -1,8 +1,8 @@
 const axios = require("axios");
 
-const fetchRequest = async (url, options) => {
+const fetchRequest = async (config) => {
   try {
-    return await axios(url, options);
+    return await axios(config);
   } catch (error) {
     throw error;
   }

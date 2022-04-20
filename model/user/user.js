@@ -5,8 +5,8 @@ module.exports = ({ validate }) => {
 
       return Object.freeze({
         getAddress: () => args.address,
-        getProof: () => args.proof,
-        getMoonBird: () => args.moonbird,
+        getHasProof: () => args.hasProof,
+        getHasMoonBird: () => args.hasMoonbird,
       });
     } catch (error) {
       throw error;
