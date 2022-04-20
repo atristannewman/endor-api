@@ -5,7 +5,7 @@ const config = {
   DB: process.env.DATABASE ? process.env.DATABASE : "GRIPH_DB",
   USERNAME: process.env.USERNAME ? process.env.USERNAME : "griph_accnt",
   PASSWORD: process.env.PASSWORD ? process.env.PASSWORD : "p@$$w0rd",
-  HOST: "localhost",
+  HOST: process.env.HOST,
   DIALECT: "postgres",
 };
 
