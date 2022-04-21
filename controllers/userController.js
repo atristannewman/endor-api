@@ -15,9 +15,11 @@ module.exports = ({ transactionService, DB }) => {
         hasMoonbird: false,
       };
 
-      console.log(result.length);
       if (result && result.length) {
-        const exist = result.find((token) => token.owner_of === address);
+        const lowerCaseAddress = address.toLowerCase();
+        const exist = result.filter(
+          (token) => token.owner_of === lowerCaseAddress
+        );
 
         if (exist) {
           profile.hasProof = true;
