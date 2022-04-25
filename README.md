@@ -31,3 +31,48 @@ GET /api/transactions/history?address=<wallet address>
 # Description: This API will list down all tokens and its value for given public address
 
 GET /api/transactions/getTokenList?address=<wallet address>
+
+
+
+# Vendor APIs
+## Description: This API will gets all vendors from database
+
+GET /api/vendors
+
+## Description: This API will posts a vendor to the database
+
+POST /api/vendors
+REQUEST PARAMETERS:
+```
+{
+   "name": "JPs Studio",
+   "location": "123 Broad Street New York, New York 12345",
+   "isActive": true,
+   "accessUrl": "https://www.eventbrite.com/e/summer-party-2016-tickets-26784599458,
+}
+```
+
+## Description: This API will updates a vendor given the vendor
+
+PUT /api/vendors
+
+REQUEST PARAMETERS:
+```
+{
+   "id": 95,
+   "name": "JPs Studio",
+   "location": "123 Broad Street New York, New York 12345",
+   "isActive": true,
+   "accessUrl": "<https://www.eventbrite.com/e/summer-party-2016-tickets-26784599458>,
+}
+```
+
+## Description: This API will deletes a vendor given the vendor’s id
+
+DELETE /api/vendors
+REQUEST PARAMETERS:
+```
+{
+   "id": 95
+}
+```
