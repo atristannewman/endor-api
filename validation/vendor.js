@@ -4,7 +4,7 @@ const schema = Joi.object({
   name: Joi.string().required(),
   location: Joi.string().required(),
   isActive: Joi.boolean().required(),
-  accessUrl: Joi.string().required(),
+  accessUrl: Joi.string().optional(),
 });
 
 exports.validate = (args) => {
