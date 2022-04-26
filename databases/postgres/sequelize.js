@@ -2,11 +2,15 @@ require("dotenv").config();
 const Sequelize = require("sequelize");
 
 const credentials = {
-  DB: process.env.DATABASE ? process.env.DATABASE : "GRIPH_DB",
-  USERNAME: process.env.USERNAME ? process.env.USERNAME : "griph_accnt",
+  DATABASE: process.env.DATABASE ? process.env.DATABASE : "GRIPH_DB",
+  USERNAME: process.env.NAME ? process.env.NAME : "griph_accnt",
   PASSWORD: process.env.PASSWORD ? process.env.PASSWORD : "p@$$w0rd",
   HOST: process.env.HOST,
   DIALECT: "postgres",
+  PORT: process.env.PORT,
+  //PROD_ENV: process.env.PROD_ENV,
+  DATABASE_URL: process.env.DATABASE_URL,
+
 };
 
 let config = {
@@ -20,17 +24,17 @@ let config = {
   },
 };
 
-if (process.env.PROD_ENV) {
+// if (process.env.PROD_ENV) {
   config.dialectOptions = {
     ssl: {
       require: true,
       rejectUnauthorized: false,
     },
   };
-}
+// }
 
 const sequelize = new Sequelize(
-  credentials.DB,
+  credentials.DATABASE,
   credentials.USERNAME,
   credentials.PASSWORD,
   config

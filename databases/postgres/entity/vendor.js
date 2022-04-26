@@ -14,7 +14,7 @@ const Vendor = db.define("vendor", {
   accessUrl: Sequelize.STRING,
 });
 
-db.sync();
+// db.sync();
 
 const create = async (args) => {
   const vendorInstance = makeVendor(args);

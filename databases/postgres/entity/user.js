@@ -13,8 +13,6 @@ const User = db.define("user", {
   hasMoonbird: Sequelize.BOOLEAN,
 });
 
-db.sync();
-
 const create = async (args) => {
   const userInstance = makeUser(args);
   try {
