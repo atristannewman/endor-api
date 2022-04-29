@@ -2,8 +2,7 @@ module.exports = ({ transactionService, DB }) => {
   const getProfile = async (httpRequest) => {
     try {
       const { address } = httpRequest.query;
-      const PROOF_COLLECTIVE_PASS_ADDRESS =
-        "0x08d7c0242953446436f34b4c78fe9da38c73668d";
+      const PROOF_COLLECTIVE_PASS_ADDRESS = "0x08d7c0242953446436f34b4c78fe9da38c73668d";
       const { data } = await transactionService.checkProofTokenExist(
         PROOF_COLLECTIVE_PASS_ADDRESS
       );

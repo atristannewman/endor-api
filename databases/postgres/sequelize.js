@@ -3,7 +3,7 @@ const Sequelize = require("sequelize");
 
 const credentials = {
   DATABASE: process.env.DATABASE ? process.env.DATABASE : "GRIPH_DB",
-  USERNAME: process.env.NAME ? process.env.NAME : "griph_accnt",
+  USERNAME: process.env.USERNAME ? process.env.NAME : "griph_accnt",
   PASSWORD: process.env.PASSWORD ? process.env.PASSWORD : "p@$$w0rd",
   HOST: process.env.HOST,
   DIALECT: "postgres",
