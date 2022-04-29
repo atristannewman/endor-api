@@ -2,9 +2,9 @@ require("dotenv").config();
 const Sequelize = require("sequelize");
 
 const credentials = {
-  DATABASE: process.env.DATABASE ? process.env.DATABASE : "GRIPH_DB",
-  USERNAME: process.env.USERNAME ? process.env.NAME : "griph_accnt",
-  PASSWORD: process.env.PASSWORD ? process.env.PASSWORD : "p@$$w0rd",
+  DATABASE: process.env.DATABASE,
+  USERNAME: process.env.USERNAME,
+  PASSWORD: process.env.PASSWORD,
   HOST: process.env.HOST,
   DIALECT: "postgres",
   PORT: process.env.PORT,
