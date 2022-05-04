@@ -6,15 +6,14 @@ Pre-requisite
 
 1. create .env file in the root folder.
 2. Add the following environment variables:]
-   ETHSCAN_TOKEN="AEFAZJQYPJPXWD3YU7U5D8Y5E7YTVR7JNU"
-   PORT="8500"
-3. ETHPLORER_TOKEN="EK-fa7oj-AETzsf3-LJUmS"
-4. NAME="qxvvyneprkgenr"
-PASSWORD="73ad4ba03e9d044c937c5c4d439041197e993b3598332b16faa9209fc89f67c3"
-DATABASE="dflqt6263kfn9h"
-HOST="ec2-3-229-252-6.compute-1.amazonaws.com"
+   ETHSCAN_TOKEN={ask a dev}
+   PORT={what do you want it to be?}
+3. ETHPLORER_TOKEN={ask a dev}
+4. NAME={ask a dev. its on heroku}
+PASSWORD={ask a dev. its on heroku}
+DATABASE={ask a dev. its on heroku}
+HOST={ask a dev. its on heroku}
 PROD_ENV="1"
-PORT="5432"
 
 START THE SERVER:
 
