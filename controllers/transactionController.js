@@ -24,6 +24,7 @@ module.exports = ({ transactionService }) => {
       );
 
       const { data } = response;
+
       const tokenList = [];
       data.tokens.forEach((token) => {
         tokenList.push({
