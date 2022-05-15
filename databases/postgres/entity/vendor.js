@@ -13,7 +13,7 @@ const Vendor = db.define("vendor", {
   isActive: Sequelize.BOOLEAN,
   accessUrl: Sequelize.STRING,
   // /*accessCode: Sequelize.STRING,
-  entryInstruction: Sequelize.STRING,
+  // entryInstruction: Sequelize.STRING,
 });
 
 Vendor.sync();
@@ -28,7 +28,7 @@ const create = async (args) => {
       isActive: vendorInstance.isActive(),
       accessUrl: vendorInstance.getAccessUrl(),
       // accessCode: vendorInstance.getAccessCode(),
-      entryInstruction: vendorInstance.getEntryInstruction(),
+      // entryInstruction: vendorInstance.getEntryInstruction(),
     });
   } catch (error) {
     console.log(error);

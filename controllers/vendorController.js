@@ -8,7 +8,7 @@ module.exports = ({ DB }) => {
         isActive,
         accessUrl,
         // accessCode,
-        entryInstruction,
+        // entryInstruction,
       });
       return {
         status: 200,
@@ -29,7 +29,7 @@ module.exports = ({ DB }) => {
         isActive,
         accessUrl,
         // accessCode,
-        entryInstruction,
+        // entryInstruction,
       });
       const vendor = await DB.Vendor.findById(id);
       return {

@@ -6,7 +6,7 @@ const schema = Joi.object({
   isActive: Joi.boolean().required(),
   accessUrl: Joi.string().optional(),
   // accessCode: Joi.string().optional(),
-  entryInstruction: Joi.string().optional(),
+  // entryInstruction: Joi.string().optional(),
 });
 
 exports.validate = (args) => {
