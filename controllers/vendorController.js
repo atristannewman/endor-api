@@ -1,14 +1,14 @@
 module.exports = ({ DB }) => {
   const createVendor = async (httpRequest) => {
     try {
-      const { name, location, isActive, accessUrl, /*accessCode,*/ entryInstruction } = httpRequest.body;
+      const { name, location, isActive, accessUrl, accessCode, entryInstruction } = httpRequest.body;
       const vendor = await DB.Vendor.create({
         name,
         location,
         isActive,
         accessUrl,
-        // accessCode,
-        // entryInstruction,
+        accessCode,
+        entryInstruction
       });
       return {
         status: 200,
@@ -22,14 +22,14 @@ module.exports = ({ DB }) => {
   };
   const updateVendor = async (httpRequest) => {
     try {
-      const { name, location, isActive, accessUrl, /*accessCode,*/ entryInstruction } = httpRequest.body;
+      const { name, location, isActive, accessUrl, accessCode, entryInstruction } = httpRequest.body;
       await DB.Vendor.updateById(id, {
         name,
         location,
         isActive,
         accessUrl,
-        // accessCode,
-        // entryInstruction,
+        accessCode,
+        entryInstruction
       });
       const vendor = await DB.Vendor.findById(id);
       return {

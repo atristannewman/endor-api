@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeVendor = require("../../../model/vendor");
 
-const Vendor = db.define("vendor", {
+const Vendor = db.define("vendors", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -12,12 +12,13 @@ const Vendor = db.define("vendor", {
   location: Sequelize.STRING,
   isActive: Sequelize.BOOLEAN,
   accessUrl: Sequelize.STRING,
-  // /*accessCode: Sequelize.STRING,
-  // entryInstruction: Sequelize.STRING,
+  accessCode: Sequelize.STRING,
+  entryInstruction: Sequelize.STRING
 });
 
-Vendor.sync();
-// db.sync();
+// Vendor.sync({force: true}); //This overwrites the last database
+// db.sync(); //Not sure what this does, but it does not add columns
+// Editing the schema requires migration scripts or a third party package I haven't found yet
 
 const create = async (args) => {
   const vendorInstance = makeVendor(args);
@@ -27,8 +28,8 @@ const create = async (args) => {
       location: vendorInstance.getLocation(),
       isActive: vendorInstance.isActive(),
       accessUrl: vendorInstance.getAccessUrl(),
-      // accessCode: vendorInstance.getAccessCode(),
-      // entryInstruction: vendorInstance.getEntryInstruction(),
+      accessCode: vendorInstance.getAccessCode(),
+      entryInstruction: vendorInstance.getEntryInstruction()
     });
   } catch (error) {
     console.log(error);
