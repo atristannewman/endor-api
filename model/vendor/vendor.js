@@ -7,7 +7,7 @@ module.exports = ({ validate }) => {
         getLocation: () => args.location,
         isActive: () => args.isActive,
         getAccessUrl: () => args.accessUrl,
-        getAccessCode: () => args.accessCode,
+        // getAccessCode: () => args.accessCode,
         getEntryInstruction: () => args.entryInstruction,
       });
     } catch (error) {

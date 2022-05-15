@@ -5,7 +5,7 @@ const schema = Joi.object({
   location: Joi.string().required(),
   isActive: Joi.boolean().required(),
   accessUrl: Joi.string().optional(),
-  accessCode: Joi.string().optional(),
+  // accessCode: Joi.string().optional(),
   entryInstruction: Joi.string().optional(),
 });
 
