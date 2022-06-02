@@ -2,16 +2,40 @@ const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
 
-const User = db.define("user", {
-  uuid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV1,
-    primaryKey: true,
+const User = db.define(
+  "user",
+  {
+    // uuid: {
+    //   type: Sequelize.UUID,
+    //   defaultValue: Sequelize.UUIDV1,
+    //   primaryKey: true,
+    // },
+    id: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+      autoIncrement: true,
+    },
+    address: Sequelize.STRING,
+    hasProof: Sequelize.BOOLEAN,
+    hasMoonbird: Sequelize.BOOLEAN,
   },
-  address: Sequelize.STRING,
-  hasProof: Sequelize.BOOLEAN,
-  hasMoonbird: Sequelize.BOOLEAN,
-});
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
+);
+
+const getAll = async () => {
+  try {
+    return await User.findAll({
+      // attributes: ["address", "hasProof"],
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
 const create = async (args) => {
   const userInstance = makeUser(args);
@@ -52,6 +76,7 @@ const update = async (id, args) => {
 };
 
 module.exports = Object.freeze({
+  getAll,
   create,
   update,
   findByAddress,

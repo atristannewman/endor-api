@@ -1,8 +1,11 @@
+const { create, getAll } = require("../databases/postgres/entity/user");
+
 module.exports = ({ transactionService, DB }) => {
   const getProfile = async (httpRequest) => {
     try {
       const { address } = httpRequest.query;
-      const PROOF_COLLECTIVE_PASS_ADDRESS = "0x08d7c0242953446436f34b4c78fe9da38c73668d";
+      const PROOF_COLLECTIVE_PASS_ADDRESS =
+        "0x08d7c0242953446436f34b4c78fe9da38c73668d";
       const { data } = await transactionService.checkProofTokenExist(
         PROOF_COLLECTIVE_PASS_ADDRESS
       );
@@ -42,7 +45,34 @@ module.exports = ({ transactionService, DB }) => {
     }
   };
 
+  const getUsers = async (httpRequest) => {
+    try {
+      const users = await getAll();
+      return {
+        status: 200,
+        data: users,
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const createUser = async (httpRequest) => {
+    try {
+      const user = await create(httpRequest.body);
+      return {
+        status: 200,
+        data: user,
+      };
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
   return Object.freeze({
     getProfile,
+    getUsers,
+    createUser,
   });
 };
