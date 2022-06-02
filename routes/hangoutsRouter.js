@@ -3,9 +3,9 @@ const hangoutsRouter = express.Router();
 const { hangoutController } = require("../controllers");
 const requestHandler = require("../requestHandler");
 
-hangoutsRouter.get("/", requestHandler(hangoutController.createHangout));
-// hangoutsRouter.post("/", requestHandler(hangoutsController.createHangouts));
-// hangoutsRouter.put("/", requestHandler(hangoutsController.updateHangouts));
-// hangoutsRouter.delete("/", requestHandler(hangoutsController.deleteHangouts));
+hangoutsRouter.get("/", requestHandler(hangoutController.getHangouts));
+hangoutsRouter.post("/", requestHandler(hangoutController.createHangout));
+hangoutsRouter.put("/", requestHandler(hangoutController.updateHangout));
+hangoutsRouter.delete("/", requestHandler(hangoutController.deleteHangout));
 
 module.exports = hangoutsRouter;

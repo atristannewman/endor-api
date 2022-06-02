@@ -1,36 +1,36 @@
 module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
     try {
-      console.log("howdy");
-      // const { name, location, isActive, accessUrl, accessCode, entryInstruction } = httpRequest.body;
-      // const vendor = await DB.Vendor.create({
-      //   name,
-      //   location,
-      //   isActive,
-      //   accessUrl,
-      //   accessCode,
-      //   entryInstruction
-      // });
-      // return {
-      //   status: 200,
-      //   data: {
-      //     vendor,
-      //   },
-      // };
+      const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
+      const hangout = await DB.Hangout.create({
+        id,
+        name,
+        startTime,
+        endTime,
+        address,
+        tags,
+        host
+      });
+      return {
+        status: 200,
+        data: {
+          vendor,
+        },
+      };
     } catch (error) {
       throw error;
     }
   };
-  const updateVendor = async (httpRequest) => {
+  const updateHangout = async (httpRequest) => {
     try {
       const { name, location, isActive, accessUrl, accessCode, entryInstruction } = httpRequest.body;
-      await DB.Vendor.updateById(id, {
+      await DB.Hangout.updateById(id, {
         name,
-        location,
-        isActive,
-        accessUrl,
-        accessCode,
-        entryInstruction
+        startTime,
+        endTime,
+        address,
+        tags,
+        host,
       });
       const vendor = await DB.Vendor.findById(id);
       return {
@@ -43,27 +43,27 @@ module.exports = ({ DB }) => {
       throw error;
     }
   };
-  const deleteVendor = async (httpRequest) => {
+  const deleteHangout = async (httpRequest) => {
     try {
       const { id } = httpRequest.body;
       await DB.Vendor.deleteById(id);
       return {
         status: 200,
         data: {
-          message: "Vendor is deleted successfully",
+          message: "Hangout is deleted successfully",
         },
       };
     } catch (error) {
       throw error;
     }
   };
-  const getVendors = async () => {
+  const getHangouts = async () => {
     try {
-      const vendors = await DB.Vendor.findAll();
+      const hangouts = await DB.Hangout.findAll();
       return {
         status: 200,
         data: {
-          vendors
+          hangouts
         },
       };
     } catch (error) {
@@ -73,8 +73,8 @@ module.exports = ({ DB }) => {
 
   return Object.freeze({
     createHangout,
-    updateVendor,
-    deleteVendor,
-    getVendors,
+    updateHangout,
+    deleteHangout,
+    getHangouts,
   });
 };
