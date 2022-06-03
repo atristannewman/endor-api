@@ -1,8 +1,9 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
-const makeVendor = require("../../../model/hangout");
+const makeHangout = require("../../../model/hangout");
+const { STRING } = require("sequelize");
 
-const Vendor = db.define("vendors", {
+const Hangout = db.define("hangouts", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -13,7 +14,7 @@ const Vendor = db.define("vendors", {
   startTime: Sequelize.STRING,
   endTime: Sequelize.STRING,
   host: Sequelize.STRING, // User
-  tags: Sequelize.ARRAY // of strings
+  tags: Sequelize.ARRAY(Sequelize.STRING), // of strings
 });
 
 // Hangout.sync({force: true}); //This overwrites the last database
@@ -23,13 +24,14 @@ const Vendor = db.define("vendors", {
 const create = async (args) => {
   const hangoutInstance = makeHangout(args);
   try {
+    console.log("make hangout hangout entity");
     return await Hangout.create({
       name: hangoutInstance.getName(),
       address: hangoutInstance.getAddress(),
       startTime: hangoutInstance.getStartTime(),
       endTime: hangoutInstance.getEndTime(),
-      host: vendorInstance.getHost(),
-      tags: vendorInstance.getTags()
+      host: hangoutInstance.getHost(),
+      tags: hangoutInstance.getTags()
     });
   } catch (error) {
     console.log(error);
@@ -53,18 +55,24 @@ const findById = async (id) => {
       },
     });
   } catch (error) {
+    console.log(`error in hangout find by id: ${error}`);
     throw error;
   }
 };
 
 const updateById = async (id, args) => {
   try {
-     return await Hangout.update(args, {
-       where: {
-         id,
-       },
+    console.log(`update by id: ${id}, args: ${args}`)
+     return await Hangout.upsert({id: id,
+       name: args.name,
+       address: args.address,
+       startTime: args.startTime,
+       endTime: args.endTime,
+       tags: Array(JSON.parse(args.tags)),
+       host: args.host
      });
   } catch (error) {
+    console.log(`error in hangout update: ${error}`);
     throw error;
   }
 };

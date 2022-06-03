@@ -6,9 +6,9 @@ const schema = Joi.object({
   startTime: Joi.string().required(),
   endTime: Joi.string().optional(),
   host: Joi.string().required(),
-  tags: Joi.array().optional()
+  tags: Joi.array().items(Joi.string()).optional(),
 });
 
 exports.validate = (args) => {
-  return Joi.attempt(args, schema, "Failed parameter validation for Vendor");
+  return schema.validate(args);
 };

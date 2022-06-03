@@ -1,7 +1,9 @@
 module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
     try {
+      console.log("create hangout hangout controller");
       const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
+      console.log(`${tags} hangout controller`);
       const hangout = await DB.Hangout.create({
         id,
         name,
@@ -11,6 +13,7 @@ module.exports = ({ DB }) => {
         tags,
         host
       });
+      // console.log("create hangout hangout controller");
       return {
         status: 200,
         data: {
@@ -23,7 +26,7 @@ module.exports = ({ DB }) => {
   };
   const updateHangout = async (httpRequest) => {
     try {
-      const { name, location, isActive, accessUrl, accessCode, entryInstruction } = httpRequest.body;
+      const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
       await DB.Hangout.updateById(id, {
         name,
         startTime,
@@ -32,11 +35,11 @@ module.exports = ({ DB }) => {
         tags,
         host,
       });
-      const vendor = await DB.Vendor.findById(id);
+      const hangout = await DB.Hangout.findById(id);
       return {
         status: 200,
         data: {
-          vendor,
+          hangout,
         },
       };
     } catch (error) {
@@ -46,7 +49,7 @@ module.exports = ({ DB }) => {
   const deleteHangout = async (httpRequest) => {
     try {
       const { id } = httpRequest.body;
-      await DB.Vendor.deleteById(id);
+      await DB.Hangout.deleteById(id);
       return {
         status: 200,
         data: {

@@ -10,7 +10,6 @@ const credentials = {
   PORT: process.env.PORT,
   //PROD_ENV: process.env.PROD_ENV,
   DATABASE_URL: process.env.DATABASE_URL,
-
 };
 
 let config = {
