@@ -19,6 +19,7 @@ const User = db.define(
     address: Sequelize.STRING,
     hasProof: Sequelize.BOOLEAN,
     hasMoonbird: Sequelize.BOOLEAN,
+    // newColumn: Sequelize.STRING,
   },
   {
     timestamps: false,
@@ -44,6 +45,7 @@ const create = async (args) => {
       address: userInstance.getAddress(),
       hasProof: userInstance.getHasProof(),
       hasMoonbird: userInstance.getHasMoonBird(),
+      // newColumn: userInstance.getNewColumn(),
     });
   } catch (error) {
     console.log(error);

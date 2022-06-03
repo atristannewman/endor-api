@@ -88,16 +88,45 @@ REQUEST PARAMETERS:
 
 "ConnectionRefusedError [SequelizeConnectionRefusedError]: connect ECONNREFUSED 127.0.0.1:5432"
 
-## Running migrations to create tables into database
+## Undo all migrations
+
+`npx sequelize-cli db:migrate:undo:all`
+
+## Running migrations to create tables and columns into database
+
+## To create table
 
 1. Run below command to create a blank migration file
    `npx sequelize-cli migration:generate --name <name of migration file>`
-2. Write required queries in newly created migration file as shown in 'migrations/20220602175116-create_user_table.js'
+2. Write required queries in newly created migration file as shown in
+   `sampleMigrations/20220602175116-create_user_table.js`
 3. Run below command to run queries written in migration file
    `npx sequelize-cli db:migrate`
    This command will update the database
-4. Start the server by below command
-   `npm run dev`
+
+## To add column
+
+1. Run below command to create a blank migration file
+   `npx sequelize-cli migration:generate --name <name of migration file>`
+2. Write required queries in newly created migration file as shown in
+   `sampleMigrations/20220603090126-add_column_new_column.js`
+3. Run below command to run queries written in migration file
+   `npx sequelize-cli db:migrate`
+   This command will update the database
+4. Add newly created column in your models, functions and validations
+   `databases/postgres/entity/user.js` `model/user/user.js` `validation/user.js`
+
+## To remove column
+
+1. Run below command to create a blank migration file
+   `npx sequelize-cli migration:generate --name <name of migration file>`
+2. Write required queries in newly created migration file as shown in
+   `sampleMigrations/20220603093009-remove_column_new_column.js`
+3. Run below command to run queries written in migration file
+   `npx sequelize-cli db:migrate`
+   This command will update the database
+4. Add newly created column in your models, functions and validations
+   `databases/postgres/entity/user.js` `model/user/user.js` `validation/user.js`
 
 # User APIs
 
