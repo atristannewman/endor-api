@@ -114,7 +114,7 @@ REQUEST PARAMETERS:
    `npx sequelize-cli db:migrate`
    This command will update the database
 4. Add newly created column in your models, functions and validations
-   `databases/postgres/entity/user.js` `model/user/user.js` `validation/user.js`
+   `databases/postgres/entity/user.js`(2 places) `model/user/user.js` `validation/user.js`
 
 ## To remove column
 
@@ -126,7 +126,7 @@ REQUEST PARAMETERS:
    `npx sequelize-cli db:migrate`
    This command will update the database
 4. Add newly created column in your models, functions and validations
-   `databases/postgres/entity/user.js` `model/user/user.js` `validation/user.js`
+   `databases/postgres/entity/user.js`(2 places) `model/user/user.js` `validation/user.js`
 
 # User APIs
 
