@@ -1,20 +1,5 @@
 # griph-api
 
-HOW TO RUN SERVER:
-
-Pre-requisite
-
-1. create .env file in the root folder.
-2. Add the following environment variables:]
-   ETHSCAN_TOKEN={ask a dev}
-   PORT={what do you want it to be?}
-3. ETHPLORER_TOKEN={ask a dev}
-4. NAME={ask a dev. its on heroku}
-   PASSWORD={ask a dev. its on heroku}
-   DATABASE={ask a dev. its on heroku}
-   HOST={ask a dev. its on heroku}
-   PROD_ENV="1"
-
 START THE SERVER:
 
 1. Run npm install
