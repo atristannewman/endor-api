@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
+const Hangouts=require("./hangout")
 
 const User = db.define("user", {
   uuid: {
@@ -11,7 +12,19 @@ const User = db.define("user", {
   address: Sequelize.STRING,
   hasProof: Sequelize.BOOLEAN,
   hasMoonbird: Sequelize.BOOLEAN,
-});
+
+},{
+  timestamps: false,
+  freezeTableName: true,
+ 
+}
+);
+
+// db.User.associate = (models) => {
+//  db.Sequelize.User.hasMany(Hangouts,{foreignkey:'hosts'});
+// // };
+
+
 
 const create = async (args) => {
   const userInstance = makeUser(args);
@@ -52,6 +65,7 @@ const update = async (id, args) => {
 };
 
 module.exports = Object.freeze({
+  User: () => User,
   create,
   update,
   findByAddress,

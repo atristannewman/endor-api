@@ -1,4 +1,5 @@
 const connectDatabase = require("../databases");
+// const associations = require("../databases/associations");
 const transactionService = require("../services/transaction");
 const makeTransactionController = require("./transactionController");
 const makeUserController = require("./userController");

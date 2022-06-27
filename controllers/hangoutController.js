@@ -17,7 +17,7 @@ module.exports = ({ DB }) => {
       return {
         status: 200,
         data: {
-          vendor,
+          hangout,
         },
       };
     } catch (error) {
