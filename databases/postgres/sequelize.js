@@ -40,12 +40,13 @@ const sequelize = new Sequelize(
   config
 );
 
-sequelize.sync({force:true}).then(() => console.log("synced"));
+// sequelize.sync({force:true}).then(() => console.log("synced"));
 
 sequelize
   .authenticate()
   .then(function (err) {
     console.log("Connection has been established successfully.");
+    // sequelize.sync({ force: true }).then(() => console.log("synced"));
   })
   .catch(function (err) {
     console.log("Unable to connect to the database:", err);

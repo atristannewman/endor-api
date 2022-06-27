@@ -1,7 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
-const Hangouts=require("./hangout")
 
 const User = db.define("user", {
   uuid: {
@@ -19,10 +18,6 @@ const User = db.define("user", {
  
 }
 );
-
-// db.User.associate = (models) => {
-//  db.Sequelize.User.hasMany(Hangouts,{foreignkey:'hosts'});
-// // };
 
 
 
@@ -65,7 +60,7 @@ const update = async (id, args) => {
 };
 
 module.exports = Object.freeze({
-  User: () => User,
+  User,
   create,
   update,
   findByAddress,

@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeVendor = require("../../../model/vendor");
+const { User } = require("./user");
 
 const Vendor = db.define("vendors", {
   id: {
@@ -29,7 +30,9 @@ const create = async (args) => {
       isActive: vendorInstance.isActive(),
       accessUrl: vendorInstance.getAccessUrl(),
       accessCode: vendorInstance.getAccessCode(),
-      entryInstruction: vendorInstance.getEntryInstruction()
+      entryInstruction: vendorInstance.getEntryInstruction(),
+      address: vendorInstance.getAddress(),
+     
     });
   } catch (error) {
     console.log(error);
@@ -39,7 +42,7 @@ const create = async (args) => {
 
 const findAll = async () => {
   try {
-    return await Vendor.findAll();
+    return await Vendor.findAll({ include: { model: User, as: "host" } });
   } catch (error) {
     throw error;
   }
@@ -82,6 +85,7 @@ const deleteById = async (id) => {
 };
 
 module.exports = Object.freeze({
+  Vendor,
   create,
   updateById,
   deleteById,

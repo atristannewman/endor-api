@@ -56,7 +56,6 @@ const create = async (args) => {
       address: hangoutInstance.getAddress(),
       startTime: hangoutInstance.getStartTime(),
       endTime: hangoutInstance.getEndTime(),
-      host: hangoutInstance.getHost(),
       tags: hangoutInstance.getTags(),
       user_id: hangoutInstance.getUser()
     });
@@ -68,7 +67,7 @@ const create = async (args) => {
 
 const findAll = async () => {
   try {
-    return await Hangout.findAll({include: [User]});
+    return await Hangout.findAll({include: { model: User, as: "host" }});
   } catch (error) {
     throw error;
   }
@@ -118,7 +117,7 @@ const deleteById = async (id) => {
 };
 
 module.exports = Object.freeze({
-  Hangout: () => Hangout,
+  Hangout,
   create,
   updateById,
   deleteById,

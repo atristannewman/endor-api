@@ -2,18 +2,17 @@ module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
     try {
       console.log("create hangout hangout controller");
-      const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
+      const {  name, startTime, endTime, address, tags, user_id } = httpRequest.body;
       console.log(`${tags} hangout controller`);
       const hangout = await DB.Hangout.create({
-        id,
         name,
         startTime,
         endTime,
         address,
         tags,
-        host
+        user_id
       });
-      // console.log("create hangout hangout controller");
+    
       return {
         status: 200,
         data: {
@@ -26,14 +25,14 @@ module.exports = ({ DB }) => {
   };
   const updateHangout = async (httpRequest) => {
     try {
-      const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
+      const { id, name, startTime, endTime, address, tags,user_id } = httpRequest.body;
       await DB.Hangout.updateById(id, {
         name,
         startTime,
         endTime,
         address,
         tags,
-        host,
+        user_id
       });
       const hangout = await DB.Hangout.findById(id);
       return {
@@ -62,7 +61,9 @@ module.exports = ({ DB }) => {
   };
   const getHangouts = async () => {
     try {
-      const hangouts = await DB.Hangout.findAll();
+      const hangouts = await DB.Hangout.findAll({
+
+      });
       return {
         status: 200,
         data: {
