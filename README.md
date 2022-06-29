@@ -1,5 +1,20 @@
 # griph-api
 
+HOW TO RUN SERVER:
+
+Pre-requisite
+
+1. create .env file in the root folder.
+2. Add the following environment variables:]
+   ETHSCAN_TOKEN={ask a dev}
+   PORT={what do you want it to be?}
+3. ETHPLORER_TOKEN={ask a dev}
+4. NAME={ask a dev. its on heroku}
+PASSWORD={ask a dev. its on heroku}
+DATABASE={ask a dev. its on heroku}
+HOST={ask a dev. its on heroku}
+PROD_ENV="1"
+
 START THE SERVER:
 
 1. Run npm install
@@ -22,8 +37,9 @@ GET /api/transactions/history?address=<wallet address>
 
 GET /api/transactions/getTokenList?address=<wallet address>
 
-# Vendor APIs
 
+
+# Vendor APIs
 ## Description: This API will gets all vendors from database
 
 GET /api/vendors
@@ -32,7 +48,6 @@ GET /api/vendors
 
 POST /api/vendors
 REQUEST PARAMETERS:
-
 ```
 {
    "name": "JPs Studio",
@@ -47,7 +62,6 @@ REQUEST PARAMETERS:
 PUT /api/vendors
 
 REQUEST PARAMETERS:
-
 ```
 {
    "id": 95,
@@ -62,72 +76,14 @@ REQUEST PARAMETERS:
 
 DELETE /api/vendors
 REQUEST PARAMETERS:
-
 ```
 {
    "id": 95
 }
 ```
 
+
 ## Errors:
 
 "ConnectionRefusedError [SequelizeConnectionRefusedError]: connect ECONNREFUSED 127.0.0.1:5432"
-
-## Undo all migrations
-
-`npx sequelize-cli db:migrate:undo:all`
-
-## Running migrations to create tables and columns into database
-
-## To create table
-
-1. Run below command to create a blank migration file
-   `npx sequelize-cli migration:generate --name <name of migration file>`
-2. Write required queries in newly created migration file as shown in
-   `sampleMigrations/20220602175116-create_user_table.js`
-3. Run below command to run queries written in migration file
-   `npx sequelize-cli db:migrate`
-   This command will update the database
-
-## To add column
-
-1. Run below command to create a blank migration file
-   `npx sequelize-cli migration:generate --name <name of migration file>`
-2. Write required queries in newly created migration file as shown in
-   `sampleMigrations/20220603090126-add_column_new_column.js`
-3. Run below command to run queries written in migration file
-   `npx sequelize-cli db:migrate`
-   This command will update the database
-4. Add newly created column in your models, functions and validations
-   `databases/postgres/entity/user.js`(2 places) `model/user/user.js` `validation/user.js`
-
-## To remove column
-
-1. Run below command to create a blank migration file
-   `npx sequelize-cli migration:generate --name <name of migration file>`
-2. Write required queries in newly created migration file as shown in
-   `sampleMigrations/20220603093009-remove_column_new_column.js`
-3. Run below command to run queries written in migration file
-   `npx sequelize-cli db:migrate`
-   This command will update the database
-4. Add newly created column in your models, functions and validations
-   `databases/postgres/entity/user.js`(2 places) `model/user/user.js` `validation/user.js`
-
-# User APIs
-
-## Description: This API will gets all users from database
-
-GET /api/users
-
-## Description: This API will post a user to the database
-
-POST /api/users
-REQUEST PARAMETERS:
-
-```
-{
-   "address": "address of user",
-   "hasProof": false,
-   "hasMoonbird": true
-}
-```
+* 

@@ -7,7 +7,6 @@ module.exports = ({ validate }) => {
         getAddress: () => args.address,
         getHasProof: () => args.hasProof,
         getHasMoonBird: () => args.hasMoonbird,
-        getNewColumn: () => args.newColumn,
       });
     } catch (error) {
       throw error;

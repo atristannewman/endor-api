@@ -3,13 +3,14 @@ const Sequelize = require("sequelize");
 
 const credentials = {
   DATABASE: process.env.DATABASE,
-  USERNAME: process.env.NAME,
+  USERNAME: process.env.USERNAME,
   PASSWORD: process.env.PASSWORD,
   HOST: process.env.HOST,
   DIALECT: "postgres",
-  PORT: process.env.DB_PORT,
-  // PROD_ENV: process.env.PROD_ENV,
-  // DATABASE_URL: process.env.DATABASE_URL,
+  PORT: process.env.PORT,
+  //PROD_ENV: process.env.PROD_ENV,
+  DATABASE_URL: process.env.DATABASE_URL,
+
 };
 
 let config = {
@@ -23,14 +24,14 @@ let config = {
   },
 };
 
-if (process.env.PROD_ENV) {
+// if (process.env.PROD_ENV) {
   config.dialectOptions = {
     ssl: {
       require: true,
       rejectUnauthorized: false,
     },
   };
-}
+// }
 
 const sequelize = new Sequelize(
   credentials.DATABASE,
@@ -38,14 +39,5 @@ const sequelize = new Sequelize(
   credentials.PASSWORD,
   config
 );
-
-sequelize
-  .authenticate()
-  .then(function (err) {
-    console.log("Connection has been established successfully.");
-  })
-  .catch(function (err) {
-    console.log("Unable to connect to the database:", err);
-  });
 
 module.exports = sequelize;
