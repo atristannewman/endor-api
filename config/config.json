@@ -20,6 +20,7 @@
     "dialect": "mysql"
   },
   "production": {
+    // TODO: Hide in production
     "username": "qxvvyneprkgenr",
     "password": "73ad4ba03e9d044c937c5c4d439041197e993b3598332b16faa9209fc89f67c3",
     "database": "dflqt6263kfn9h",
