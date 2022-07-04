@@ -11,7 +11,15 @@ const User = db.define("user", {
   address: Sequelize.STRING,
   hasProof: Sequelize.BOOLEAN,
   hasMoonbird: Sequelize.BOOLEAN,
-});
+
+},{
+  timestamps: false,
+  freezeTableName: true,
+ 
+}
+);
+
+
 
 const create = async (args) => {
   const userInstance = makeUser(args);
@@ -52,6 +60,7 @@ const update = async (id, args) => {
 };
 
 module.exports = Object.freeze({
+  User,
   create,
   update,
   findByAddress,

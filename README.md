@@ -81,9 +81,44 @@ REQUEST PARAMETERS:
    "id": 95
 }
 ```
+# Hangout API
+
+
+
+# Description :  This API will add hangout but need to pass user_id in body 
+
+POST/api/hangouts
+REQUEST PARAMETERS:
+````
+body:
+   {
+     "name":" ",
+     "startTime":" ",
+     "endTime":" ",
+     "address":" ",
+     "tags":[""," "], 
+     "user_id":" "
+}
+````
+#  Description :  This API will get all the hangouts with its hosts(users) 
+
+GET/api/hangouts
+REQUEST PARAMETERS:
+```
+```
+
+# One-to-Many relationship 
+
+1. we have implemented One to many relation between User and Hangouts.
+
+2. Users have many hangouts but hangout only belongs to user.
+
+3. foreign key we have created is user_id in hangouts.
+
+
+
 
 
 ## Errors:
 
 "ConnectionRefusedError [SequelizeConnectionRefusedError]: connect ECONNREFUSED 127.0.0.1:5432"
-* 

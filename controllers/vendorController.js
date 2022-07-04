@@ -1,14 +1,15 @@
 module.exports = ({ DB }) => {
   const createVendor = async (httpRequest) => {
     try {
-      const { name, location, isActive, accessUrl, accessCode, entryInstruction } = httpRequest.body;
+      const { name, location, isActive, accessUrl, accessCode, entryInstruction ,address} = httpRequest.body;
       const vendor = await DB.Vendor.create({
         name,
         location,
         isActive,
         accessUrl,
         accessCode,
-        entryInstruction
+        entryInstruction,
+        address
       });
       return {
         status: 200,

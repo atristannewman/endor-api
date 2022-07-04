@@ -1,0 +1,84 @@
+module.exports = ({ DB }) => {
+  const createHangout = async (httpRequest) => {
+    try {
+      console.log("create hangout hangout controller");
+      const {  name, startTime, endTime, address, tags, user_id } = httpRequest.body;
+      console.log(`${tags} hangout controller`);
+      const hangout = await DB.Hangout.create({
+        name,
+        startTime,
+        endTime,
+        address,
+        tags,
+        user_id
+      });
+    
+      return {
+        status: 200,
+        data: {
+          hangout,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+  const updateHangout = async (httpRequest) => {
+    try {
+      const { id, name, startTime, endTime, address, tags,user_id } = httpRequest.body;
+      await DB.Hangout.updateById(id, {
+        name,
+        startTime,
+        endTime,
+        address,
+        tags,
+        user_id
+      });
+      const hangout = await DB.Hangout.findById(id);
+      return {
+        status: 200,
+        data: {
+          hangout,
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+  const deleteHangout = async (httpRequest) => {
+    try {
+      const { id } = httpRequest.body;
+      await DB.Hangout.deleteById(id);
+      return {
+        status: 200,
+        data: {
+          message: "Hangout is deleted successfully",
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+  const getHangouts = async () => {
+    try {
+      const hangouts = await DB.Hangout.findAll({
+
+      });
+      return {
+        status: 200,
+        data: {
+          hangouts
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return Object.freeze({
+    createHangout,
+    updateHangout,
+    deleteHangout,
+    getHangouts,
+  });
+};
