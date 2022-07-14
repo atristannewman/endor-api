@@ -81,9 +81,103 @@ REQUEST PARAMETERS:
    "id": 95
 }
 ```
+# Hangout API
+
+
+
+# Description :  This API will add hangout but need to pass user_id in body 
+
+POST/api/hangouts
+REQUEST PARAMETERS:
+````
+body:
+   {
+     "name":" ",
+     "startTime":" ",
+     "endTime":" ",
+     "address":" ",
+     "tags":[""," "], 
+     "user_id":" "
+}
+````
+#  Description :  This API will get all the hangouts with its hosts(users) 
+
+GET/api/hangouts
+REQUEST PARAMETERS:
+```
+```
+
+# One-to-Many relationship 
+
+1. we have implemented One to many relation between User and Hangouts.
+
+2. Users have many hangouts but hangout only belongs to user.
+
+3. foreign key we have created is user_id in hangouts.
+
+   
+   ## Undo all migrations
+
+`npx sequelize-cli db:migrate:undo:all`
+
+## Running migrations to create tables and columns into database
+
+## To create table
+
+1. Run below command to create a blank migration file
+   `npx sequelize-cli migration:generate --name <name of migration file>`
+2. Write required queries in newly created migration file as shown in
+   `sampleMigrations/20220602175116-create_user_table.js`
+3. Run below command to run queries written in migration file
+   `npx sequelize-cli db:migrate`
+   This command will update the database
+
+## To add column
+
+1. Run below command to create a blank migration file
+   `npx sequelize-cli migration:generate --name <name of migration file>`
+2. Write required queries in newly created migration file as shown in
+   `sampleMigrations/20220603090126-add_column_new_column.js`
+3. Run below command to run queries written in migration file
+   `npx sequelize-cli db:migrate`
+   This command will update the database
+4. Add newly created column in your models, functions and validations
+   `databases/postgres/entity/user.js`(2 places) `model/user/user.js` `validation/user.js`
+
+## To remove column
+
+1. Run below command to create a blank migration file
+   `npx sequelize-cli migration:generate --name <name of migration file>`
+2. Write required queries in newly created migration file as shown in
+   `sampleMigrations/20220603093009-remove_column_new_column.js`
+3. Run below command to run queries written in migration file
+   `npx sequelize-cli db:migrate`
+   This command will update the database
+4. Add newly created column in your models, functions and validations
+   `databases/postgres/entity/user.js`(2 places) `model/user/user.js` `validation/user.js`
+
+# User APIs
+
+## Description: This API will gets all users from database
+
+GET /api/users
+
+## Description: This API will post a user to the database
+
+POST /api/users
+REQUEST PARAMETERS:
+
+```
+{
+   "address": "address of user",
+   "hasProof": false,
+   "hasMoonbird": true
+}
+```
+
+
 
 
 ## Errors:
 
 "ConnectionRefusedError [SequelizeConnectionRefusedError]: connect ECONNREFUSED 127.0.0.1:5432"
-* 

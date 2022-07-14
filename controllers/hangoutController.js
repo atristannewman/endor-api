@@ -1,9 +1,7 @@
 module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
     try {
-      console.log("create hangout hangout controller");
       const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
-      console.log(`${tags} hangout controller`);
       const hangout = await DB.Hangout.create({
         id,
         name,
@@ -13,11 +11,12 @@ module.exports = ({ DB }) => {
         tags,
         host
       });
-      // console.log("create hangout hangout controller");
+
+      const hangouts = await DB.Hangout.findAll();
       return {
         status: 200,
         data: {
-          vendor,
+          hangouts
         },
       };
     } catch (error) {

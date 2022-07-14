@@ -10,10 +10,12 @@ module.exports = ({ DB }) => {
         accessCode,
         entryInstruction
       });
+
+      const vendors = await DB.Vendor.findAll()
       return {
         status: 200,
         data: {
-          vendor,
+          vendors
         },
       };
     } catch (error) {
