@@ -59,6 +59,7 @@ const update = async (id, args) => {
 };
 
 module.exports = Object.freeze({
+  User,
   create,
   update,
   findByAddress,

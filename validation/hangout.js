@@ -5,8 +5,9 @@ const schema = Joi.object({
   address: Joi.string().required(),
   startTime: Joi.string().required(),
   endTime: Joi.string().optional(),
-  host: Joi.string().required(),
+  // host: Joi.string().required(),
   tags: Joi.array().items(Joi.string()).optional(),
+  user_id: Joi.string().required()
 });
 
 exports.validate = (args) => {

@@ -21,6 +21,7 @@ let config = {
     acquire: 30000,
     idle: 10000,
   },
+  logging:false
 };
 
 if (process.env.PROD_ENV) {

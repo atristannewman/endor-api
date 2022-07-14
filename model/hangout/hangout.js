@@ -7,14 +7,16 @@ module.exports = ({ validate }) => {
         getAddress: () => args.address,
         getStartTime: () => args.startTime,
         getEndTime: () => args.endTime,
-        getHost: () => args.host,
         getTags: () => {
-          const tagArgs = JSON.parse(args.tags);
-          return Array(tagArgs);
-        }
+          
+          const tagArgs = JSON.parse(JSON.stringify(args.tags));
+          return tagArgs;
+          
+        },
+        getUser: () => args.user_id
       });
 
-      console.log(`return object: ${returnObject.tags}`);
+      console.log(`return object: ${returnObject}`);
       
 
       return returnObject;

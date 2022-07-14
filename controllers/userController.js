@@ -41,8 +41,25 @@ module.exports = ({ transactionService, DB }) => {
       throw error;
     }
   };
+  const createUser = async (httpRequest) => {
+    try {
+      const { address, hasMoonbird, hasProof } = httpRequest.body;
+      const user = await DB.User.create({
+        address, hasProof, hasMoonbird
+      })
+      return {
+        status: 200,
+        data: {
+          user
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 
   return Object.freeze({
     getProfile,
+    createUser
   });
 };
