@@ -2,27 +2,46 @@ const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
 const { validate } = require("../../../validation/userAddress");
+const { userUpdateValidate } = require("../../../validation/userUpdate");
 
-const User = db.define("user", {
-  uuid: {
-    type: Sequelize.UUID,
-    defaultValue: Sequelize.UUIDV1,
-    primaryKey: true,
+const User = db.define(
+  "user",
+  {
+    uuid: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV1,
+      primaryKey: true,
+    },
+    username: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    address: {
+      type: Sequelize.STRING,
+      allowNull: false,
+    },
+    profileImageUrl: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    hasProof: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+    },
+    hasMoonbird: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+    },
+    hostRating: {
+      type: Sequelize.DOUBLE,
+      allowNull: false,
+    },
   },
-  address: Sequelize.STRING,
-  hasProof: Sequelize.BOOLEAN,
-  hasMoonbird: Sequelize.BOOLEAN,
-  username: Sequelize.STRING,
-  hostRating: Sequelize.DOUBLE,
-  profileImageUrl: Sequelize.STRING,
-
-}, {
-  timestamps: false,
-  freezeTableName: true,
-}
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
 );
-
-
 
 const create = async (args) => {
   const userInstance = makeUser(args);
@@ -81,12 +100,14 @@ const update = async (id, args) => {
 const updateByAddress = async (address, args) => {
   try {
     validate({ address });
+    userUpdateValidate(args);
     return await User.update(args, {
       where: {
-        address
-      }
+        address,
+      },
     });
   } catch (error) {
+    console.log(`error in user update: ${error}`);
     throw error;
   }
 };
@@ -111,5 +132,5 @@ module.exports = Object.freeze({
   updateByAddress,
   findByAddress,
   deleteByAddress,
-  findByUsername
+  findByUsername,
 });
