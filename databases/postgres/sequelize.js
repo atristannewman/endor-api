@@ -1,5 +1,6 @@
 require("dotenv").config();
 const Sequelize = require("sequelize");
+const url = require('url');
 
 const credentials = {
   DATABASE: process.env.DATABASE,
@@ -21,7 +22,7 @@ let config = {
     acquire: 30000,
     idle: 10000,
   },
-  logging:false
+  logging: false
 };
 
 if (process.env.PROD_ENV) {
@@ -31,6 +32,18 @@ if (process.env.PROD_ENV) {
       rejectUnauthorized: false,
     },
   };
+  const { DATABASE_URL } = process.env;
+  const dbUrl = url.parse(DATABASE_URL);
+  credentials.USERNAME = dbUrl.auth.substr(0, dbUrl.auth.indexOf(':'));
+  credentials.PASSWORD = dbUrl.auth.substr(
+    dbUrl.auth.indexOf(':') + 1,
+    dbUrl.auth.length
+  );
+  credentials.DATABASE = dbUrl.path.slice(1);
+  const host = dbUrl.hostname;
+  const { port } = dbUrl;
+  config.host = host;
+  config.port = port;
 }
 
 const sequelize = new Sequelize(

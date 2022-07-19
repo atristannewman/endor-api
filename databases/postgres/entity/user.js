@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
+const { validate } = require("../../../validation/userAddress");
 
 const User = db.define("user", {
   uuid: {
@@ -11,8 +12,11 @@ const User = db.define("user", {
   address: Sequelize.STRING,
   hasProof: Sequelize.BOOLEAN,
   hasMoonbird: Sequelize.BOOLEAN,
+  username: Sequelize.STRING,
+  hostRating: Sequelize.DOUBLE,
+  profileImageUrl: Sequelize.STRING,
 
-},{
+}, {
   timestamps: false,
   freezeTableName: true,
 }
@@ -27,6 +31,9 @@ const create = async (args) => {
       address: userInstance.getAddress(),
       hasProof: userInstance.getHasProof(),
       hasMoonbird: userInstance.getHasMoonBird(),
+      username: userInstance.getUsername(),
+      hostRating: userInstance.getHostRating(),
+      profileImageUrl: userInstance.getProfileImageUrl(),
     });
   } catch (error) {
     console.log(error);
@@ -36,9 +43,22 @@ const create = async (args) => {
 
 const findByAddress = async (address) => {
   try {
+    validate({ address });
     return await User.findOne({
       where: {
         address,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const findByUsername = async (username) => {
+  try {
+    return await User.findOne({
+      where: {
+        username,
       },
     });
   } catch (error) {
@@ -58,9 +78,38 @@ const update = async (id, args) => {
   }
 };
 
+const updateByAddress = async (address, args) => {
+  try {
+    validate({ address });
+    return await User.update(args, {
+      where: {
+        address
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteByAddress = async (address) => {
+  try {
+    validate({ address });
+    User.destroy({
+      where: {
+        address,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = Object.freeze({
   User,
   create,
   update,
+  updateByAddress,
   findByAddress,
+  deleteByAddress,
+  findByUsername
 });

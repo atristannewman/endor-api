@@ -43,9 +43,27 @@ module.exports = ({ transactionService, DB }) => {
   };
   const createUser = async (httpRequest) => {
     try {
-      const { address, hasMoonbird, hasProof } = httpRequest.body;
+      const { address, hasMoonbird, hasProof, username, hostRating, profileImageUrl } = httpRequest.body;
+      const userAddress = await DB.User.findByAddress(address);
+      const userUsername = await DB.User.findByUsername(username);
+      if (userAddress) {
+        return {
+          status: 409,
+          data: {
+            message: 'User with that address already exists'
+          }
+        }
+      }
+      if (userUsername) {
+        return {
+          status: 409,
+          data: {
+            message: 'User with that username already exists'
+          }
+        }
+      }
       const user = await DB.User.create({
-        address, hasProof, hasMoonbird
+        address, hasProof, hasMoonbird, username, hostRating, profileImageUrl
       })
       return {
         status: 200,
@@ -56,10 +74,113 @@ module.exports = ({ transactionService, DB }) => {
     } catch (error) {
       throw error;
     }
+  };
+
+  const updateUser = async (httpRequest) => {
+    try {
+      const { address, username, hostRating, profileImageUrl } = httpRequest.body;
+      let user = await DB.User.findByAddress(address);
+      if (!user) {
+        return {
+          status: 404,
+          message: "User not found"
+        }
+      }
+      
+      const userUsername = await DB.User.findByUsername(username);
+      if (userUsername) {
+        return {
+          status: 409,
+          data: {
+            message: 'User with that username aleady exists'
+          }
+        }
+
+      }
+      await DB.User.updateByAddress(address, {
+        address,
+        username,
+        hostRating,
+        profileImageUrl
+      });
+
+      user = await DB.User.findByAddress(address);
+      return {
+        status: 200,
+        data: {
+          user
+        }
+      }
+    }
+    catch (error) {
+      throw error;
+    }
+  };
+
+  const deleteUser = async (httpRequest) => {
+    try {
+      const { address } = httpRequest.body;
+      const user = await DB.User.findByAddress(address);
+      if (!user) {
+        return {
+          status: 404,
+          data: {
+            message: "User not found"
+          }
+        }
+      }
+
+      await DB.User.deleteByAddress(address);
+      return {
+        status: 200,
+        data: {
+          message: "User removed successfully",
+        }
+      }
+    }
+    catch (error) {
+      throw error;
+    }
+  };
+
+  const getUser = async (httpRequest) => {
+    try {
+      const { address } = httpRequest.body;
+      const user = await DB.User.findByAddress(address);
+      if (!user) {
+        return {
+          status: 404,
+          data: {
+            message: "User not found",
+          }
+        }
+      }
+
+      const userInfo = {
+        walletAddress: user.address,
+        imageurl: user.profileImageUrl,
+        hostRating: user.hostRating,
+        username: user.username
+      }
+
+      return {
+        status: 200,
+        data: {
+          userInfo
+        }
+      }
+    }
+
+    catch (error) {
+      throw error;
+    }
   }
 
   return Object.freeze({
     getProfile,
-    createUser
+    createUser,
+    updateUser,
+    deleteUser,
+    getUser,
   });
 };
