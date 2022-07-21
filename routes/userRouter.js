@@ -4,6 +4,9 @@ const { userController } = require("../controllers");
 const requestHandler = require("../requestHandler");
 
 userRouter.get("/getProfile", requestHandler(userController.getProfile));
-userRouter.post("/createUser",requestHandler(userController.createUser));
+userRouter.post("/",requestHandler(userController.createUser));
+userRouter.put("/",requestHandler(userController.updateUser));
+userRouter.delete("/",requestHandler(userController.deleteUser));
+userRouter.get("/",requestHandler(userController.getUser));
 
 module.exports = userRouter;

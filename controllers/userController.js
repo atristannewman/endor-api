@@ -43,23 +43,195 @@ module.exports = ({ transactionService, DB }) => {
   };
   const createUser = async (httpRequest) => {
     try {
-      const { address, hasMoonbird, hasProof } = httpRequest.body;
+      const {
+        address,
+        hasMoonbird,
+        hasProof,
+        username,
+        hostRating,
+        profileImageUrl,
+      } = httpRequest.body;
+      const userAddress = await DB.User.findByAddress(address);
+      if (userAddress) {
+        return {
+          status: 409,
+          data: {
+            message: "User address aleady exists",
+          },
+        };
+      }
+      const userUsername = await DB.User.findByUsername(username);
+      if (userUsername) {
+        return {
+          status: 409,
+          data: {
+            message: "User name aleady exists",
+          },
+        };
+      }
       const user = await DB.User.create({
-        address, hasProof, hasMoonbird
-      })
+        address,
+        hasProof,
+        hasMoonbird,
+        username,
+        hostRating,
+        profileImageUrl,
+      });
       return {
         status: 200,
         data: {
-          user
+          user,
+        },
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
+    }
+  };
+
+  const updateUser = async (httpRequest) => {
+    try {
+      const { address, username, hostRating, profileImageUrl } =
+        httpRequest.body;
+      const user = await DB.User.findByAddress(address);
+      if (!user) {
+        return {
+          status: 404,
+          message: "user is not found",
+        };
+      }
+      const userUsername = await DB.User.findByUsername(username);
+      if (userUsername) {
+        return {
+          status: 409,
+          data: {
+            message: "User name aleady exists",
+          },
+        };
+      }
+      await DB.User.updateByAddress(address, {
+        username,
+        hostRating,
+        profileImageUrl,
+      });
+      const updatedUser = await DB.User.findByAddress(address);
+      return {
+        status: 200,
+        data: {
+          updatedUser,
+        },
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
+    }
+  };
+
+  const deleteUser = async (httpRequest) => {
+    try {
+      const { address } = httpRequest.query;
+      const user = await DB.User.findByAddress(address);
+      if (!user) {
+        return {
+          status: 404,
+          data: {
+            message: "User is not found",
+          },
+        };
+      }
+      await DB.User.deleteByAddress(address);
+      return {
+        status: 200,
+        data: {
+          message: "User is deleted successfully",
+        },
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
+    }
+  };
+
+  const getUser = async (httpRequest) => {
+    try {
+      const { address } = httpRequest.query;
+      if (address) {
+      const user = await DB.User.findByAddress(address);
+        if (!user) {
+          return {
+            status: 404,
+            data: {
+              message: "User is not found",
+            },
+          };
         }
+        const userInfo = {
+          walletAddress: user.address,
+          imageurl: user.profileImageUrl,
+          hostRating: user.hostRating,
+          username: user.username,
+        };
+
+        return {
+          status: 200,
+          data: {
+            userInfo,
+          },
+        };
+      } else {
+        const users = await DB.User.findAll();
+        if (!users) {
+          return {
+            status: 404,
+            data: {
+              message: "No users were found",
+            },
+          };
+        }
+        const usersInfo = users.map((user) => {
+          const userData = user.dataValues;
+          return {
+            walletAddress: userData.address,
+            imageurl: userData.profileImageUrl,
+            hostRating: userData.hostRating,
+            username: userData.username,
+          }
+        });
+
+        return {
+          status: 200,
+          data: {
+            usersInfo,
+          },
+        };
       }
     } catch (error) {
-      throw error;
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
     }
-  }
+  };
 
   return Object.freeze({
     getProfile,
-    createUser
+    createUser,
+    updateUser,
+    deleteUser,
+    getUser,
   });
 };
