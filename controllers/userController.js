@@ -137,7 +137,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const deleteUser = async (httpRequest) => {
     try {
-      const { address } = httpRequest.body;
+      const { address } = httpRequest.query;
       const user = await DB.User.findByAddress(address);
       if (!user) {
         return {
@@ -166,28 +166,57 @@ module.exports = ({ transactionService, DB }) => {
 
   const getUser = async (httpRequest) => {
     try {
-      const { address } = httpRequest.body;
+      const { address } = httpRequest.query;
+      if (address) {
       const user = await DB.User.findByAddress(address);
-      if (!user) {
+        if (!user) {
+          return {
+            status: 404,
+            data: {
+              message: "User is not found",
+            },
+          };
+        }
+        const userInfo = {
+          walletAddress: user.address,
+          imageurl: user.profileImageUrl,
+          hostRating: user.hostRating,
+          username: user.username,
+        };
+
         return {
-          status: 404,
+          status: 200,
           data: {
-            message: "User is not found",
+            userInfo,
+          },
+        };
+      } else {
+        const users = await DB.User.findAll();
+        if (!users) {
+          return {
+            status: 404,
+            data: {
+              message: "No users were found",
+            },
+          };
+        }
+        const usersInfo = users.map((user) => {
+          const userData = user.dataValues;
+          return {
+            walletAddress: userData.address,
+            imageurl: userData.profileImageUrl,
+            hostRating: userData.hostRating,
+            username: userData.username,
+          }
+        });
+
+        return {
+          status: 200,
+          data: {
+            usersInfo,
           },
         };
       }
-      const userInfo = {
-        walletAddress: user.address,
-        imageurl: user.profileImageUrl,
-        hostRating: user.hostRating,
-        username: user.username,
-      };
-      return {
-        status: 200,
-        data: {
-          userInfo,
-        },
-      };
     } catch (error) {
       return {
         status: 500,

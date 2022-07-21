@@ -73,6 +73,14 @@ const findByAddress = async (address) => {
   }
 };
 
+const findAll = async () => {
+  try {
+    return await User.findAll();
+  } catch (error) {
+    throw error;
+  }
+}
+
 const findByUsername = async (username) => {
   try {
     return await User.findOne({
@@ -131,6 +139,7 @@ module.exports = Object.freeze({
   update,
   updateByAddress,
   findByAddress,
+  findAll,
   deleteByAddress,
   findByUsername,
 });
