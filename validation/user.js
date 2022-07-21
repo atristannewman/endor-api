@@ -4,6 +4,9 @@ const schema = Joi.object({
   address: Joi.string().required(),
   hasProof: Joi.boolean().required(),
   hasMoonbird: Joi.boolean().required(),
+  username:Joi.string().required(),
+  hostRating:Joi.number().required(),
+  profileImageUrl:Joi.string().optional()
 });
 
 exports.validate = (args) => {
