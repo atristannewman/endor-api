@@ -7,9 +7,10 @@ module.exports = ({ validate }) => {
         getAddress: () => args.address,
         getHasProof: () => args.hasProof,
         getHasMoonBird: () => args.hasMoonbird,
-        getUsername: ()=> args.username,
-        getHostRating: ()=> args.hostRating,
-        getProfileImageUrl:()=> args.profileImageUrl
+        getUsername: () => args.username,
+        getHostRating: () => args.hostRating,
+        getProfileImageUrl: () => args.profileImageUrl,
+        getNotificationPreferences: () => args.notificationPreferences,
       });
     } catch (error) {
       throw error;

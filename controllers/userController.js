@@ -2,7 +2,8 @@ module.exports = ({ transactionService, DB }) => {
   const getProfile = async (httpRequest) => {
     try {
       const { address } = httpRequest.query;
-      const PROOF_COLLECTIVE_PASS_ADDRESS = "0x08d7c0242953446436f34b4c78fe9da38c73668d";
+      const PROOF_COLLECTIVE_PASS_ADDRESS =
+        "0x08d7c0242953446436f34b4c78fe9da38c73668d";
       const { data } = await transactionService.checkProofTokenExist(
         PROOF_COLLECTIVE_PASS_ADDRESS
       );
@@ -56,7 +57,7 @@ module.exports = ({ transactionService, DB }) => {
         return {
           status: 409,
           data: {
-            message: "User address aleady exists",
+            message: "User address already exists",
           },
         };
       }
@@ -168,7 +169,7 @@ module.exports = ({ transactionService, DB }) => {
     try {
       const { address } = httpRequest.query;
       if (address) {
-      const user = await DB.User.findByAddress(address);
+        const user = await DB.User.findByAddress(address);
         if (!user) {
           return {
             status: 404,
@@ -207,7 +208,7 @@ module.exports = ({ transactionService, DB }) => {
             imageurl: userData.profileImageUrl,
             hostRating: userData.hostRating,
             username: userData.username,
-          }
+          };
         });
 
         return {
@@ -227,11 +228,78 @@ module.exports = ({ transactionService, DB }) => {
     }
   };
 
+  const updateUserPreferences = async (httpRequest) => {
+    try {
+      const {
+        address,
+        possibleAttendees,
+        distanceFromAttendees,
+        location,
+        minHostRating,
+      } = httpRequest.body;
+
+      if (address) {
+        const user = await DB.User.findByAddress(address);
+        if (!user) {
+          return {
+            status: 404,
+            data: {
+              message: "User is not found",
+            },
+          };
+        }
+
+        await DB.User.updateByAddress(address, {
+          hasProof: user.hasProof,
+          hasMoonbird: user.hasMoonbird,
+          username: user.username,
+          hostRating: user.hostRating,
+          profileImageUrl: user.profileImageUrl,
+          notificationPreferences: {
+            minPossibleAttendees: possibleAttendees,
+            distanceFromPossibleAttendees: distanceFromAttendees,
+            location,
+            minHostRating,
+          },
+        });
+        const updatedUser = await DB.User.findByAddress(address);
+        const userInfo = {
+          walletAddress: updatedUser.address,
+          imageurl: updatedUser.profileImageUrl,
+          hostRating: updatedUser.hostRating,
+          username: updatedUser.username,
+          preferences: updatedUser.notificationPreferences,
+        };
+
+        return {
+          status: 200,
+          data: {
+            userInfo,
+          },
+        };
+      }
+      return {
+        status: 400,
+        data: {
+          message: "Address is not provided",
+        },
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
+    }
+  };
+
   return Object.freeze({
     getProfile,
     createUser,
     updateUser,
     deleteUser,
     getUser,
+    updateUserPreferences,
   });
 };
