@@ -36,6 +36,16 @@ const User = db.define(
       type: Sequelize.DOUBLE,
       allowNull: false,
     },
+    notificationPreferences: {
+      type: Sequelize.JSONB,
+      allowNull: false,
+      defaultValue: {
+        minPossibleAttendees: 0,
+        distanceFromPossibleAttendees: 0,
+        location: "",
+        minHostRating: 5,
+      },
+    },
   },
   {
     timestamps: false,
@@ -79,7 +89,7 @@ const findAll = async () => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const findByUsername = async (username) => {
   try {
@@ -109,7 +119,7 @@ const updateByAddress = async (address, args) => {
   try {
     validate({ address });
     userUpdateValidate(args);
-    return await User.update(args, {
+    return User.update(args, {
       where: {
         address,
       },
