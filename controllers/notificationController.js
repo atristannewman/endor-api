@@ -52,38 +52,36 @@ module.exports = ({ DB }) => {
       try {
         console.log("post notification");
         const id = httpRequest.params.id
-        const notificationToken = httpRequest.body.notificationToken
+        const deviceToken = httpRequest.body.deviceToken
 
-        console.log(`test notification token ${notificationToken}`);
-
-        var options = {
+        var apnProvider = new apn.Provider({
             token: {
-                cert: __dirname + '/cert.pem',
-                key: __dirname + '/key.pem',
-                keyId: __dirname + '/XS2HX5FS8N',
-                teamId: "FlockApp"
-            }
+                key: __dirname + '/AuthKey_XS2HX5FS8N.p8',
+                keyId: __dirname + 'XS2HX5FS8N',
+                teamId: "TRISTAN Newman"
+            },
             // ,
             // proxy: {
             //   host: "192.168.10.92",
             //   port: 8080
             // }
-            // production: false
-        };
+            production: false
+        });
 
-          var note = new apn.Notification();
-      
-          note.expiry = Math.floor(Date.now() / 1000) + 3600;
-          note.badge = 3;
-          note.sound = "ping.aiff";
-          note.alert = "\uD83D\uDCE7 \u2709 You have a new message";
-          note.payload = {'messageFrom': 'Caroline'};
-        //   apnConnection.pushNotification(note, myDevice);
-        
-          var apnProvider = new apn.Provider(options);
-          apnProvider.send(note, notificationToken).then( (result) => {
-            // see documentation for an explanation of result
-            // console.log(`send notification request response, ${JSON.parse(result)}`);
+        var notification = new apn.Notification();
+
+        notification.topic = httpRequest.body.appBundleId
+        notification.expiry = Math.floor(Date.now() / 1000) + 3600;
+        notification.badge = 3;
+        notification.sound = "ping.aiff";
+        notification.alert = "\uD83D\uDCE7 \u2709 You have a new message";
+        notification.payload = {id: 123};
+
+        console.log(`test device token ${deviceToken}`);
+
+        apnProvider.send(notification, deviceToken, sound).then( (result) => {
+          // see documentation for an explanation of result
+            console.log(`send notification request response, ${result}`);
           });
       
         //   return res.json({});
