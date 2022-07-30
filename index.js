@@ -21,7 +21,7 @@ app.use("/api/users", userRouter);
 app.use("/api/vendors", vendorRouter);
 app.use("/api/hangouts", hangoutsRouter);
 app.use("/api/notifications", notificationsRouter);
-app.get("/send.js", function(req, res, next) {
+app.get("/api/send.js", function(req, res, next) {
   const app = req.query.app;
   const deviceToken = req.query.deviceToken;
   const message = req.query.message;
