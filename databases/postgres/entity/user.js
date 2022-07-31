@@ -14,7 +14,7 @@ const User = db.define(
     },
     username: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     address: {
       type: Sequelize.STRING,
@@ -34,7 +34,7 @@ const User = db.define(
     },
     hostRating: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     notificationPreferences: {
       type: Sequelize.JSONB,

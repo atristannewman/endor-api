@@ -58,7 +58,7 @@ module.exports = ({ DB }) => {
             token: {
                 key: __dirname + '/AuthKey_XS2HX5FS8N.p8',
                 keyId: __dirname + 'XS2HX5FS8N',
-                teamId: "TRISTAN Newman"
+                teamId: "HL3TG6P8PX"
             },
             // ,
             // proxy: {
