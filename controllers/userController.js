@@ -80,6 +80,9 @@ module.exports = ({ transactionService, DB }) => {
         profileImageUrl,
         deviceToken
       });
+
+      console.log(`user device token ${user.deviceToken}`);
+      
       return {
         status: 200,
         data: {
