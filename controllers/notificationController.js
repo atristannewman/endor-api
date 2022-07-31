@@ -81,11 +81,9 @@ module.exports = ({ DB }) => {
 
         apnProvider.send(notification, deviceToken).then( (response) => {
           // see documentation for an explanation of result
-            console.log(`send notification request response, ${response}`);
-            response.sent.forEach((token) => {
-              console.log(`token: ${token}`)
-            })
-
+          console.log(`send notification request response, ${response}`);
+          console.log(`tokens: ${response.sent}`)
+          console.log(`failed token: ${response.failed}`)
         });
       
         //   return res.json({});
