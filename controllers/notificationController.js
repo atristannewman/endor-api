@@ -83,6 +83,16 @@ module.exports = ({ DB }) => {
           // see documentation for an explanation of result
           console.log(`send notification request response, ${response}`);
           console.log(`tokens: ${response.sent}`)
+          response.sent.forEach((token) => {
+            console.log(`send notification request response, ${token.device}`);
+          })
+
+          response.failed.forEach((token) => {
+            console.log(`send notification request response error, ${token.error}`);
+            console.log(`send notification request response device, ${token.device}`);
+            console.log(`send notification request response, ${token.response}`);
+
+          })
           console.log(`failed token: ${response.failed}`)
         });
       
