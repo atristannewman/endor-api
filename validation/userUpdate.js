@@ -7,6 +7,7 @@ const schema = Joi.object({
   hostRating: Joi.number().optional(),
   profileImageUrl: Joi.string().optional(),
   notificationPreferences: Joi.object().optional(),
+  deviceToken: Joi.string().optional()
 });
 
 exports.userUpdateValidate = (args) => {
