@@ -1,14 +1,13 @@
 module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
     try {
-      const { id, name, startTime, endTime, address, tags, host } = httpRequest.body;
+      const { name, startTime, endTime, address, tags, host } = httpRequest.body;
       const hangout = await DB.Hangout.create({
         name,
         startTime,
         endTime,
         address,
-        tags,
-        user_id
+        tags
       });
 
       const hangouts = await DB.Hangout.findAll();
@@ -22,16 +21,16 @@ module.exports = ({ DB }) => {
       throw error;
     }
   };
+
   const updateHangout = async (httpRequest) => {
     try {
-      const { id, name, startTime, endTime, address, tags,user_id } = httpRequest.body;
+      const { id, name, startTime, endTime, address, tags} = httpRequest.body;
       await DB.Hangout.updateById(id, {
         name,
         startTime,
         endTime,
         address,
-        tags,
-        user_id
+        tags
       });
       const hangout = await DB.Hangout.findById(id);
       return {
@@ -44,6 +43,7 @@ module.exports = ({ DB }) => {
       throw error;
     }
   };
+
   const deleteHangout = async (httpRequest) => {
     try {
       const { id } = httpRequest.body;
@@ -58,6 +58,7 @@ module.exports = ({ DB }) => {
       throw error;
     }
   };
+
   const getHangouts = async () => {
     try {
       const hangouts = await DB.Hangout.findAll({

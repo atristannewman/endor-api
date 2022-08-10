@@ -13,7 +13,7 @@ module.exports = ({ validate }) => {
           return tagArgs;
           
         },
-        getUser: () => args.user_id
+        // getUser: () => args.user_id
       });
 
       console.log(`return object: ${returnObject}`);
