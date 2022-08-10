@@ -14,7 +14,7 @@ const Hangout = db.define("hangout", {
   address: Sequelize.STRING,
   startTime: Sequelize.STRING,
   endTime: Sequelize.STRING,
-  tags: Sequelize.ARRAY(Sequelize.STRING), // of strings
+  // tags: Sequelize.ARRAY(Sequelize.STRING), // of strings
 
 },
   {
@@ -57,7 +57,7 @@ const create = async (args) => {
       startTime: hangoutInstance.getStartTime(),
       endTime: hangoutInstance.getEndTime(),
       tags: hangoutInstance.getTags(),
-      user_id: hangoutInstance.getUser()
+      // user_id: hangoutInstance.getUser()
     });
   } catch (error) {
     console.log(error);
@@ -67,7 +67,7 @@ const create = async (args) => {
 
 const findAll = async () => {
   try {
-    return await Hangout.findAll({include: { model: User, as: "host" }});
+    return await Hangout.findAll();
   } catch (error) {
     throw error;
   }
