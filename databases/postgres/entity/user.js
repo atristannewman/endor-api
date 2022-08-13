@@ -46,6 +46,10 @@ const User = db.define(
         minHostRating: 5,
       },
     },
+    notificationID: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
   },
   {
     timestamps: false,
