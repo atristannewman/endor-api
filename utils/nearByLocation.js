@@ -1,4 +1,4 @@
-function distance(lat1, lon1, lat2, lon2, unit) {
+const distance = (lat1, lon1, lat2, lon2, unit) => {
     var radlat1 = Math.PI * lat1/180
     var radlat2 = Math.PI * lat2/180
     var theta = lon1-lon2
@@ -31,7 +31,7 @@ var data = [{
     "lng": "103.83762574759974",
     "location": "Stop 3"
 }];
-
+module.exports = distance;
 var html = "";
 var poslat = 1.28210155945393;
 var poslng = 103.81722480263163;
@@ -42,5 +42,5 @@ for (var i = 0; i < data.length; i++) {
         array.push(data[i].code);
     }
 }
-
+console.log(array);
 // Currently work in progress
