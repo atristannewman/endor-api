@@ -6,7 +6,11 @@ const schema = Joi.object({
   hasMoonbird: Joi.boolean().required(),
   username:Joi.string().required(),
   hostRating:Joi.number().required(),
-  profileImageUrl:Joi.string().optional()
+  profileImageUrl:Joi.string().optional(),
+  location: Joi.object({
+    latitude:Joi.number(),
+    longitude:Joi.number()
+  }).optional(),
 });
 
 exports.validate = (args) => {

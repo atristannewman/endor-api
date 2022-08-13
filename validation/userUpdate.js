@@ -7,6 +7,10 @@ const schema = Joi.object({
   hostRating: Joi.number().optional(),
   profileImageUrl: Joi.string().optional(),
   notificationPreferences: Joi.object().optional(),
+  location: Joi.object({
+    latitude:Joi.number(),
+    longitude:Joi.number()
+  }).optional(),
 });
 
 exports.userUpdateValidate = (args) => {
