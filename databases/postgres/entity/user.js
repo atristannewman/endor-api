@@ -34,7 +34,7 @@ const User = db.define(
     },
     hostRating: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     notificationPreferences: {
       type: Sequelize.JSONB,
@@ -45,6 +45,10 @@ const User = db.define(
         location: "",
         minHostRating: 5,
       },
+    },
+    deviceToken: {
+      type: Sequelize.STRING,
+      allowNull: true,
     }
   },
   {
@@ -63,6 +67,7 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
+      deviceToken: userInstance.getDeviceToken()
     });
   } catch (error) {
     console.log(error);

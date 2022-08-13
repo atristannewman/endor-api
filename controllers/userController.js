@@ -51,6 +51,7 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
+        deviceToken
       } = httpRequest.body;
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
@@ -77,7 +78,11 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
+        deviceToken
       });
+
+      console.log(`user device token ${user.deviceToken}`);
+      
       return {
         status: 200,
         data: {
@@ -96,7 +101,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { address, username, hostRating, profileImageUrl } =
+      const { address, username, hostRating, profileImageUrl, deviceToken } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -118,6 +123,7 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
+        deviceToken
       });
       const updatedUser = await DB.User.findByAddress(address);
       return {
@@ -183,6 +189,7 @@ module.exports = ({ transactionService, DB }) => {
           imageurl: user.profileImageUrl,
           hostRating: user.hostRating,
           username: user.username,
+          deviceToken: user.deviceToken
         };
 
         return {
@@ -208,6 +215,7 @@ module.exports = ({ transactionService, DB }) => {
             imageurl: userData.profileImageUrl,
             hostRating: userData.hostRating,
             username: userData.username,
+            deviceToken: userData.deviceToken
           };
         });
 
@@ -228,7 +236,7 @@ module.exports = ({ transactionService, DB }) => {
     }
   };
 
-  const updateUserPreferences = async (httpRequest) => {
+  const updateUserNotificationSettings = async (httpRequest) => {
     try {
       const {
         address,
@@ -300,6 +308,6 @@ module.exports = ({ transactionService, DB }) => {
     updateUser,
     deleteUser,
     getUser,
-    updateUserPreferences,
+    updateUserNotificationSettings,
   });
 };
