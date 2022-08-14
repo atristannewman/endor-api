@@ -51,6 +51,7 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
+        location,
       } = httpRequest.body;
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
@@ -77,6 +78,10 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
+        location:{
+          latitude:location.latitude,
+          longitude: location.longitude
+        },
       });
       return {
         status: 200,
@@ -96,7 +101,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { address, username, hostRating, profileImageUrl } =
+      const { address, username, hostRating, profileImageUrl, location } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -118,6 +123,7 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
+        location:location
       });
       const updatedUser = await DB.User.findByAddress(address);
       return {

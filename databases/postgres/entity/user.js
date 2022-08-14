@@ -46,6 +46,14 @@ const User = db.define(
         minHostRating: 5,
       },
     },
+    location: {
+      type: Sequelize.JSON,
+      allowNull: false,
+      defaultValue: {
+        latitude: 0,
+        longitude: 0,
+      },
+    },
   },
   {
     timestamps: false,
@@ -63,6 +71,7 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
+      location:userInstance.getlocation()
     });
   } catch (error) {
     console.log(error);
