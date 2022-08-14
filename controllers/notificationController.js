@@ -41,7 +41,7 @@ module.exports = ({ DB }) => {
       */
 
       host = 'https://api.sandbox.push.apple.com'
-      path = `/3/device/${httpRequest.body.deviceToken}`
+      path = `/3/device/${deviceToken}`
       
       const client = http2.connect(host);
 
