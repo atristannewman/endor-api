@@ -4,10 +4,7 @@ module.exports = {
   async up (queryInterface, Sequelize) {
     await queryInterface.addColumn("user", "location", {
       type: Sequelize.JSONB,
-      defaultValue: {
-        latitude: 0,
-        longitude: 0,
-      },
+      defaultValue: null,
     });
   },
 
