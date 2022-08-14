@@ -51,7 +51,8 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
-        deviceToken
+        deviceToken,
+        location,
       } = httpRequest.body;
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
@@ -78,7 +79,11 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
-        deviceToken
+        deviceToken,
+        location:{
+          latitude:location.latitude,
+          longitude: location.longitude
+        },
       });
 
       console.log(`user device token ${user.deviceToken}`);
@@ -101,7 +106,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { address, username, hostRating, profileImageUrl, deviceToken } =
+      const { address, username, hostRating, profileImageUrl, deviceToken , location } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -123,7 +128,8 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
-        deviceToken
+        deviceToken,
+        location:location
       });
       const updatedUser = await DB.User.findByAddress(address);
       return {

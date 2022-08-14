@@ -49,7 +49,15 @@ const User = db.define(
     deviceToken: {
       type: Sequelize.STRING,
       allowNull: true,
-    }
+    },
+    location: {
+      type: Sequelize.JSON,
+      allowNull: false,
+      defaultValue: {
+        latitude: 0,
+        longitude: 0,
+      },
+    },
   },
   {
     timestamps: false,
@@ -67,7 +75,8 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
-      deviceToken: userInstance.getDeviceToken()
+      deviceToken: userInstance.getDeviceToken(),
+      location:userInstance.getlocation()
     });
   } catch (error) {
     console.log(error);

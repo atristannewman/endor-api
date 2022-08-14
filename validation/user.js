@@ -7,7 +7,14 @@ const schema = Joi.object({
   username:Joi.string().optional(),
   hostRating:Joi.number().optional(),
   profileImageUrl:Joi.string().optional(),
-  deviceToken: Joi.string().optional()
+  deviceToken: Joi.string().optional(),
+  username:Joi.string().required(),
+  hostRating:Joi.number().required(),
+  profileImageUrl:Joi.string().optional(),
+  location: Joi.object({
+    latitude:Joi.number(),
+    longitude:Joi.number()
+  }).optional(),
 });
 
 exports.validate = (args) => {

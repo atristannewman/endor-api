@@ -11,7 +11,8 @@ module.exports = ({ validate }) => {
         getHostRating: () => args.hostRating,
         getProfileImageUrl: () => args.profileImageUrl,
         getNotificationPreferences: () => args.notificationPreferences,
-        getDeviceToken: () => args.deviceToken
+        getDeviceToken: () => args.deviceToken,
+        getlocation: () => args.location,
       });
     } catch (error) {
       throw error;
