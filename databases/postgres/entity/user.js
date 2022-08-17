@@ -47,7 +47,7 @@ const User = db.define(
       },
     },
     location: {
-      type: Sequelize.JSON,
+      type: Sequelize.JSONB,
       allowNull: true,
     },
   },
