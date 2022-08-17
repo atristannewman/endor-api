@@ -48,7 +48,6 @@ module.exports = ({ DB }) => {
     try {
       const { id } = httpRequest.body;
       await DB.Hangout.deleteById(id);
-
       const hangouts = await DB.Hangout.findAll();
 
       return {
