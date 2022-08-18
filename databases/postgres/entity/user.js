@@ -48,7 +48,11 @@ const User = db.define(
     },
     location: {
       type: Sequelize.JSONB,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: {
+        latitude: null,
+        longitude: null,
+      },
     },
   },
   {
