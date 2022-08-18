@@ -8,9 +8,9 @@ const schema = Joi.object({
   hostRating:Joi.number().required(),
   profileImageUrl:Joi.string().optional(),
   location: Joi.object({
-    latitude:Joi.number().greater(0).required().allow('null',null),
-    longitude:Joi.number().greater(0).required().allow('null',null)
-  }).required(),
+    latitude:Joi.number().greater(0).required().allow('null',null,''),
+    longitude:Joi.number().greater(0).required().allow('null',null,'')
+  }).optional().allow('','null',null),
 });
 
 exports.validate = (args) => {
