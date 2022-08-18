@@ -78,10 +78,7 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
-        location:{
-          latitude:location.latitude,
-          longitude: location.longitude
-        },
+        location,
       });
       return {
         status: 200,
@@ -123,7 +120,7 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
-        location:location
+        location
       });
       const updatedUser = await DB.User.findByAddress(address);
       return {

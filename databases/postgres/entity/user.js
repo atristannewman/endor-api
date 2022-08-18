@@ -47,11 +47,11 @@ const User = db.define(
       },
     },
     location: {
-      type: Sequelize.JSON,
-      allowNull: false,
+      type: Sequelize.JSONB,
+      allowNull: true,
       defaultValue: {
-        latitude: 0,
-        longitude: 0,
+        latitude: null,
+        longitude: null,
       },
     },
   },
@@ -63,6 +63,24 @@ const User = db.define(
 
 const create = async (args) => {
   const userInstance = makeUser(args);
+  let location = userInstance.getlocation();
+  if(location?.latitude==='null' && location?.longitude==='null'){
+    location.latitude=null;
+    location.longitude=null;
+  }else if(location?.latitude==='' && location?.longitude==='')
+  {
+    location.latitude=null;
+    location.longitude=null;
+  }else if(location?.latitude && location?.longitude){
+    location.latitude = parseFloat(location.latitude);
+    location.longitude = parseFloat(location.longitude);
+  }else if(location==='' || location === null || location === 'null')
+  {
+    location = {
+      latitude:null,
+      longitude:null
+    }
+  }
   try {
     return await User.create({
       address: userInstance.getAddress(),
@@ -71,7 +89,7 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
-      location:userInstance.getlocation()
+      location
     });
   } catch (error) {
     console.log(error);
