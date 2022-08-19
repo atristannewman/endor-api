@@ -9,9 +9,9 @@ const schema = Joi.object({
   notificationPreferences: Joi.object().optional(),
   deviceToken: Joi.string().optional(),
   location: Joi.object({
-    latitude:Joi.number(),
-    longitude:Joi.number()
-  }).optional(),
+    latitude:Joi.number().greater(0).required().allow('null',null,''),
+    longitude:Joi.number().greater(0).required().allow('null',null,'')
+  }).optional().allow('','null',null),
 });
 
 exports.userUpdateValidate = (args) => {

@@ -80,10 +80,7 @@ module.exports = ({ transactionService, DB }) => {
         hostRating,
         profileImageUrl,
         deviceToken,
-        location:{
-          latitude:location.latitude,
-          longitude: location.longitude
-        },
+        location,
       });
 
       console.log(`user device token ${user.deviceToken}`);
@@ -129,7 +126,7 @@ module.exports = ({ transactionService, DB }) => {
         hostRating,
         profileImageUrl,
         deviceToken,
-        location:location
+        location
       });
       const updatedUser = await DB.User.findByAddress(address);
       return {

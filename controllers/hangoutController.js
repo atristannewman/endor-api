@@ -48,10 +48,12 @@ module.exports = ({ DB }) => {
     try {
       const { id } = httpRequest.body;
       await DB.Hangout.deleteById(id);
+      const hangouts = await DB.Hangout.findAll();
+
       return {
         status: 200,
         data: {
-          message: "Hangout is deleted successfully",
+          hangouts
         },
       };
     } catch (error) {

@@ -51,11 +51,11 @@ const User = db.define(
       allowNull: true,
     },
     location: {
-      type: Sequelize.JSON,
-      allowNull: false,
+      type: Sequelize.JSONB,
+      allowNull: true,
       defaultValue: {
-        latitude: 0,
-        longitude: 0,
+        latitude: null,
+        longitude: null,
       },
     },
   },
@@ -67,6 +67,24 @@ const User = db.define(
 
 const create = async (args) => {
   const userInstance = makeUser(args);
+  let location = userInstance.getlocation();
+  if(location?.latitude==='null' && location?.longitude==='null'){
+    location.latitude=null;
+    location.longitude=null;
+  }else if(location?.latitude==='' && location?.longitude==='')
+  {
+    location.latitude=null;
+    location.longitude=null;
+  }else if(location?.latitude && location?.longitude){
+    location.latitude = parseFloat(location.latitude);
+    location.longitude = parseFloat(location.longitude);
+  }else if(location==='' || location === null || location === 'null')
+  {
+    location = {
+      latitude:null,
+      longitude:null
+    }
+  }
   try {
     return await User.create({
       address: userInstance.getAddress(),
@@ -76,7 +94,7 @@ const create = async (args) => {
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
       deviceToken: userInstance.getDeviceToken(),
-      location:userInstance.getlocation()
+      location
     });
   } catch (error) {
     console.log(error);
@@ -133,6 +151,25 @@ const updateByAddress = async (address, args) => {
   try {
     validate({ address });
     userUpdateValidate(args);
+    let location = args?.location;
+    if(location){
+      if(location?.latitude==='null' && location?.longitude==='null'){
+        args.location.latitude=null;
+        args.location.longitude=null;
+      }else if(location?.latitude==='' && location?.longitude==='')
+      {
+        args.location.latitude=null;
+        args.location.longitude=null;
+      }else if(location?.latitude && location?.longitude){
+        args.location.latitude = parseFloat(location.latitude);
+        args.location.longitude = parseFloat(location.longitude);
+      }else if(location==='' || location === null || location === 'null')
+      {
+        args.location.latitude=null;
+        args.location.longitude=null;
+      }
+    }
+    
     return User.update(args, {
       where: {
         address,
