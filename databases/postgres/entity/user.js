@@ -146,6 +146,25 @@ const updateByAddress = async (address, args) => {
   try {
     validate({ address });
     userUpdateValidate(args);
+    let location = args?.location;
+    if(location){
+      if(location?.latitude==='null' && location?.longitude==='null'){
+        args.location.latitude=null;
+        args.location.longitude=null;
+      }else if(location?.latitude==='' && location?.longitude==='')
+      {
+        args.location.latitude=null;
+        args.location.longitude=null;
+      }else if(location?.latitude && location?.longitude){
+        args.location.latitude = parseFloat(location.latitude);
+        args.location.longitude = parseFloat(location.longitude);
+      }else if(location==='' || location === null || location === 'null')
+      {
+        args.location.latitude=null;
+        args.location.longitude=null;
+      }
+    }
+    
     return User.update(args, {
       where: {
         address,
