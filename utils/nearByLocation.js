@@ -1,4 +1,4 @@
-const distance = (lat1, lon1, lat2, lon2, unit) => {
+module.exports.getDistance = (lat1, lon1, lat2, lon2, unit) => {
     var radlat1 = Math.PI * lat1/180
     var radlat2 = Math.PI * lat2/180
     var theta = lon1-lon2
@@ -12,35 +12,6 @@ const distance = (lat1, lon1, lat2, lon2, unit) => {
     dist = dist * 60 * 1.1515
     if (unit=="K") { dist = dist * 1.609344 }
     if (unit=="N") { dist = dist * 0.8684 }
+    console.log(dist);
     return dist
-}
-let array = [];
-var data = [{
-    "code": "0001",
-    "lat": "1.28210155945393",
-    "lng": "103.81722480263163",
-    "location": "Stop 1"
-}, {
-    "code": "0003",
-    "lat": "1.2777380589964",
-    "lng": "103.83749709165197",
-    "location": "Stop 2"
-}, {
-    "code": "0002",
-    "lat": "1.27832046633393",
-    "lng": "103.83762574759974",
-    "location": "Stop 3"
-}];
-module.exports = distance;
-var html = "";
-var poslat = 1.28210155945393;
-var poslng = 103.81722480263163;
-
-for (var i = 0; i < data.length; i++) {
-    // This function will called in controller
-    if (distance(poslat, poslng, data[i].lat, data[i].lng, "K") <= 0.1) {
-        array.push(data[i].code);
-    }
-}
-console.log(array);
-// Currently work in progress
+};

@@ -123,6 +123,28 @@ const findAll = async () => {
   }
 };
 
+const findAllByLocation = async (address) => {
+  try {
+    return await User.findAll({
+      where:{
+        location:{
+          latitude: {
+            [Sequelize.Op.not]:null
+          },
+          longitude: {
+            [Sequelize.Op.not]:null
+          },
+        },
+        address:{
+          [Sequelize.Op.ne]:address
+        }
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const findByUsername = async (username) => {
   try {
     return await User.findOne({
@@ -203,4 +225,5 @@ module.exports = Object.freeze({
   findAll,
   deleteByAddress,
   findByUsername,
+  findAllByLocation
 });

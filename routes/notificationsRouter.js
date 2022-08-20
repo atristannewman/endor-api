@@ -5,4 +5,6 @@ const requestHandler = require("../requestHandler");
 
 notificationsRouter.post("/",requestHandler(notificationController.sendNotification));
 
+notificationsRouter.post("/test",requestHandler(notificationController.testHangout));
+
 module.exports = notificationsRouter;
