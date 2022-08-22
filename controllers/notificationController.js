@@ -1,5 +1,5 @@
 const nearByLocation = require("../utils/nearByLocation");
-
+const appleNotification = require("../services/appleNotificationService");
 exports.setNotificationToken = function (req, res, next) {
   const user = req.user;
   user.apn_token = req.body.token;
@@ -10,75 +10,6 @@ exports.setNotificationToken = function (req, res, next) {
 };
 
 module.exports = ({ DB }) => {
-  const sendNotification = async (httpRequest) => { // Sends notification to development given deviceToken and message
-    // Development environment for notifications includes the APS Environment setting in the XCode project's Provisioning Profile file
-
-    const jwt = require("jsonwebtoken");
-    const http2 = require("http2");
-    const fs = require("fs");
-    const deviceToken = httpRequest.body.deviceToken;
-
-    const key = fs.readFileSync(__dirname + "/FlockAppAPNsKey.p8", "utf8");
-
-    // "iat" should not be older than 1 hr from current time or will get rejected
-    const token = jwt.sign(
-      {
-        iss: "HL3TG6P8PX", // "team ID" of your developer account
-        iat: Date.now() / 1000 // Replace with current unix epoch time [Not in milliseconds, frustated me :D]
-      },
-      key,
-      {
-        header: {
-          alg: "ES256",
-          kid: "CB4MN6UCR4" // issuer key which is "key ID" of your p8 file
-        }
-      }
-    );
-
-    /*
-          Use 'https://api.production.push.apple.com' for production build
-        */
-
-    const host = "https://api.sandbox.push.apple.com";
-    const path = `/3/device/${deviceToken}`;
-
-    const client = http2.connect(host);
-
-    client.on("error", (err) => console.error(err));
-
-    const body = {
-      aps: {
-        alert: `${httpRequest.body.message}`,
-        "content-available": 1
-      }
-    };
-
-    const headers = {
-      ":method": "POST",
-      "apns-topic": "com.tristannewman.FlockApp", // your application bundle ID
-      ":scheme": "https",
-      ":path": path,
-      authorization: `bearer ${token}`
-    };
-
-    const request = client.request(headers);
-
-    request.on("response", (headers, flags) => {
-      for (const name in headers) {
-        console.log(`${name}: ${headers[name]}`);
-      }
-    });
-
-    request.setEncoding("utf8");
-    let data = "";
-    request.on("data", (chunk) => { data += chunk; });
-    request.write(JSON.stringify(body));
-    request.on("end", () => {
-      console.log(`\n${data}`);
-      client.close();
-    });
-    request.end();
-  };
 
   const testHangout = async (httpRequest) => { // Test Api
     const address = httpRequest.body.address;
@@ -102,7 +33,8 @@ module.exports = ({ DB }) => {
     const location = user.location;
     const notificationPreferences = user.notificationPreferences;
     const distanceFromPossibleAttendees = notificationPreferences.distanceFromPossibleAttendees;
-    const data = await DB.User.findAllByLocation(user.address);
+    const data = await DB.User.findAllByLocation();
+
     let i = 0; let j = 0; const array = []; let secondIteration = []; let successCount = 0;
     while (i < data.length) {
       // First Iteration for initial user
@@ -155,27 +87,52 @@ module.exports = ({ DB }) => {
     console.log("Success Count", successCount);
     const nearByUsers = array.length;
     if (successCount >= notificationPreferences.minPossibleAttendees) {
-      return {
-        status: 200,
-        data: {
-          nearByUsers,
-          username: user.username
-        }
-      };
+      console.log(`Notification Success ${user.address}`);
     } else {
-      return {
-        status: 409,
-        data: {
-
-          nearByUsers,
-          message: "User minPossibleAttendees not met"
-        }
-      };
+      console.log(`Notification Failure ${user.address}`);
     }
   };
 
+  const sendHangoutNotification = async (httpRequest) => { // Test Api
+    const initialData = await DB.User.findAllByLocation({ raw: true });
+    let data = [];
+    let h = 0; let i = 0; let array = []; let location = {}; let notificationPreferences; let distanceFromPossibleAttendees; let user;
+    while (h < initialData.length) {
+      data = initialData;
+      user = initialData[h];
+      location = user.location;
+      notificationPreferences = user.notificationPreferences;
+      distanceFromPossibleAttendees = notificationPreferences.distanceFromPossibleAttendees;
+      while (i < data.length) {
+        if (nearByLocation.getDistance(location.latitude, location.longitude, data[i].location.latitude, data[i].location.longitude, "K") <= distanceFromPossibleAttendees) {
+          array.push({ address: data[i].address, location: data[i].location, notificationPreferences: data[i].notificationPreferences });
+        }
+        ++i;
+      }
+      console.log(`Required Users ${notificationPreferences.minPossibleAttendees}`);
+      console.log(`Found Users ${array.length}`);
+      if (array.length >= (notificationPreferences.minPossibleAttendees - 1)) {
+        console.log(`Notification Success ${user.address}`);
+        appleNotification.sendNotification(user.deviceToken,'Enough Proof members are nearby, would you like to start a Hangout?');
+      } else {
+        console.log(`Notification Failure ${user.address}`);
+      }
+      ++h;
+      i = 0;
+      array = [];
+    }
+
+    return {
+      status: 200,
+      data: {
+        message: "All Users Completed",
+        totalUsers: initialData.length
+      }
+    };
+  };
+
   return Object.freeze({
-    sendNotification,
-    testHangout
+    testHangout,
+    sendHangoutNotification
   });
 };

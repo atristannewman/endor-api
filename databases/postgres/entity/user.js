@@ -10,31 +10,31 @@ const User = db.define(
     uuid: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV1,
-      primaryKey: true,
+      primaryKey: true
     },
     username: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: false
     },
     address: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: false
     },
     profileImageUrl: {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: true
     },
     hasProof: {
       type: Sequelize.BOOLEAN,
-      allowNull: false,
+      allowNull: false
     },
     hasMoonbird: {
       type: Sequelize.BOOLEAN,
-      allowNull: false,
+      allowNull: false
     },
     hostRating: {
       type: Sequelize.DOUBLE,
-      allowNull: true,
+      allowNull: true
     },
     notificationPreferences: {
       type: Sequelize.JSONB,
@@ -43,47 +43,45 @@ const User = db.define(
         minPossibleAttendees: 0,
         distanceFromPossibleAttendees: 0,
         location: "",
-        minHostRating: 5,
-      },
+        minHostRating: 5
+      }
     },
     deviceToken: {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: true
     },
     location: {
       type: Sequelize.JSONB,
       allowNull: true,
       defaultValue: {
         latitude: null,
-        longitude: null,
-      },
-    },
+        longitude: null
+      }
+    }
   },
   {
     timestamps: false,
-    freezeTableName: true,
+    freezeTableName: true
   }
 );
 
 const create = async (args) => {
   const userInstance = makeUser(args);
   let location = userInstance.getlocation();
-  if(location?.latitude==='null' && location?.longitude==='null'){
-    location.latitude=null;
-    location.longitude=null;
-  }else if(location?.latitude==='' && location?.longitude==='')
-  {
-    location.latitude=null;
-    location.longitude=null;
-  }else if(location?.latitude && location?.longitude){
+  if (location?.latitude === "null" && location?.longitude === "null") {
+    location.latitude = null;
+    location.longitude = null;
+  } else if (location?.latitude === "" && location?.longitude === "") {
+    location.latitude = null;
+    location.longitude = null;
+  } else if (location?.latitude && location?.longitude) {
     location.latitude = parseFloat(location.latitude);
     location.longitude = parseFloat(location.longitude);
-  }else if(location==='' || location === null || location === 'null')
-  {
+  } else if (location === "" || location === null || location === "null") {
     location = {
-      latitude:null,
-      longitude:null
-    }
+      latitude: null,
+      longitude: null
+    };
   }
   try {
     return await User.create({
@@ -107,8 +105,8 @@ const findByAddress = async (address) => {
     validate({ address });
     return await User.findOne({
       where: {
-        address,
-      },
+        address
+      }
     });
   } catch (error) {
     throw error;
@@ -123,22 +121,31 @@ const findAll = async () => {
   }
 };
 
-const findAllByLocation = async (address) => {
+const findAllByLocation = async () => {
   try {
     return await User.findAll({
-      where:{
-        location:{
+      where: {
+        location: {
           latitude: {
-            [Sequelize.Op.not]:null
+            [Sequelize.Op.not]: null
           },
           longitude: {
-            [Sequelize.Op.not]:null
-          },
+            [Sequelize.Op.not]: null
+          }
         },
-        address:{
-          [Sequelize.Op.ne]:address
-        }
-      }
+        notificationPreferences: {
+          minPossibleAttendees: {
+            [Sequelize.Op.gt]: 1
+          }
+        },
+        // Uncomment this in testing
+        // deviceToken: {
+        //   [Sequelize.Op.not]: null
+        // }
+      },
+      order:[
+        ['notificationPreferences.minPossibleAttendees'],
+      ] 
     });
   } catch (error) {
     throw error;
@@ -149,8 +156,8 @@ const findByUsername = async (username) => {
   try {
     return await User.findOne({
       where: {
-        username,
-      },
+        username
+      }
     });
   } catch (error) {
     throw error;
@@ -161,8 +168,8 @@ const update = async (id, args) => {
   try {
     User.update(args, {
       where: {
-        id,
-      },
+        id
+      }
     });
   } catch (error) {
     throw error;
@@ -173,29 +180,27 @@ const updateByAddress = async (address, args) => {
   try {
     validate({ address });
     userUpdateValidate(args);
-    let location = args?.location;
-    if(location){
-      if(location?.latitude==='null' && location?.longitude==='null'){
-        args.location.latitude=null;
-        args.location.longitude=null;
-      }else if(location?.latitude==='' && location?.longitude==='')
-      {
-        args.location.latitude=null;
-        args.location.longitude=null;
-      }else if(location?.latitude && location?.longitude){
+    const location = args?.location;
+    if (location) {
+      if (location?.latitude === "null" && location?.longitude === "null") {
+        args.location.latitude = null;
+        args.location.longitude = null;
+      } else if (location?.latitude === "" && location?.longitude === "") {
+        args.location.latitude = null;
+        args.location.longitude = null;
+      } else if (location?.latitude && location?.longitude) {
         args.location.latitude = parseFloat(location.latitude);
         args.location.longitude = parseFloat(location.longitude);
-      }else if(location==='' || location === null || location === 'null')
-      {
-        args.location.latitude=null;
-        args.location.longitude=null;
+      } else if (location === "" || location === null || location === "null") {
+        args.location.latitude = null;
+        args.location.longitude = null;
       }
     }
-    
+
     return User.update(args, {
       where: {
-        address,
-      },
+        address
+      }
     });
   } catch (error) {
     console.log(`error in user update: ${error}`);
@@ -208,8 +213,8 @@ const deleteByAddress = async (address) => {
     validate({ address });
     User.destroy({
       where: {
-        address,
-      },
+        address
+      }
     });
   } catch (error) {
     throw error;
