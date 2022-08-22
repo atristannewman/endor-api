@@ -107,15 +107,6 @@ module.exports = ({ transactionService, DB }) => {
           message: "user is not found",
         };
       }
-      const userUsername = await DB.User.findByUsername(username);
-      if (userUsername) {
-        return {
-          status: 409,
-          data: {
-            message: "User name aleady exists",
-          },
-        };
-      }
       await DB.User.updateByAddress(address, {
         username,
         hostRating,
