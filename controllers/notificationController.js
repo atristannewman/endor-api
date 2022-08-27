@@ -93,19 +93,19 @@ module.exports = ({ DB }) => {
     }
   };
 
-  const sendHangoutNotification = async (httpRequest) => { // Test Api
-    const initialData = await DB.User.findAllByLocation({ raw: true });
-    let data = [];
+  const sendHangoutPromptNotification = async (httpRequest) => { // Test Api
+    const usersByLocation = await DB.User.findAllByLocation({ raw: true });
+    let users = [];
     let h = 0; let i = 0; let array = []; let location = {}; let notificationPreferences; let distanceFromPossibleAttendees; let user;
-    while (h < initialData.length) {
-      data = initialData;
-      user = initialData[h];
+    while (h < usersByLocation.length) {
+      users = usersByLocation;
+      user = usersByLocation[h];
       location = user.location;
       notificationPreferences = user.notificationPreferences;
       distanceFromPossibleAttendees = notificationPreferences.distanceFromPossibleAttendees;
-      while (i < data.length) {
-        if (nearByLocation.getDistance(location.latitude, location.longitude, data[i].location.latitude, data[i].location.longitude, "K") <= distanceFromPossibleAttendees) {
-          array.push({ address: data[i].address, location: data[i].location, notificationPreferences: data[i].notificationPreferences });
+      while (i < users.length) {
+        if (nearByLocation.getDistance(location.latitude, location.longitude, users[i].location.latitude, users[i].location.longitude, "K") <= distanceFromPossibleAttendees) {
+          array.push({ address: users[i].address, location: users[i].location, notificationPreferences: users[i].notificationPreferences });
         }
         ++i;
       }
@@ -126,13 +126,13 @@ module.exports = ({ DB }) => {
       status: 200,
       data: {
         message: "All Users Completed",
-        totalUsers: initialData.length
+        totalUsers: usersByLocation.length
       }
     };
   };
 
   return Object.freeze({
     testHangout,
-    sendHangoutNotification
+    sendHangoutPromptNotification
   });
 };

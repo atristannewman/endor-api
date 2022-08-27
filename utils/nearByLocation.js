@@ -1,9 +1,9 @@
-module.exports.getDistance = (lat1, lon1, lat2, lon2, unit) => {
-    var radlat1 = Math.PI * lat1/180
-    var radlat2 = Math.PI * lat2/180
-    var theta = lon1-lon2
-    var radtheta = Math.PI * theta/180
-    var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+module.exports.getDistance = (latitude1, longitude1, latitude2, longitude2, unit) => {
+    var radiusLatitude1 = Math.PI * latitude1/180
+    var radiusLatitude2 = Math.PI * latitude2/180
+    var theta = longitude1-longitude2
+    var radiustheta = Math.PI * theta/180
+    var dist = Math.sin(radiusLatitude1) * Math.sin(radiusLatitude2) + Math.cos(radiusLatitude1) * Math.cos(radiusLatitude2) * Math.cos(radiustheta);
     if (dist > 1) {
         dist = 1;
     }
