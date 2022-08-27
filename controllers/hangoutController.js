@@ -1,3 +1,6 @@
+const nearByLocation = require("../utils/nearByLocation");
+const appleNotification = require("../services/appleNotificationService");
+
 module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
     try {
@@ -9,12 +12,38 @@ module.exports = ({ DB }) => {
         address,
         tags
       });
-
-      const hangouts = await DB.Hangout.findAll();
+      if(hangout)
+      {
+        const usersByLocation = await DB.User.findAllByLocation({ raw: true });
+        let h = 0; let array = []; let notificationPreferences; let distanceFromPossibleAttendees; let user;
+        let location = {          // Will make dynamic
+          latitude:'31.485427',
+          longitude:'74.331426'
+        };
+        // Need to Discuss
+        // Min Distance
+        // Geo Location or lat, long
+        while (h < usersByLocation.length) {
+          user = usersByLocation[h];
+          
+          notificationPreferences = user.notificationPreferences;
+          distanceFromPossibleAttendees = 1;
+          if (nearByLocation.getDistance(location.latitude, location.longitude, user.location.latitude, user.location.longitude, "K") <= distanceFromPossibleAttendees) {
+            array.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences });
+            console.log(`Notification Success ${user.address}`);
+            //appleNotification.sendNotification(user.deviceToken,'A Proof Hangout has been scheduled near by...');
+          }else{
+            console.log(`Notification Failed ${user.address}`);
+          }
+          ++h;
+        }
+        console.log('Total Found',array.length);
+      }
+      //const hangouts = await DB.Hangout.findAll();
       return {
         status: 200,
         data: {
-          hangouts
+          hangout
         },
       };
     } catch (error) {

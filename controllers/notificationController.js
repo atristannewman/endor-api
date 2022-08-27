@@ -93,7 +93,7 @@ module.exports = ({ DB }) => {
     }
   };
 
-  const sendHangoutPromptNotification = async (httpRequest) => { // Test Api
+  const sendHangoutPromptNotification = async (httpRequest) => { 
     const usersByLocation = await DB.User.findAllByLocation({ raw: true });
     let users = [];
     let h = 0; let i = 0; let array = []; let location = {}; let notificationPreferences; let distanceFromPossibleAttendees; let user;
