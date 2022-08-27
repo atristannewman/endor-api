@@ -7,7 +7,8 @@ module.exports = ({ DB }) => {
         startTime,
         endTime,
         address,
-        tags
+        tags,
+        host
       });
 
       const hangouts = await DB.Hangout.findAll();

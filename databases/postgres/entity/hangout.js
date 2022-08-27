@@ -58,7 +58,6 @@ const create = async (args) => {
       startTime: hangoutInstance.getStartTime(),
       endTime: hangoutInstance.getEndTime(),
       tags: hangoutInstance.getTags(),
-      // user_id: hangoutInstance.getUser()
       host: hangoutInstance.getHost()
     });
   } catch (error) {
