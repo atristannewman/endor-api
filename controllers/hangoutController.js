@@ -1,4 +1,4 @@
-const nearByLocation = require("../utils/nearByLocation");
+const geolib = require('geolib');
 const appleNotification = require("../services/appleNotificationService");
 
 module.exports = ({ DB }) => {
@@ -25,13 +25,19 @@ module.exports = ({ DB }) => {
         // Geo Location or lat, long
         while (h < usersByLocation.length) {
           user = usersByLocation[h];
-          
+          let distance = geolib.getDistance(
+            { latitude: location.latitude, longitude: location.longitude },
+            { latitude: user.location.latitude, longitude: user.location.longitude },
+            0.1
+          );
+          distance = geolib.convertDistance(distance, 'km');
+          console.log(distance);
           notificationPreferences = user.notificationPreferences;
-          distanceFromPossibleAttendees = 1;
-          if (nearByLocation.getDistance(location.latitude, location.longitude, user.location.latitude, user.location.longitude, "K") <= distanceFromPossibleAttendees) {
+          distanceFromPossibleAttendees = 1;  // Will need to dicuss this as well
+          if (distance <= distanceFromPossibleAttendees) {
             array.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences });
             console.log(`Notification Success ${user.address}`);
-            //appleNotification.sendNotification(user.deviceToken,'A Proof Hangout has been scheduled near by...');
+            appleNotification.sendNotification(user.deviceToken,'A Proof Hangout has been scheduled near by...');
           }else{
             console.log(`Notification Failed ${user.address}`);
           }
