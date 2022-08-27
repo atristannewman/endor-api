@@ -172,17 +172,11 @@ module.exports = ({ transactionService, DB }) => {
             },
           };
         }
-        const userInfo = {
-          walletAddress: user.address,
-          imageurl: user.profileImageUrl,
-          hostRating: user.hostRating,
-          username: user.username,
-        };
 
         return {
           status: 200,
           data: {
-            userInfo,
+            user
           },
         };
       } else {
