@@ -144,7 +144,7 @@ const findAllByLocation = async () => {
         // }
       },
       order:[
-        ['notificationPreferences.minPossibleAttendees'],
+        ['notificationPreferences.minPossibleAttendees','DESC'],
       ] 
     });
   } catch (error) {
