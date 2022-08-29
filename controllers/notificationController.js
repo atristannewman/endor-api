@@ -122,7 +122,7 @@ module.exports = ({ DB }) => {
             potentialUserArray = [];
             while (l < notifiedUserArray.length) {
               user = notifiedUserArray[l];
-              //appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
+              appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
               ++l;
             }
             l = 0;
