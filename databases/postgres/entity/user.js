@@ -137,15 +137,15 @@ const findAllByLocation = async () => {
           minPossibleAttendees: {
             [Sequelize.Op.gt]: 1
           }
-        },
+        }
         // Uncomment this in testing
         // deviceToken: {
         //   [Sequelize.Op.not]: null
         // }
       },
-      order:[
-        ['notificationPreferences.minPossibleAttendees','DESC'],
-      ] 
+      order: [
+        ["notificationPreferences.minPossibleAttendees", "DESC"]
+      ]
     });
   } catch (error) {
     throw error;
