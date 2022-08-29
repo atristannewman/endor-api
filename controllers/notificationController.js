@@ -97,7 +97,7 @@ module.exports = ({ DB }) => {
           potentialDistanceFromPossibleAttendees = potentialNotificationPreferences.distanceFromPossibleAttendees;
           while (l < users.length) { // Iterate for each potential User found for Origin User
             let distance = geolib.getDistance(
-              { latitude: location.latitude, longitude: location.longitude },
+              { latitude: potentialUser.location.latitude, longitude: potentialUser.location.longitude },
               { latitude: users[l].location.latitude, longitude: users[l].location.longitude },
               0.1
             );
@@ -121,7 +121,7 @@ module.exports = ({ DB }) => {
             potentialUserArray = [];
             while (l < notifiedUserArray.length) {
               user = notifiedUserArray[l];
-              appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
+              //appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
               ++l;
             }
             l = 0;
