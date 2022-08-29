@@ -15,35 +15,64 @@ module.exports = ({ DB }) => {
       if(hangout)
       {
         const usersByLocation = await DB.User.findAllByLocation({ raw: true });
-        let h = 0; let array = []; let notificationPreferences; let distanceFromPossibleAttendees; let user;
+        let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let notifiedUserArray = [];
+    let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
+    let potentialDistanceFromPossibleAttendees; let user;
         let location = {          // Will make dynamic
           latitude:'31.485427',
           longitude:'74.331426'
         };
+        let users = usersByLocation;
         // Need to Discuss
         // Min Distance
         // Geo Location or lat, long
-        while (h < usersByLocation.length) {
-          user = usersByLocation[h];
+        while (i < users.length) {
           let distance = geolib.getDistance(
             { latitude: location.latitude, longitude: location.longitude },
-            { latitude: user.location.latitude, longitude: user.location.longitude },
+            { latitude: users[i].location.latitude, longitude: users[i].location.longitude },
             0.1
           );
-          distance = geolib.convertDistance(distance, 'km');
-          console.log(distance);
-          notificationPreferences = user.notificationPreferences;
-          distanceFromPossibleAttendees = 1;  // Will need to dicuss this as well
+          distance = geolib.convertDistance(distance, "km");
           if (distance <= distanceFromPossibleAttendees) {
-            array.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences });
-            console.log(`Notification Success ${user.address}`);
-            appleNotification.sendNotification(user.deviceToken,'A Proof Hangout has been scheduled near by...');
-          }else{
-            console.log(`Notification Failed ${user.address}`);
+            potentialUserArray.push({ address: users[i].address, location: users[i].location, notificationPreferences: users[i].notificationPreferences, deviceToken: users[i].deviceToken });
           }
-          ++h;
+          ++i;
         }
-        console.log('Total Found',array.length);
+        i = 0;
+        console.log(`Found Potential Users ${potentialUserArray.length}`);
+          while (k < potentialUserArray.length) {
+            potentialUser = potentialUserArray[k];
+            potentialNotificationPreferences = potentialUser.notificationPreferences;
+            potentialDistanceFromPossibleAttendees = potentialNotificationPreferences.distanceFromPossibleAttendees;
+            while (l < users.length) { // Iterate for each potential User found for Origin User
+              let distance = geolib.getDistance(
+                { latitude: location.latitude, longitude: location.longitude },
+                { latitude: users[l].location.latitude, longitude: users[l].location.longitude },
+                0.1
+              );
+              distance = geolib.convertDistance(distance, "km");
+              if (distance <= potentialDistanceFromPossibleAttendees) {
+                ++potentialUserCount; // No need of array just keep count of attendees for potential user
+              }
+              ++l;
+            }
+            l = 0;
+            if (potentialUserCount >= (potentialNotificationPreferences.minPossibleAttendees)) {
+              console.log("Attendees Found For Potential User: ", potentialUser.address);
+              notifiedUserArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
+            } else {
+              console.log("Attendees Not Found For Potential User: ", potentialUser.address);
+            }
+            potentialUserCount = 0;
+            ++k;
+          }
+          while (l < notifiedUserArray.length) {
+            user = notifiedUserArray[l];
+            //appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by...");
+            ++l;
+          }
+          k = 0;
+        console.log('Total Found',notifiedUserArray.length);
       }
       //const hangouts = await DB.Hangout.findAll();
       return {
