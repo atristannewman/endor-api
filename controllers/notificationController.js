@@ -58,7 +58,7 @@ module.exports = ({ DB }) => {
     const usersByLocation = await DB.User.findAllByLocation({ raw: true }); // All Users Array
     let originUsers = usersByLocation; // Origin Users Array
     let users = [];
-    const h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let notifiedUserArray = []; let location = {};
+    let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let notifiedUserArray = []; let location = {};
     let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
     let potentialDistanceFromPossibleAttendees; let user;
     while (h < originUsers.length) {
