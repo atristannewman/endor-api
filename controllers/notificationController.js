@@ -61,6 +61,9 @@ module.exports = ({ DB }) => {
     let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let notifiedUserArray = []; let location = {};
     let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
     let potentialDistanceFromPossibleAttendees; let user;
+
+    console.log(`users by location: ${originUsers}`);
+
     while (h < originUsers.length) {
       console.log("Initial Origin Length: ", originUsers.length);
       users = usersByLocation;
@@ -91,6 +94,7 @@ module.exports = ({ DB }) => {
       if (potentialUserArray.length >= (notificationPreferences.minPossibleAttendees)) {
         notifiedUserArray.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences, deviceToken: user.deviceToken }); // Add Origin User to Notified Array
         console.log(`Potential Users Met for ${user.address}`);
+        
         while (k < potentialUserArray.length) {
           potentialUser = potentialUserArray[k];
           potentialNotificationPreferences = potentialUser.notificationPreferences;
@@ -108,6 +112,7 @@ module.exports = ({ DB }) => {
             }
             ++l;
           }
+
           l = 0;
           if (potentialUserCount >= (potentialNotificationPreferences.minPossibleAttendees)) {
             console.log("Attendees Found For Potential User: ", potentialUser.address);
@@ -115,23 +120,30 @@ module.exports = ({ DB }) => {
           } else {
             console.log("Attendees Not Found For Potential User: ", potentialUser.address);
           }
+
           potentialUserCount = 0;
           if (notifiedUserArray.length === notificationPreferences.minPossibleAttendees) {
             console.log("All Potential Users have Criteria Sending Push");
             potentialUserArray = [];
+            console.log(`notified user array length: ${notifiedUserArray.length}`)
+
             while (l < notifiedUserArray.length) {
               user = notifiedUserArray[l];
-              appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
+              console.log(`user for device token: ${user.deviceToken}`)
+              // appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
               ++l;
             }
             l = 0;
           }
           ++k;
         }
+        // console.log(`notification user array length: ${notifiedUserArray.length}`);
+        // console.log(`notification preferences min possible attendees: ${notificationPreferences.minPossibleAttendees}`)
+
         k = 0;
         if (notifiedUserArray.length === notificationPreferences.minPossibleAttendees) {
           notifiedUserArray = notifiedUserArray.map(a => a.address);
-          console.log(notifiedUserArray);
+          console.log(`notified user array: ${notifiedUserArray}`);
           originUsers = originUsers.filter(i => !notifiedUserArray.includes(i.address));
         } else {
           originUsers.splice(0, 1); // Remove Origin User from Origin Array
