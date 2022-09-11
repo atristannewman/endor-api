@@ -7,7 +7,8 @@ module.exports = ({ DB }) => {
         startTime,
         endTime,
         address,
-        tags
+        tags,
+        host
       });
 
       const hangouts = await DB.Hangout.findAll();
@@ -47,8 +48,9 @@ module.exports = ({ DB }) => {
   const deleteHangout = async (httpRequest) => {
     try {
       const { id } = httpRequest.body;
-      await DB.Hangout.deleteById(id);
-      const hangouts = await DB.Hangout.findAll();
+      await DB.Hangout.deleteById(id).then(
+        function () {const hangouts = DB.Hangout.findAll()}
+      );
 
       return {
         status: 200,
