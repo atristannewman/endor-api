@@ -1,5 +1,6 @@
 const geolib = require('geolib');
 const appleNotification = require("../services/appleNotificationService");
+const googleServices = require("../services/googleServices");
 
 module.exports = ({ DB }) => {
   const createHangout = async (httpRequest) => {
@@ -13,17 +14,14 @@ module.exports = ({ DB }) => {
         tags,
         host
       });
+      const location = await googleServices.geoCoding(address);
       if (hangout) {
         const usersByLocation = await DB.User.findAllByLocation({ raw: true });
         let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0;
         let potentialUser; let notifiedUserArray = []; let potentialNotificationPreferences; let potentialDistanceFromPossibleAttendees; let user;
-        let location = {          // Will make dynamic
-          latitude: '31.485427',
-          longitude: '74.331426'
-        };
         let users = usersByLocation;
         // Need to Discuss
-        // Min Distance
+        // Min Distance Currently set to 1km
         // Geo Location or lat, long
         while (i < users.length) {
           let distance = geolib.getDistance(
@@ -72,7 +70,9 @@ module.exports = ({ DB }) => {
           ++l;
         }
         k = 0;
-        console.log('Total Found', notifiedUserArray.length);
+        console.log('Total Notified Users', notifiedUserArray.length);
+        notifiedUserArray = notifiedUserArray.map(a => a.address);
+        console.log(`notified user array: ${notifiedUserArray}`);
       }
       //const hangouts = await DB.Hangout.findAll();
       return {
