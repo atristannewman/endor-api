@@ -59,9 +59,12 @@ module.exports = ({ DB }) => {
     const usersByLocation = await DB.User.findAllByLocation({ raw: true }); // All Users Array
     let originUsers = usersByLocation; // Origin Users Array
     let users = [];
-    let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let notifiedUserArray = []; let location = {};
+    const h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let originUserNotifiedArray = []; let location = {};
     let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
-    let potentialDistanceFromPossibleAttendees; let user;
+    let potentialDistanceFromPossibleAttendees; let user; let notifiedUserArray = [];
+
+    console.log(`users by location: ${originUsers}`);
+
     while (h < originUsers.length) {
       console.log("Initial Origin Length: ", originUsers.length);
       users = usersByLocation;
@@ -90,8 +93,9 @@ module.exports = ({ DB }) => {
       console.log(`Required Potential Users ${notificationPreferences.minPossibleAttendees}`);
       console.log(`Found Potential Users ${potentialUserArray.length}`);
       if (potentialUserArray.length >= (notificationPreferences.minPossibleAttendees)) {
-        notifiedUserArray.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences, deviceToken: user.deviceToken }); // Add Origin User to Notified Array
+        originUserNotifiedArray.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences, deviceToken: user.deviceToken }); // Add Origin User to Notified Array
         console.log(`Potential Users Met for ${user.address}`);
+
         while (k < potentialUserArray.length) {
           potentialUser = potentialUserArray[k];
           potentialNotificationPreferences = potentialUser.notificationPreferences;
@@ -109,31 +113,38 @@ module.exports = ({ DB }) => {
             }
             ++l;
           }
+
           l = 0;
           if (potentialUserCount >= (potentialNotificationPreferences.minPossibleAttendees)) {
             console.log("Attendees Found For Potential User: ", potentialUser.address);
+            originUserNotifiedArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
             notifiedUserArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
           } else {
             console.log("Attendees Not Found For Potential User: ", potentialUser.address);
           }
+
           potentialUserCount = 0;
-          if (notifiedUserArray.length === notificationPreferences.minPossibleAttendees) {
+          if (originUserNotifiedArray.length === notificationPreferences.minPossibleAttendees) {
             console.log("All Potential Users have Criteria Sending Push");
             potentialUserArray = [];
-            while (l < notifiedUserArray.length) {
-              user = notifiedUserArray[l];
-              appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
+
+            while (l < originUserNotifiedArray.length) {
+              user = originUserNotifiedArray[l];
+              notifiedUserArray.push(user);
+              // appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
               ++l;
             }
             l = 0;
           }
           ++k;
         }
+        // console.log(`notification user array length: ${originUserNotifiedArray.length}`);
+        // console.log(`notification preferences min possible attendees: ${notificationPreferences.minPossibleAttendees}`)
+
         k = 0;
-        if (notifiedUserArray.length === notificationPreferences.minPossibleAttendees) {
-          notifiedUserArray = notifiedUserArray.map(a => a.address);
-          console.log(notifiedUserArray);
-          originUsers = originUsers.filter(i => !notifiedUserArray.includes(i.address));
+        if (originUserNotifiedArray.length === notificationPreferences.minPossibleAttendees) {
+          originUserNotifiedArray = originUserNotifiedArray.map(a => a.address);
+          originUsers = originUsers.filter(i => !originUserNotifiedArray.includes(i.address));
         } else {
           originUsers.splice(0, 1); // Remove Origin User from Origin Array
         }
@@ -142,10 +153,21 @@ module.exports = ({ DB }) => {
         originUsers.splice(0, 1); // Remove Origin User from Origin Array
       }
 
-      notifiedUserArray = [];
+      originUserNotifiedArray = [];
       potentialUserArray = []; // Empty Potential Users for next Origin User
     }
 
+    notifiedUserArray = [...new Map(notifiedUserArray.map(item =>
+      [item.address, item])).values()];
+    console.log("Notified Users Array Length", notifiedUserArray.length);
+    l = 0;
+    while (l < notifiedUserArray.length) {
+      user = notifiedUserArray[l];
+      // appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
+      ++l;
+    }
+    notifiedUserArray = notifiedUserArray.map(a => a.address);
+    console.log(`notified user array: ${notifiedUserArray}`);
     return {
       status: 200,
       data: {

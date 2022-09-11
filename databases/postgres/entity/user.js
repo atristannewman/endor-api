@@ -137,8 +137,8 @@ const findAllByLocation = async () => {
           minPossibleAttendees: {
             [Sequelize.Op.gt]: 1
           }
-        }
-        // Uncomment this in testing
+        },
+        // Uncomment this in production
         // deviceToken: {
         //   [Sequelize.Op.not]: null
         // }

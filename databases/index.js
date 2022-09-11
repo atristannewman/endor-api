@@ -24,7 +24,7 @@ module.exports = ({ db, isMock }) => {
 
   const User = selectedDB.User.User;
   const Vendor = selectedDB.Vendor.Vendor;
-  const Hangout=selectedDB.Hangout.Hangout;
+  const Hangout = selectedDB.Hangout.Hangout;
 
   return selectedDB;
 };
