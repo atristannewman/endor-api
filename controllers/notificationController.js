@@ -58,7 +58,7 @@ module.exports = ({ DB }) => {
     const usersByLocation = await DB.User.findAllByLocation({ raw: true }); // All Users Array
     let originUsers = usersByLocation; // Origin Users Array
     let users = [];
-    let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let originUserNotifiedArray = []; let location = {};
+    const h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let originUserNotifiedArray = []; let location = {};
     let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
     let potentialDistanceFromPossibleAttendees; let user; let notifiedUserArray = [];
 
@@ -94,7 +94,7 @@ module.exports = ({ DB }) => {
       if (potentialUserArray.length >= (notificationPreferences.minPossibleAttendees)) {
         originUserNotifiedArray.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences, deviceToken: user.deviceToken }); // Add Origin User to Notified Array
         console.log(`Potential Users Met for ${user.address}`);
-        
+
         while (k < potentialUserArray.length) {
           potentialUser = potentialUserArray[k];
           potentialNotificationPreferences = potentialUser.notificationPreferences;
@@ -126,7 +126,7 @@ module.exports = ({ DB }) => {
           if (originUserNotifiedArray.length === notificationPreferences.minPossibleAttendees) {
             console.log("All Potential Users have Criteria Sending Push");
             potentialUserArray = [];
-            
+
             while (l < originUserNotifiedArray.length) {
               user = originUserNotifiedArray[l];
               notifiedUserArray.push(user);
@@ -155,10 +155,10 @@ module.exports = ({ DB }) => {
       originUserNotifiedArray = [];
       potentialUserArray = []; // Empty Potential Users for next Origin User
     }
-    
+
     notifiedUserArray = [...new Map(notifiedUserArray.map(item =>
       [item.address, item])).values()];
-    console.log('Notified Users Array Length',notifiedUserArray.length);
+    console.log("Notified Users Array Length", notifiedUserArray.length);
     l = 0;
     while (l < notifiedUserArray.length) {
       user = notifiedUserArray[l];
