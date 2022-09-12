@@ -10,8 +10,8 @@ module.exports = ({ validate }) => {
         getUsername: () => args.username,
         getHostRating: () => args.hostRating,
         getProfileImageUrl: () => args.profileImageUrl,
-        getNotificationPreferences: () => args.notificationPreferences,
-        getlocation: () => args.location==='null'?null:args.location,
+        getNotificationPreferences: () => args.notificationPreferences==='null'?null:args.notificationPreferences,
+        getLocation: () => args.location==='null'?null:args.location,
       });
     } catch (error) {
       throw error;

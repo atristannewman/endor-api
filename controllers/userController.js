@@ -42,6 +42,7 @@ module.exports = ({ transactionService, DB }) => {
       throw error;
     }
   };
+  
   const createUser = async (httpRequest) => {
     try {
       const {
