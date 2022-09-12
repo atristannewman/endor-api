@@ -2,7 +2,7 @@ const NodeGeocoder = require('node-geocoder');
 module.exports.geoCoding = async (address) => {
   const options = {
     provider: 'google',
-    apiKey: 'AIzaSyCbtE7ZiLCspJzEbmEO5g02DCPN1AbCQEE', // for Mapquest, OpenCage, Google Premier
+    apiKey: process.env.GOOGLE_API_KEY, // for Mapquest, OpenCage, Google Premier
   };
   
   const geocoder = NodeGeocoder(options);
