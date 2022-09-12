@@ -11,6 +11,7 @@ const schema = Joi.object({
     latitude:Joi.number().greater(0).required().allow('null',null,''),
     longitude:Joi.number().greater(0).required().allow('null',null,'')
   }).optional().allow('','null',null),
+  notificationPrefences: 
 });
 
 exports.validate = (args) => {

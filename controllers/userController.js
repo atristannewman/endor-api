@@ -52,7 +52,9 @@ module.exports = ({ transactionService, DB }) => {
         hostRating,
         profileImageUrl,
         location,
+        notificationPreferences
       } = httpRequest.body;
+
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
         return {
@@ -62,6 +64,7 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
+
       const userUsername = await DB.User.findByUsername(username);
       if (userUsername) {
         return {
@@ -71,6 +74,7 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
+
       const user = await DB.User.create({
         address,
         hasProof,
@@ -79,13 +83,16 @@ module.exports = ({ transactionService, DB }) => {
         hostRating,
         profileImageUrl,
         location,
+        notificationPreferences
       });
+
       return {
         status: 200,
         data: {
           user,
         },
       };
+      
     } catch (error) {
       return {
         status: 500,
