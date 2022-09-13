@@ -105,6 +105,7 @@ const create = async (args) => {
       deviceToken: userInstance.getDeviceToken(),
       notificationPreferences: userInstance.getNotificationPreferences()
     });
+
   } catch (error) {
     console.log(error);
     throw error;
@@ -193,6 +194,7 @@ const updateByAddress = async (address, args) => {
     userUpdateValidate(args);
     console.log(args);
     const location = args?.location;
+    
     if (location) {
       if (location?.latitude === "null" && location?.longitude === "null") {
         args.location.latitude = null;

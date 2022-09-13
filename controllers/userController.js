@@ -42,7 +42,7 @@ module.exports = ({ transactionService, DB }) => {
       throw error;
     }
   };
-  
+
   const createUser = async (httpRequest) => {
     try {
       const {
@@ -104,7 +104,14 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { address, username, hostRating, profileImageUrl, location, notificationPreferences } =
+      const { 
+        address, 
+        username, 
+        hostRating, 
+        profileImageUrl, 
+        location, 
+        notificationPreferences,
+        deviceToken } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -113,13 +120,16 @@ module.exports = ({ transactionService, DB }) => {
           message: "user is not found",
         };
       }
+
       await DB.User.updateByAddress(address, {
         username,
         hostRating,
         profileImageUrl,
         location,
-        notificationPreferences
+        notificationPreferences,
+        deviceToken
       });
+
       const updatedUser = await DB.User.findByAddress(address);
       return {
         status: 200,
@@ -127,6 +137,7 @@ module.exports = ({ transactionService, DB }) => {
           updatedUser,
         },
       };
+      
     } catch (error) {
       return {
         status: 500,

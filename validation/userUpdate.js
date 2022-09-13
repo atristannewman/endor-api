@@ -11,6 +11,7 @@ const schema = Joi.object({
     minPossibleAttendees: Joi.number().required(),
     distanceFromPossibleAttendees: Joi.number().required()
   }).optional().allow('','null',null),
+  deviceToken: Joi.string().required().allow('null',null,''),
   location: Joi.object({
     latitude:Joi.number().greater(0).required().allow('null',null,''),
     longitude:Joi.number().greater(0).required().allow('null',null,'')
