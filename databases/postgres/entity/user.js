@@ -1,8 +1,9 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
-const { validate } = require("../../../validation/userAddress");
+const { userAddressValidate } = require("../../../validation/userAddress");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
+const { userValidate } = require("../../../validation/user");
 
 const User = db.define(
   "user",
@@ -10,31 +11,31 @@ const User = db.define(
     uuid: {
       type: Sequelize.UUID,
       defaultValue: Sequelize.UUIDV1,
-      primaryKey: true,
+      primaryKey: true
     },
     username: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: false
     },
     address: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: false
     },
     profileImageUrl: {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: true
     },
     hasProof: {
       type: Sequelize.BOOLEAN,
-      allowNull: false,
+      allowNull: false
     },
     hasMoonbird: {
       type: Sequelize.BOOLEAN,
-      allowNull: false,
+      allowNull: false
     },
     hostRating: {
       type: Sequelize.DOUBLE,
-      allowNull: false,
+      allowNull: true
     },
     notificationPreferences: {
       type: Sequelize.JSONB,
@@ -42,45 +43,56 @@ const User = db.define(
       defaultValue: {
         minPossibleAttendees: 0,
         distanceFromPossibleAttendees: 0,
-        location: "",
-        minHostRating: 5,
+        minHostRating: 5
       },
+      set(value) {
+        const notificationPreferences = {
+          minPossibleAttendees: parseInt(value.minPossibleAttendees),
+          distanceFromPossibleAttendees: parseInt(value.distanceFromPossibleAttendees),
+          minHostRating: parseInt(value.minHostRating),
+        }
+        this.setDataValue('notificationPreferences', notificationPreferences);
+      }
+    },
+    deviceToken: {
+      type: Sequelize.STRING,
+      allowNull: true
     },
     location: {
       type: Sequelize.JSONB,
       allowNull: true,
       defaultValue: {
         latitude: null,
-        longitude: null,
-      },
-    },
+        longitude: null
+      }
+    }
   },
   {
     timestamps: false,
-    freezeTableName: true,
+    freezeTableName: true
   }
 );
 
 const create = async (args) => {
   const userInstance = makeUser(args);
-  let location = userInstance.getlocation();
-  if(location?.latitude==='null' && location?.longitude==='null'){
-    location.latitude=null;
-    location.longitude=null;
-  }else if(location?.latitude==='' && location?.longitude==='')
-  {
-    location.latitude=null;
-    location.longitude=null;
-  }else if(location?.latitude && location?.longitude){
+
+  let location = userInstance.getLocation();
+  if (location?.latitude === "null" && location?.longitude === "null") {
+    location.latitude = null;
+    location.longitude = null;
+  } else if (location?.latitude === "" && location?.longitude === "") {
+    location.latitude = null;
+    location.longitude = null;
+  } else if (location?.latitude && location?.longitude) {
     location.latitude = parseFloat(location.latitude);
     location.longitude = parseFloat(location.longitude);
-  }else if(location==='' || location === null || location === 'null')
-  {
+  } else if (location === "" || location === null || location === "null") {
     location = {
-      latitude:null,
-      longitude:null
-    }
+      latitude: null,
+      longitude: null
+    };
   }
+  
   try {
     return await User.create({
       address: userInstance.getAddress(),
@@ -89,8 +101,11 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
-      location
+      location: userInstance.getLocation(),
+      deviceToken: userInstance.getDeviceToken(),
+      notificationPreferences: userInstance.getNotificationPreferences()
     });
+
   } catch (error) {
     console.log(error);
     throw error;
@@ -99,11 +114,11 @@ const create = async (args) => {
 
 const findByAddress = async (address) => {
   try {
-    validate({ address });
+    userAddressValidate({ address });
     return await User.findOne({
       where: {
-        address,
-      },
+        address
+      }
     });
   } catch (error) {
     throw error;
@@ -118,12 +133,43 @@ const findAll = async () => {
   }
 };
 
+const findAllByLocation = async () => {
+  try {
+    return await User.findAll({
+      where: {
+        location: {
+          latitude: {
+            [Sequelize.Op.not]: null
+          },
+          longitude: {
+            [Sequelize.Op.not]: null
+          }
+        },
+        notificationPreferences: {
+          minPossibleAttendees: {
+            [Sequelize.Op.gt]: 1
+          }
+        }
+        // Uncomment this in production
+        // deviceToken: {
+        //   [Sequelize.Op.not]: null
+        // }
+      },
+      order: [
+        ["notificationPreferences.minPossibleAttendees", "DESC"]
+      ]
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const findByUsername = async (username) => {
   try {
     return await User.findOne({
       where: {
-        username,
-      },
+        username
+      }
     });
   } catch (error) {
     throw error;
@@ -134,8 +180,8 @@ const update = async (id, args) => {
   try {
     User.update(args, {
       where: {
-        id,
-      },
+        id
+      }
     });
   } catch (error) {
     throw error;
@@ -144,31 +190,31 @@ const update = async (id, args) => {
 
 const updateByAddress = async (address, args) => {
   try {
-    validate({ address });
+    userAddressValidate({ address });
     userUpdateValidate(args);
-    let location = args?.location;
-    if(location){
-      if(location?.latitude==='null' && location?.longitude==='null'){
-        args.location.latitude=null;
-        args.location.longitude=null;
-      }else if(location?.latitude==='' && location?.longitude==='')
-      {
-        args.location.latitude=null;
-        args.location.longitude=null;
-      }else if(location?.latitude && location?.longitude){
+    console.log(args);
+    const location = args?.location;
+    
+    if (location) {
+      if (location?.latitude === "null" && location?.longitude === "null") {
+        args.location.latitude = null;
+        args.location.longitude = null;
+      } else if (location?.latitude === "" && location?.longitude === "") {
+        args.location.latitude = null;
+        args.location.longitude = null;
+      } else if (location?.latitude && location?.longitude) {
         args.location.latitude = parseFloat(location.latitude);
         args.location.longitude = parseFloat(location.longitude);
-      }else if(location==='' || location === null || location === 'null')
-      {
-        args.location.latitude=null;
-        args.location.longitude=null;
+      } else if (location === "" || location === null || location === "null") {
+        args.location.latitude = null;
+        args.location.longitude = null;
       }
     }
-    
+
     return User.update(args, {
       where: {
-        address,
-      },
+        address
+      }
     });
   } catch (error) {
     console.log(`error in user update: ${error}`);
@@ -178,11 +224,11 @@ const updateByAddress = async (address, args) => {
 
 const deleteByAddress = async (address) => {
   try {
-    validate({ address });
+    userAddressValidate({ address });
     User.destroy({
       where: {
-        address,
-      },
+        address
+      }
     });
   } catch (error) {
     throw error;
@@ -198,4 +244,5 @@ module.exports = Object.freeze({
   findAll,
   deleteByAddress,
   findByUsername,
+  findAllByLocation
 });
