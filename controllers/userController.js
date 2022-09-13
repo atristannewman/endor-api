@@ -55,7 +55,6 @@ module.exports = ({ transactionService, DB }) => {
         location,
         notificationPreferences
       } = httpRequest.body;
-
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
         return {
@@ -75,7 +74,6 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
-
       const user = await DB.User.create({
         address,
         hasProof,
@@ -106,7 +104,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { address, username, hostRating, profileImageUrl, location } =
+      const { address, username, hostRating, profileImageUrl, location, notificationPreferences } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -119,7 +117,8 @@ module.exports = ({ transactionService, DB }) => {
         username,
         hostRating,
         profileImageUrl,
-        location
+        location,
+        notificationPreferences
       });
       const updatedUser = await DB.User.findByAddress(address);
       return {

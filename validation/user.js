@@ -12,7 +12,7 @@ const schema = Joi.object({
     latitude: Joi.number().greater(0).required().allow('null',null,''),
     longitude: Joi.number().greater(0).required().allow('null',null,'')
   }).optional().allow('','null',null),
-  notificationPrefences: Joi.object({
+  notificationPreferences: Joi.object({
     minHostRating: Joi.number().required(),
     minPossibleAttendees: Joi.number().required(),
     distanceFromPossibleAttendees: Joi.number().required()

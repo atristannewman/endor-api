@@ -6,7 +6,11 @@ const schema = Joi.object({
   username: Joi.string().required(),
   hostRating: Joi.number().optional(),
   profileImageUrl: Joi.string().optional(),
-  notificationPreferences: Joi.object().optional(),
+  notificationPreferences: Joi.object({
+    minHostRating: Joi.number().required(),
+    minPossibleAttendees: Joi.number().required(),
+    distanceFromPossibleAttendees: Joi.number().required()
+  }).optional().allow('','null',null),
   location: Joi.object({
     latitude:Joi.number().greater(0).required().allow('null',null,''),
     longitude:Joi.number().greater(0).required().allow('null',null,'')

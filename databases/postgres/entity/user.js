@@ -44,6 +44,14 @@ const User = db.define(
         minPossibleAttendees: 0,
         distanceFromPossibleAttendees: 0,
         minHostRating: 5
+      },
+      set(value) {
+        const notificationPreferences = {
+          minPossibleAttendees: parseInt(value.minPossibleAttendees),
+          distanceFromPossibleAttendees: parseInt(value.distanceFromPossibleAttendees),
+          minHostRating: parseInt(value.minHostRating),
+        }
+        this.setDataValue('notificationPreferences', notificationPreferences);
       }
     },
     deviceToken: {
@@ -68,7 +76,7 @@ const User = db.define(
 const create = async (args) => {
   const userInstance = makeUser(args);
 
-  let location = userInstance.getlocation();
+  let location = userInstance.getLocation();
   if (location?.latitude === "null" && location?.longitude === "null") {
     location.latitude = null;
     location.longitude = null;
@@ -93,8 +101,8 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
+      location: userInstance.getLocation(),
       deviceToken: userInstance.getDeviceToken(),
-      location: userInstance.getlocation(),
       notificationPreferences: userInstance.getNotificationPreferences()
     });
   } catch (error) {
@@ -183,6 +191,7 @@ const updateByAddress = async (address, args) => {
   try {
     userAddressValidate({ address });
     userUpdateValidate(args);
+    console.log(args);
     const location = args?.location;
     if (location) {
       if (location?.latitude === "null" && location?.longitude === "null") {
