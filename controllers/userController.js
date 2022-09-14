@@ -42,6 +42,27 @@ module.exports = ({ transactionService, DB }) => {
       throw error;
     }
   };
+
+  const getAllUsers = async (httpRequest) => {
+    try {
+      const allUsers = await DB.User.findAll();
+
+      return {
+        status: 200,
+        data: {
+          allUsers
+        },
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
+    }
+  };
+
   const createUser = async (httpRequest) => {
     try {
       const {
@@ -291,6 +312,7 @@ module.exports = ({ transactionService, DB }) => {
 
   return Object.freeze({
     getProfile,
+    getAllUsers,
     createUser,
     updateUser,
     deleteUser,
