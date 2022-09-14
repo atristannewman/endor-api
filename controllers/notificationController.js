@@ -54,18 +54,30 @@ module.exports = ({ DB }) => {
       }
     };
   };
+
   const sendHangoutPromptNotification = async (httpRequest) => { // Test Api
-    const usersByLocation = await DB.User.findAllByLocation({ raw: true }); // All Users Array
+    const usersByLocation = await DB.User.findAllWithLocation({ raw: true }); // All Users Array
+    console.log(`users by location array length: ${usersByLocation.length}`);
     let originUsers = usersByLocation; // Origin Users Array
+
     let users = [];
-    const h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0; let potentialUser; let originUserNotifiedArray = []; let location = {};
+
+    const h = 0; 
+    let i = 0; 
+    let k = 0; 
+    let l = 0; 
+    let potentialUserArray = []; 
+    let potentialUserCount = 0; 
+    let potentialUser; 
+    let originUserNotifiedArray = []; 
+    let location = {};
     let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
     let potentialDistanceFromPossibleAttendees; let user; let notifiedUserArray = [];
 
     console.log(`users by location: ${originUsers}`);
 
     while (h < originUsers.length) {
-      console.log("Initial Origin Length: ", originUsers.length);
+      console.log("Initial Users origin array length: ", originUsers.length);
       users = usersByLocation;
       user = originUsers[h]; // Zero index Origin user
       users = users.filter(function (el) { // Need to filter out Origin User from Potential User Search

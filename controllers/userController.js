@@ -76,6 +76,7 @@ module.exports = ({ transactionService, DB }) => {
         location,
         notificationPreferences
       } = httpRequest.body;
+      
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
         return {

@@ -133,7 +133,7 @@ const findAll = async () => {
   }
 };
 
-const findAllByLocation = async () => {
+const findAllWithLocation = async () => {
   try {
     return await User.findAll({
       where: {
@@ -243,5 +243,5 @@ module.exports = Object.freeze({
   findAll,
   deleteByAddress,
   findByUsername,
-  findAllByLocation
+  findAllWithLocation
 });
