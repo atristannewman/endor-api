@@ -74,6 +74,7 @@ module.exports = ({ transactionService, DB }) => {
         profileImageUrl,
         deviceToken,
         location,
+        notificationPreferences
       } = httpRequest.body;
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
@@ -84,6 +85,7 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
+
       const userUsername = await DB.User.findByUsername(username);
       if (userUsername) {
         return {
@@ -102,16 +104,16 @@ module.exports = ({ transactionService, DB }) => {
         profileImageUrl,
         deviceToken,
         location,
+        notificationPreferences
       });
 
-      console.log(`user device token ${user.deviceToken}`);
-      
       return {
         status: 200,
         data: {
           user,
         },
       };
+      
     } catch (error) {
       return {
         status: 500,
@@ -124,7 +126,14 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { address, username, hostRating, profileImageUrl, deviceToken , location } =
+      const { 
+        address, 
+        username, 
+        hostRating, 
+        profileImageUrl, 
+        location, 
+        notificationPreferences,
+        deviceToken } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -133,13 +142,16 @@ module.exports = ({ transactionService, DB }) => {
           message: "user is not found",
         };
       }
+
       await DB.User.updateByAddress(address, {
         username,
         hostRating,
         profileImageUrl,
-        deviceToken,
-        location
+        location,
+        notificationPreferences,
+        deviceToken
       });
+
       const updatedUser = await DB.User.findByAddress(address);
       return {
         status: 200,
@@ -147,6 +159,7 @@ module.exports = ({ transactionService, DB }) => {
           updatedUser,
         },
       };
+      
     } catch (error) {
       return {
         status: 500,

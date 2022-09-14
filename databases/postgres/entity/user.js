@@ -1,8 +1,9 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
-const { validate } = require("../../../validation/userAddress");
+const { userAddressValidate } = require("../../../validation/userAddress");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
+const { userValidate } = require("../../../validation/user");
 
 const User = db.define(
   "user",
@@ -42,8 +43,15 @@ const User = db.define(
       defaultValue: {
         minPossibleAttendees: 0,
         distanceFromPossibleAttendees: 0,
-        location: "",
         minHostRating: 5
+      },
+      set(value) {
+        const notificationPreferences = {
+          minPossibleAttendees: parseInt(value.minPossibleAttendees),
+          distanceFromPossibleAttendees: parseInt(value.distanceFromPossibleAttendees),
+          minHostRating: parseInt(value.minHostRating),
+        }
+        this.setDataValue('notificationPreferences', notificationPreferences);
       }
     },
     deviceToken: {
@@ -67,7 +75,8 @@ const User = db.define(
 
 const create = async (args) => {
   const userInstance = makeUser(args);
-  let location = userInstance.getlocation();
+
+  let location = userInstance.getLocation();
   if (location?.latitude === "null" && location?.longitude === "null") {
     location.latitude = null;
     location.longitude = null;
@@ -83,6 +92,7 @@ const create = async (args) => {
       longitude: null
     };
   }
+  
   try {
     return await User.create({
       address: userInstance.getAddress(),
@@ -91,9 +101,11 @@ const create = async (args) => {
       username: userInstance.getUsername(),
       hostRating: userInstance.getHostRating(),
       profileImageUrl: userInstance.getProfileImageUrl(),
+      location: userInstance.getLocation(),
       deviceToken: userInstance.getDeviceToken(),
-      location
+      notificationPreferences: userInstance.getNotificationPreferences()
     });
+
   } catch (error) {
     console.log(error);
     throw error;
@@ -102,7 +114,7 @@ const create = async (args) => {
 
 const findByAddress = async (address) => {
   try {
-    validate({ address });
+    userAddressValidate({ address });
     return await User.findOne({
       where: {
         address
@@ -137,7 +149,7 @@ const findAllByLocation = async () => {
           minPossibleAttendees: {
             [Sequelize.Op.gt]: 1
           }
-        },
+        }
         // Uncomment this in production
         // deviceToken: {
         //   [Sequelize.Op.not]: null
@@ -178,8 +190,9 @@ const update = async (id, args) => {
 
 const updateByAddress = async (address, args) => {
   try {
-    validate({ address });
+    userAddressValidate({ address });
     userUpdateValidate(args);
+    
     const location = args?.location;
     if (location) {
       if (location?.latitude === "null" && location?.longitude === "null") {
@@ -210,7 +223,7 @@ const updateByAddress = async (address, args) => {
 
 const deleteByAddress = async (address) => {
   try {
-    validate({ address });
+    userAddressValidate({ address });
     User.destroy({
       where: {
         address
