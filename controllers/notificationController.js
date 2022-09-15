@@ -13,23 +13,35 @@ module.exports = ({ DB }) => {
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllByLocation({ raw: true });
     let users = [];
-    let h = 0; let i = 0; let array = []; let location = {}; let notificationPreferences; let distanceFromPossibleAttendees; let user;
+    let h = 0; 
+    let i = 0; 
+    let array = []; 
+    let location = {}; 
+    let notificationPreferences; 
+    let preferredDistanceFromPossibleAttendees; 
+    let user;
+
     while (h < usersByLocation.length) {
       users = usersByLocation;
       user = usersByLocation[h];
       location = user.location;
       notificationPreferences = user.notificationPreferences;
-      distanceFromPossibleAttendees = notificationPreferences.distanceFromPossibleAttendees;
+      preferredDistanceFromPossibleAttendees = notificationPreferences.preferredDistanceFromPossibleAttendees;
+
       while (i < users.length) {
         let distance = geolib.getDistance(
           { latitude: location.latitude, longitude: location.longitude },
           { latitude: users[i].location.latitude, longitude: users[i].location.longitude },
           0.1
         );
-        distance = geolib.convertDistance(distance, "km");
-        console.log(distance);
-        if (distance <= distanceFromPossibleAttendees) {
-          array.push({ address: users[i].address, location: users[i].location, notificationPreferences: users[i].notificationPreferences });
+
+        distance = geolib.convertDistance(distance, "ml");
+        console.log("Distance origin user to others: ", distance);
+        if (distance <= preferredDistanceFromPossibleAttendees) {
+          array.push({ address: users[i].address, 
+            location: users[i].location, 
+            notificationPreferences: users[i].notificationPreferences 
+          });
         }
         ++i;
       }
@@ -62,110 +74,147 @@ module.exports = ({ DB }) => {
 
     let users = [];
 
-    const h = 0; 
-    let i = 0; 
+    const h = 0;  
     let k = 0; 
-    let l = 0; 
-    let potentialUserArray = []; 
-    let potentialUserCount = 0; 
-    let potentialUser; 
-    let originUserNotifiedArray = []; 
+    let potentialGuestArray = []; 
+    let potentialGuestCountForOriginUser = 0; 
+    let potentialGuest; 
+    let originUserToNotifyArray = []; 
     let location = {};
-    let notificationPreferences; let distanceFromPossibleAttendees; let potentialNotificationPreferences;
-    let potentialDistanceFromPossibleAttendees; let user; let notifiedUserArray = [];
+    let notificationPreferences; 
+    let distanceFromPossibleAttendees; 
+    let potentialNotificationPreferences;
+    let preferredDistanceFromPossibleAttendees; 
+    let originUser; 
+    let notifiedUserArray = [];
 
-    console.log(`users by location: ${originUsers}`);
+    console.log(`users with location: ${originUsers}`);
 
     while (h < originUsers.length) {
       console.log("Initial Users origin array length: ", originUsers.length);
       users = usersByLocation;
-      user = originUsers[h]; // Zero index Origin user
-      users = users.filter(function (el) { // Need to filter out Origin User from Potential User Search
-        return el.address !== user.address;
+      originUser = originUsers[h]; // Zero index Origin user
+      users = users.filter(function (element) { // Need to filter out Origin User from Potential User Search
+        return originUser.address !== element.address;
       });
-      console.log("User Address", user.address);
-      location = user.location;
-      notificationPreferences = user.notificationPreferences;
-      distanceFromPossibleAttendees = notificationPreferences.distanceFromPossibleAttendees;
+
+      console.log("Origin user being assessed wallet address", originUser.address);
+      location = originUser.location;
+      originUserNotificationPreferences = originUser.notificationPreferences;
+      preferredDistanceFromPossibleAttendees = originUserNotificationPreferences.distanceFromPossibleAttendees;
+
+      // For all users within the origin users preferred travel radius
+      let i = 0;
+      console.log(`Users to be assesed based on distance from origin user: ${users.length}`);
       while (i < users.length) {
-        let distance = geolib.getDistance(
+        let distanceFromOtherUser = geolib.getDistance(
           { latitude: location.latitude, longitude: location.longitude },
           { latitude: users[i].location.latitude, longitude: users[i].location.longitude },
           0.1
         );
-        distance = geolib.convertDistance(distance, "km");
-        // console.log(distance); // Uncomment to debug distance
-        if (distance <= distanceFromPossibleAttendees) {
-          potentialUserArray.push({ address: users[i].address, location: users[i].location, notificationPreferences: users[i].notificationPreferences, deviceToken: users[i].deviceToken });
+        console.log(`Distance from origin user: ${originUser.address} to ${users[i]} is ${distanceFromOtherUser}`);
+
+        distanceFromOtherUser = geolib.convertDistance(distanceFromOtherUser, "ml");
+        if (distanceFromOtherUser <= preferredDistanceFromPossibleAttendees) {
+          potentialGuestArray.push({ 
+            address: users[i].address, 
+            location: users[i].location, 
+            notificationPreferences: users[i].notificationPreferences, 
+            deviceToken: users[i].deviceToken 
+          });
         }
         ++i;
       }
       i = 0;
-      console.log(`Required Potential Users ${notificationPreferences.minPossibleAttendees}`);
-      console.log(`Found Potential Users ${potentialUserArray.length}`);
-      if (potentialUserArray.length >= (notificationPreferences.minPossibleAttendees)) {
-        originUserNotifiedArray.push({ address: user.address, location: user.location, notificationPreferences: user.notificationPreferences, deviceToken: user.deviceToken }); // Add Origin User to Notified Array
-        console.log(`Potential Users Met for ${user.address}`);
 
-        while (k < potentialUserArray.length) {
-          potentialUser = potentialUserArray[k];
-          potentialNotificationPreferences = potentialUser.notificationPreferences;
-          potentialDistanceFromPossibleAttendees = potentialNotificationPreferences.distanceFromPossibleAttendees;
-          while (l < users.length) { // Iterate for each potential User found for Origin User
-            let distance = geolib.getDistance(
-              { latitude: potentialUser.location.latitude, longitude: potentialUser.location.longitude },
+      console.log(`Possible guests within origin users preferred distance: ${potentialGuestArray.length}`);
+
+
+      // For possible attendees requirement met
+      console.log(`Origin user minimum possible attendees preferred ${originUserNotificationPreferences.minPossibleAttendees}`);
+      console.log(`Potential guest within origin users preferred distance from array length ${potentialGuestArray.length}`);
+      if (potentialGuestArray.length >= (originUserNotificationPreferences.minPossibleAttendees - 1)) {
+        
+        originUserToNotifyArray.push({ 
+          address: originUser.address, 
+          location: originUser.location, 
+          notificationPreferences: originUser.notificationPreferences, 
+          deviceToken: originUser.deviceToken 
+        }); // Add Origin User to to notify Array
+        // CODE REVIEW NOTE: TODO: Origin user should not be added here. We don't know if the other users 
+        // prefer to meet the origin user at this point
+        
+        console.log(`Checking potential guests for origin user ${originUser.address} within their preferred distance`);
+        // Iterates through potential guests
+        while (k < potentialGuestArray.length) {
+          potentialGuest = potentialGuestArray[k];
+          potentialGuestNotificationPreferences = potentialGuest.notificationPreferences;
+          potentialGuestDistanceFromPossibleAttendees = potentialGuestNotificationPreferences.distanceFromPossibleAttendees;
+          
+          let l = 0; 
+          while (l < users.length) { // Iterate for each potential guest found for Origin User
+            let distanceFromOriginUser = geolib.getDistance(
+              { latitude: potentialGuest.location.latitude, longitude: potentialGuest.location.longitude },
               { latitude: users[l].location.latitude, longitude: users[l].location.longitude },
               0.1
             );
-            distance = geolib.convertDistance(distance, "km");
+
+            distanceFromOriginUser = geolib.convertDistance(distanceFromOriginUser, "ml");
             // console.log(distance); // Uncomment to debug distance
-            if (distance <= potentialDistanceFromPossibleAttendees) {
-              ++potentialUserCount; // No need of array just keep count of attendees for potential user
+            if (distanceFromOriginUser <= preferedDistanceFromPossibleAttendees) {
+              ++potentialGuestCountForOriginUser; // No need of array just keep count of attendees for potential user
             }
             ++l;
           }
 
+          // At this point distance from origin user and number of minimum preferred 
+          // attendeehas been accounted for
+          console.log(`number of potential guests within the origin users ${potentialGuestCountForOriginUser}`)
+
           l = 0;
-          if (potentialUserCount >= (potentialNotificationPreferences.minPossibleAttendees)) {
-            console.log("Attendees Found For Potential User: ", potentialUser.address);
-            originUserNotifiedArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
-            notifiedUserArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
+          if (potentialGuestCountForOriginUser >= (potentialGuestNotificationPreferences.minPossibleAttendees)) {
+            console.log("Attendees Found For Potential Guest: ", potentialGuest.address);
+            originUserToNotifyArray.push({ address: potentialGuest.address, location: potentialGuest.location, notificationPreferences: potentialGuest.notificationPreferences, deviceToken: potentialGuest.deviceToken });
+            notifiedUserArray.push({ address: potentialGuest.address, location: potentialGuest.location, notificationPreferences: potentialGuest.notificationPreferences, deviceToken: potentialGuest.deviceToken });
           } else {
-            console.log("Attendees Not Found For Potential User: ", potentialUser.address);
+            console.log("Not enough potential attendees within origin users preferred radius, user: ", potentialGuest.address);
           }
 
-          potentialUserCount = 0;
-          if (originUserNotifiedArray.length === notificationPreferences.minPossibleAttendees) {
+          potentialGuestCountForOriginUser = 0;
+          if (originUserToNotifyArray.length === notificationPreferences.minPossibleAttendees) {
+            // What if the amount of users we need to notify are greater than the origin users min possible attendees
+            // preference
             console.log("All Potential Users have Criteria Sending Push");
-            potentialUserArray = [];
+            potentialGuestArray = [];
 
-            while (l < originUserNotifiedArray.length) {
-              user = originUserNotifiedArray[l];
-              notifiedUserArray.push(user);
+            while (l < originUserToNotifyArray.length) {
+              originUser = originUserToNotifyArray[l];
+              notifiedUserArray.push(originUser);
               // appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
               ++l;
             }
             l = 0;
           }
+
           ++k;
         }
-        // console.log(`notification user array length: ${originUserNotifiedArray.length}`);
+        // console.log(`notification user array length: ${originUserToNotifyArray.length}`);
         // console.log(`notification preferences min possible attendees: ${notificationPreferences.minPossibleAttendees}`)
 
         k = 0;
-        if (originUserNotifiedArray.length === notificationPreferences.minPossibleAttendees) {
-          originUserNotifiedArray = originUserNotifiedArray.map(a => a.address);
-          originUsers = originUsers.filter(i => !originUserNotifiedArray.includes(i.address));
+        if (originUserToNotifyArray.length === notificationPreferences.minPossibleAttendees) {
+          originUserToNotifyArray = originUserToNotifyArray.map(a => a.address);
+          originUsers = originUsers.filter(i => !originUserToNotifyArray.includes(i.address));
         } else {
           originUsers.splice(0, 1); // Remove Origin User from Origin Array
         }
       } else {
-        console.log(`Potential Users does not meet for ${user.address}`);
+        console.log(`Potential Users does not meet for ${originUser.address}`);
         originUsers.splice(0, 1); // Remove Origin User from Origin Array
       }
 
-      originUserNotifiedArray = [];
-      potentialUserArray = []; // Empty Potential Users for next Origin User
+      originUserToNotifyArray = [];
+      potentialGuestArray = []; // Empty Potential Users for next Origin User
     }
 
     notifiedUserArray = [...new Map(notifiedUserArray.map(item =>
@@ -173,7 +222,7 @@ module.exports = ({ DB }) => {
     console.log("Notified Users Array Length", notifiedUserArray.length);
     l = 0;
     while (l < notifiedUserArray.length) {
-      user = notifiedUserArray[l];
+      originUser = notifiedUserArray[l];
       // appleNotification.sendNotification(user.deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
       ++l;
     }
