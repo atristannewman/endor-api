@@ -258,8 +258,8 @@ module.exports = ({ DB }) => {
     return {
       status: 200,
       data: {
-        message: "All Users Completed",
-        totalUsers: usersWithLocation.length
+        message: "All Hangout prompt notification check completed",
+        totalUsersNotified: notifiedUserArray.length
       }
     };
   };
