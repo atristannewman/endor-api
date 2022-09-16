@@ -196,6 +196,10 @@ module.exports = ({ DB }) => {
             //   notificationPreferences: potentialGuest.notificationPreferences, 
             //   deviceToken: potentialGuest.deviceToken 
             // });
+
+            // Answer
+            // we only need the deviceToken other fields were added for debugging purpose
+            // As wanted to compare location and check against which user address etc
           } else {
             console.log("Not enough potential attendees within potential guests (of origin users) preferred radius, guest wallet address: ", potentialGuest.address);
           }

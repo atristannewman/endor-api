@@ -13,8 +13,8 @@ const schema = Joi.object({
   }).optional().allow('','null',null),
   deviceToken: Joi.string().required().allow('null',null,''),
   location: Joi.object({
-    latitude:Joi.number().greater(0).required().allow('null',null,''),
-    longitude:Joi.number().greater(0).required().allow('null',null,'')
+    latitude:Joi.number().required().allow('null',null,''),
+    longitude:Joi.number().required().allow('null',null,'')
   }).optional().allow('','null',null),
 });
 
