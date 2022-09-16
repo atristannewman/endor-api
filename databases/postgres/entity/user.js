@@ -133,7 +133,7 @@ const findAll = async () => {
   }
 };
 
-const findAllByLocation = async () => {
+const findAllWithLocation = async () => {
   try {
     return await User.findAll({
       where: {
@@ -192,9 +192,8 @@ const updateByAddress = async (address, args) => {
   try {
     userAddressValidate({ address });
     userUpdateValidate(args);
-    console.log(args);
-    const location = args?.location;
     
+    const location = args?.location;
     if (location) {
       if (location?.latitude === "null" && location?.longitude === "null") {
         args.location.latitude = null;
@@ -244,5 +243,5 @@ module.exports = Object.freeze({
   findAll,
   deleteByAddress,
   findByUsername,
-  findAllByLocation
+  findAllWithLocation
 });

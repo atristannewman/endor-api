@@ -6,10 +6,11 @@ const transactionRouter = require("./routes/transactionRouter");
 const userRouter = require("./routes/userRouter");
 const vendorRouter = require("./routes/vendorRouter");
 const hangoutsRouter = require("./routes/hangoutsRouter");
+const notificationsRouter = require("./routes/notificationsRouter");
 
 require("dotenv").config();
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || '23.90.200.170';
 
 app.use(express.json());
 app.use(cors());
@@ -19,6 +20,7 @@ app.use("/api/transactions", transactionRouter);
 app.use("/api/users", userRouter);
 app.use("/api/vendors", vendorRouter);
 app.use("/api/hangouts", hangoutsRouter);
+app.use("/api/notifications", notificationsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server listening on the port::${PORT}`);
