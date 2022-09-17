@@ -43,6 +43,26 @@ module.exports = ({ transactionService, DB }) => {
     }
   };
 
+  const getAllUsers = async (httpRequest) => {
+    try {
+      const allUsers = await DB.User.findAll();
+
+      return {
+        status: 200,
+        data: {
+          allUsers
+        },
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        data: {
+          message: error.message,
+        },
+      };
+    }
+  };
+
   const createUser = async (httpRequest) => {
     try {
       const {
@@ -56,6 +76,7 @@ module.exports = ({ transactionService, DB }) => {
         location,
         notificationPreferences
       } = httpRequest.body;
+      
       const userAddress = await DB.User.findByAddress(address);
       if (userAddress) {
         return {
@@ -305,6 +326,7 @@ module.exports = ({ transactionService, DB }) => {
 
   return Object.freeze({
     getProfile,
+    getAllUsers,
     createUser,
     updateUser,
     deleteUser,

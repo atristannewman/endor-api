@@ -8,6 +8,7 @@ userRouter.post("/",requestHandler(userController.createUser));
 userRouter.put("/",requestHandler(userController.updateUser));
 userRouter.delete("/",requestHandler(userController.deleteUser));
 userRouter.get("/",requestHandler(userController.getUser));
+userRouter.get("/all",requestHandler(userController.getAllUsers));
 
 userRouter.put("/update-notification-prefs", requestHandler(userController.updateUserPreferences))
 

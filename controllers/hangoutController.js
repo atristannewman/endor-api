@@ -88,7 +88,13 @@ module.exports = ({ DB }) => {
 
   const updateHangout = async (httpRequest) => {
     try {
-      const { id, name, startTime, endTime, address, tags } = httpRequest.body;
+      const { id, 
+        name, 
+        startTime,
+        endTime, 
+        address, 
+        tags} = httpRequest.body;
+        
       await DB.Hangout.updateById(id, {
         name,
         startTime,
