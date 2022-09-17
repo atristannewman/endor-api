@@ -14,7 +14,7 @@ exports.setNotificationToken = function (req, res, next) {
 module.exports = ({ DB }) => {
 
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
-    const usersByLocation = await DB.User.findAllByLocation({ raw: true });
+    const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
     let users = [];
     let h = 0; 
     let i = 0; 
