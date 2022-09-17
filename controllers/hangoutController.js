@@ -1,4 +1,5 @@
-const geolib = require('geolib');
+/* eslint-disable no-useless-catch */
+const geolib = require("geolib");
 const appleNotification = require("../services/appleNotificationService");
 const googleServices = require("../services/googleServices");
 
@@ -17,9 +18,9 @@ module.exports = ({ DB }) => {
       const location = await googleServices.geoCoding(address);
       if (hangout) {
         const usersByLocation = await DB.User.findAllByLocation({ raw: true });
-        let h = 0; let i = 0; let k = 0; let l = 0; let potentialUserArray = []; let potentialUserCount = 0;
+        const h = 0; let i = 0; let k = 0; let l = 0; const potentialUserArray = []; let potentialUserCount = 0;
         let potentialUser; let notifiedUserArray = []; let potentialNotificationPreferences; let potentialDistanceFromPossibleAttendees; let user;
-        let users = usersByLocation;
+        const users = usersByLocation;
         // Need to Discuss
         // Min Distance Currently set to 1km
         // Geo Location or lat, long
@@ -65,21 +66,21 @@ module.exports = ({ DB }) => {
         }
         while (l < notifiedUserArray.length) {
           user = notifiedUserArray[l];
-          console.log('Sending Notifications');
-          //appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by...");
+          console.log("Sending Notifications");
+          appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by...");
           ++l;
         }
         k = 0;
-        console.log('Total Notified Users', notifiedUserArray.length);
+        console.log("Total Notified Users", notifiedUserArray.length);
         notifiedUserArray = notifiedUserArray.map(a => a.address);
         console.log(`notified user array: ${notifiedUserArray}`);
       }
-      //const hangouts = await DB.Hangout.findAll();
+      // const hangouts = await DB.Hangout.findAll();
       return {
         status: 200,
         data: {
           hangout
-        },
+        }
       };
     } catch (error) {
       throw error;
@@ -88,13 +89,15 @@ module.exports = ({ DB }) => {
 
   const updateHangout = async (httpRequest) => {
     try {
-      const { id, 
-        name, 
+      const {
+        id,
+        name,
         startTime,
-        endTime, 
-        address, 
-        tags} = httpRequest.body;
-        
+        endTime,
+        address,
+        tags
+      } = httpRequest.body;
+
       await DB.Hangout.updateById(id, {
         name,
         startTime,
@@ -106,8 +109,8 @@ module.exports = ({ DB }) => {
       return {
         status: 200,
         data: {
-          hangout,
-        },
+          hangout
+        }
       };
     } catch (error) {
       throw error;
@@ -118,14 +121,14 @@ module.exports = ({ DB }) => {
     try {
       const { id } = httpRequest.body;
       await DB.Hangout.deleteById(id).then(
-        function () {const hangouts = DB.Hangout.findAll()}
+        function () { const hangouts = DB.Hangout.findAll(); }
       );
 
       return {
         status: 200,
         data: {
           hangouts
-        },
+        }
       };
     } catch (error) {
       throw error;
@@ -141,7 +144,7 @@ module.exports = ({ DB }) => {
         status: 200,
         data: {
           hangouts
-        },
+        }
       };
     } catch (error) {
       throw error;
@@ -152,6 +155,6 @@ module.exports = ({ DB }) => {
     createHangout,
     updateHangout,
     deleteHangout,
-    getHangouts,
+    getHangouts
   });
 };

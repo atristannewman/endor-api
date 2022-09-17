@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 module.exports = ({ validate }) => {
   return (args) => {
     try {
@@ -10,9 +11,9 @@ module.exports = ({ validate }) => {
         getUsername: () => args.username,
         getHostRating: () => args.hostRating,
         getProfileImageUrl: () => args.profileImageUrl,
-        getNotificationPreferences: () => args.notificationPreferences==='null'?null:args.notificationPreferences,
-        getLocation: () => args.location==='null'?null:args.location,
-        getDeviceToken: () => args.deviceToken,
+        getNotificationPreferences: () => args.notificationPreferences === "null" ? null : args.notificationPreferences,
+        getLocation: () => args.location === "null" ? null : args.location,
+        getDeviceToken: () => args.deviceToken
       });
     } catch (error) {
       throw error;

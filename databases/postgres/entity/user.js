@@ -1,9 +1,9 @@
+/* eslint-disable no-useless-catch */
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
 const { userAddressValidate } = require("../../../validation/userAddress");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
-const { userValidate } = require("../../../validation/user");
 
 const User = db.define(
   "user",
@@ -45,13 +45,13 @@ const User = db.define(
         distanceFromPossibleAttendees: 0,
         minHostRating: 5
       },
-      set(value) {
+      set (value) {
         const notificationPreferences = {
           minPossibleAttendees: parseInt(value.minPossibleAttendees),
           distanceFromPossibleAttendees: parseInt(value.distanceFromPossibleAttendees),
-          minHostRating: parseInt(value.minHostRating),
-        }
-        this.setDataValue('notificationPreferences', notificationPreferences);
+          minHostRating: parseInt(value.minHostRating)
+        };
+        this.setDataValue("notificationPreferences", notificationPreferences);
       }
     },
     deviceToken: {
@@ -92,7 +92,7 @@ const create = async (args) => {
       longitude: null
     };
   }
-  
+
   try {
     return await User.create({
       address: userInstance.getAddress(),
@@ -105,7 +105,6 @@ const create = async (args) => {
       deviceToken: userInstance.getDeviceToken(),
       notificationPreferences: userInstance.getNotificationPreferences()
     });
-
   } catch (error) {
     console.log(error);
     throw error;
@@ -113,6 +112,7 @@ const create = async (args) => {
 };
 
 const findByAddress = async (address) => {
+  // eslint-disable-next-line no-useless-catch
   try {
     userAddressValidate({ address });
     return await User.findOne({
@@ -192,7 +192,7 @@ const updateByAddress = async (address, args) => {
   try {
     userAddressValidate({ address });
     userUpdateValidate(args);
-    
+
     const location = args?.location;
     if (location) {
       if (location?.latitude === "null" && location?.longitude === "null") {

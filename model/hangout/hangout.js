@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-catch */
 module.exports = ({ validate }) => {
   return (args) => {
     try {
@@ -8,16 +9,13 @@ module.exports = ({ validate }) => {
         getStartTime: () => args.startTime,
         getEndTime: () => args.endTime,
         getTags: () => {
-          
           const tagArgs = JSON.parse(JSON.stringify(args.tags));
           return tagArgs;
-          
         },
         getHost: () => args.host
       });
 
       console.log(`return object: ${returnObject}`);
-      
 
       return returnObject;
     } catch (error) {
