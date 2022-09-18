@@ -1,14 +1,14 @@
+/* eslint-disable no-useless-catch */
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeHangout = require("../../../model/hangout");
-const {User} = require("./user");
-
+const { User } = require("./user");
 
 const Hangout = db.define("hangout", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
-    primaryKey: true,
+    primaryKey: true
   },
   name: Sequelize.STRING,
   address: Sequelize.STRING,
@@ -18,15 +18,14 @@ const Hangout = db.define("hangout", {
   host: User
 
 },
-  {
-    timestamps: false,
-    freezeTableName: true,
-  
-  });
-  
+{
+  timestamps: false,
+  freezeTableName: true
+
+});
 
 // () => {
-//   Hangout.belongsTo(db.user, 
+//   Hangout.belongsTo(db.user,
 //   //   {
 //   //   foreignKey: 'user_id',
 //   //   as: "host",
@@ -78,8 +77,8 @@ const findById = async (id) => {
   try {
     return await Hangout.findOne({
       where: {
-        id,
-      },
+        id
+      }
     });
   } catch (error) {
     console.log(`error in hangout find by id: ${error}`);
@@ -89,9 +88,9 @@ const findById = async (id) => {
 
 const updateById = async (id, args) => {
   try {
-    console.log(`update by id: ${id}, args: ${args}`)
+    console.log(`update by id: ${id}, args: ${args}`);
     return await Hangout.upsert({
-      id: id,
+      id,
       name: args.name,
       address: args.address,
       startTime: args.startTime,
@@ -109,8 +108,8 @@ const deleteById = async (id) => {
   try {
     Hangout.destroy({
       where: {
-        id,
-      },
+        id
+      }
     });
   } catch (error) {
     throw error;
@@ -123,5 +122,5 @@ module.exports = Object.freeze({
   updateById,
   deleteById,
   findAll,
-  findById,
+  findById
 });
