@@ -17,7 +17,7 @@ module.exports = ({ DB }) => {
       });
       const location = await googleServices.geoCoding(address);
       if (hangout) {
-        const usersByLocation = await DB.User.findAllByLocation({ raw: true });
+        const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
         const h = 0; let i = 0; let k = 0; let l = 0; const potentialUserArray = []; let potentialUserCount = 0;
         let potentialUser; let notifiedUserArray = []; let potentialNotificationPreferences; let potentialDistanceFromPossibleAttendees; let user;
         const users = usersByLocation;
