@@ -16,14 +16,22 @@ module.exports = ({ DB }) => {
         host
       });
       const location = await googleServices.geoCoding(address);
+
       if (hangout) {
-        const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
-        const h = 0; let i = 0; let k = 0; let l = 0; const potentialUserArray = []; let potentialUserCount = 0;
-        let potentialUser; let notifiedUserArray = []; let potentialNotificationPreferences; let potentialDistanceFromPossibleAttendees; let user;
-        const users = usersByLocation;
+        const usersWithLocation = await DB.User.findAllWithLocation({ raw: true });
+        const h = 0; let k = 0; let l = 0; const potentialUserArray = []; let potentialUserCount = 0;
+        let potentialUser;
+        let notifiedUserArray = [];
+        let potentialNotificationPreferences;
+        let potentialDistanceFromPossibleAttendees;
+        let user;
+        const users = usersWithLocation;
+        console.log(`Number of users with location: ${users.length}`);
+
         // Need to Discuss
         // Min Distance Currently set to 1km
         // Geo Location or lat, long
+        let i = 0;
         while (i < users.length) {
           let distance = geolib.getDistance(
             { latitude: location.latitude, longitude: location.longitude },
@@ -31,13 +39,19 @@ module.exports = ({ DB }) => {
             0.1
           );
           distance = geolib.convertDistance(distance, "km");
-          if (distance <= 1) {
-            potentialUserArray.push({ address: users[i].address, location: users[i].location, notificationPreferences: users[i].notificationPreferences, deviceToken: users[i].deviceToken });
+          if (distance <= users[i].notificationPreferences.distanceFromPossibleAttendees) {
+            potentialUserArray.push({
+              address: users[i].address,
+              location: users[i].location,
+              notificationPreferences: users[i].notificationPreferences,
+              deviceToken: users[i].deviceToken
+            });
           }
           ++i;
         }
         i = 0;
-        console.log(`Found Potential Users ${potentialUserArray.length}`);
+        console.log(`Number of users found within their preference of the new hangout ${potentialUserArray.length}`);
+
         while (k < potentialUserArray.length) {
           potentialUser = potentialUserArray[k];
           potentialNotificationPreferences = potentialUser.notificationPreferences;
@@ -67,7 +81,7 @@ module.exports = ({ DB }) => {
         while (l < notifiedUserArray.length) {
           user = notifiedUserArray[l];
           console.log("Sending Notifications");
-          appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by...");
+          appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by.");
           ++l;
         }
         k = 0;
