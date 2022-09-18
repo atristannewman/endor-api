@@ -38,7 +38,7 @@ module.exports = ({ DB }) => {
             { latitude: users[i].location.latitude, longitude: users[i].location.longitude },
             0.1
           );
-          distance = geolib.convertDistance(distance, "km");
+          distance = geolib.convertDistance(distance, "mi");
           if (distance <= users[i].notificationPreferences.distanceFromPossibleAttendees) {
             potentialUserArray.push({
               address: users[i].address,
@@ -62,7 +62,7 @@ module.exports = ({ DB }) => {
               { latitude: users[l].location.latitude, longitude: users[l].location.longitude },
               0.1
             );
-            distance = geolib.convertDistance(distance, "km");
+            distance = geolib.convertDistance(distance, "mi");
             if (distance <= potentialDistanceFromPossibleAttendees) {
               ++potentialUserCount; // No need of array just keep count of attendees for potential user
             }
