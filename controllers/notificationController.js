@@ -208,8 +208,11 @@ module.exports = ({ DB }) => {
           l = 0
           while (l < potentialUserToNotifyArray.length) {
 
+            const promptHangoutPayload = {
+              "navigation": "goToAddHangout"
+            }
             const notifyingUser = potentialUserToNotifyArray[l];
-            appleNotification.sendNotification(potentialUserToNotifyArray[i].deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?");
+            appleNotification.sendNotification(potentialUserToNotifyArray[i].deviceToken, "Enough Proof members are nearby, would you like to start a Hangout?", promptHangoutPayload);
             notifiedUserArray.push(notifyingUser);
             ++l;
           }

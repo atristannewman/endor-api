@@ -79,9 +79,13 @@ module.exports = ({ DB }) => {
           ++k;
         }
         while (l < notifiedUserArray.length) {
+          const createdHangoutPayload = {
+            "navigation": "goToHangoutDetails",
+            "hangoutId": hangout.id
+          }
           user = notifiedUserArray[l];
           console.log("Sending Notifications");
-          appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by.");
+          appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by.", createdHangoutPayload);
           ++l;
         }
         k = 0;

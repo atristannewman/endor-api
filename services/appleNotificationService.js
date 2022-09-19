@@ -1,4 +1,4 @@
-module.exports.sendNotification = (deviceToken, msg) => {
+module.exports.sendNotification = (deviceToken, msg, payload) => {
   const jwt = require("jsonwebtoken");
   const http2 = require("http2");
   const fs = require("fs");
@@ -34,7 +34,8 @@ module.exports.sendNotification = (deviceToken, msg) => {
   const body = {
     aps: {
       alert: msg,
-      "content-available": 1
+      "content-available": 1,
+      payload
     }
   };
 
