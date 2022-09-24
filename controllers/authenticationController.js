@@ -4,7 +4,6 @@
 module.exports = ({ DB }) => {
   const createTokenproofAuthentication = async (httpRequest) => {
     try {
-      // const hangouts = await DB.Hangout.findAll();
       return {
         status: 200,
         data: {

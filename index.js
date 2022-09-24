@@ -7,6 +7,7 @@ const userRouter = require("./routes/userRouter");
 const vendorRouter = require("./routes/vendorRouter");
 const hangoutsRouter = require("./routes/hangoutsRouter");
 const notificationsRouter = require("./routes/notificationsRouter");
+const authenticationRouter = require("./routes/authenticationRouter");
 
 require("dotenv").config();
 
@@ -21,6 +22,8 @@ app.use("/api/users", userRouter);
 app.use("/api/vendors", vendorRouter);
 app.use("/api/hangouts", hangoutsRouter);
 app.use("/api/notifications", notificationsRouter);
+app.use("/api/authentication", authenticationRouter);
+
 
 app.listen(PORT, () => {
   console.log(`Server listening on the port::${PORT}`);
