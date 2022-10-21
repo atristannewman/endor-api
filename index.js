@@ -43,10 +43,18 @@ app.use(auth(auth0Configuration));
 
 // req.oidc.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
-  res.send(
-    req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out'
-  )
-});
+    if (req.oidc.isAuthenticated()) {
+      res.send({
+        'loginStatus': 'Logged in',
+        'profileAuth0Id': req.oidc.user.sub
+      })
+    } else {
+      res.send({
+        'loginStatus': 'Logged out'
+      })
+    }
+  }
+);
 
 // The /profile route will show the user profile as JSON
 app.get('/profile', requiresAuth(), (req, res) => {
