@@ -66,6 +66,7 @@ module.exports = ({ transactionService, DB }) => {
   const createUser = async (httpRequest) => {
     try {
       const {
+        auth0Id,
         address,
         hasMoonbird,
         hasProof,
@@ -97,6 +98,7 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
       const user = await DB.User.create({
+        auth0Id,
         address,
         hasProof,
         hasMoonbird,
@@ -127,7 +129,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      const { 
+      const {
         address, 
         username, 
         hostRating, 

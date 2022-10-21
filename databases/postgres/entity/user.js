@@ -17,6 +17,10 @@ const User = db.define(
       type: Sequelize.STRING,
       allowNull: false
     },
+    auth0Id: {
+      type: Sequelize.STRING,
+      allowNull: false
+    },
     address: {
       type: Sequelize.STRING,
       allowNull: false
