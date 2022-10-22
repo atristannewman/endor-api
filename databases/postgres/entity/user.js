@@ -99,6 +99,7 @@ const create = async (args) => {
 
   try {
     return await User.create({
+      auth0Id: userInstance.getAuth0Id(),
       address: userInstance.getAddress(),
       hasProof: userInstance.getHasProof(),
       hasMoonbird: userInstance.getHasMoonBird(),
