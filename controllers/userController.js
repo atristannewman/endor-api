@@ -88,6 +88,16 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
 
+      const userAuth0Id = await DB.User.findByAddress(auth0Id);
+      if (userAuth0Id) {
+        return {
+          status: 409,
+          data: {
+            message: "User auth0 id already exists",
+          },
+        };
+      }
+
       const userUsername = await DB.User.findByUsername(username);
       if (userUsername) {
         return {

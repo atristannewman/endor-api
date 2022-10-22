@@ -4,6 +4,7 @@ const db = require("../sequelize");
 const makeUser = require("../../../model/user");
 const { userAddressValidate } = require("../../../validation/userAddress");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
+const { userAuth0IdValidate } = require("../../../validation/userAuth0Id");
 
 const User = db.define(
   "user",
@@ -130,6 +131,20 @@ const findByAddress = async (address) => {
   }
 };
 
+const findByAuth0Id = async (auth0Id) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    userAuth0IdValidate({ auth0Id });
+    return await User.findOne({
+      where: {
+        auth0Id
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const findAll = async () => {
   try {
     return await User.findAll();
@@ -248,5 +263,6 @@ module.exports = Object.freeze({
   findAll,
   deleteByAddress,
   findByUsername,
-  findAllWithLocation
+  findAllWithLocation,
+  findByAuth0Id
 });
