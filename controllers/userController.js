@@ -107,6 +107,7 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
+      
       const user = await DB.User.create({
         auth0Id,
         address,
@@ -146,7 +147,8 @@ module.exports = ({ transactionService, DB }) => {
         profileImageUrl, 
         location, 
         notificationPreferences,
-        deviceToken } =
+        deviceToken,
+        auth0Id } =
         httpRequest.body;
       const user = await DB.User.findByAddress(address);
       if (!user) {
@@ -162,7 +164,8 @@ module.exports = ({ transactionService, DB }) => {
         profileImageUrl,
         location,
         notificationPreferences,
-        deviceToken
+        deviceToken,
+        auth0Id
       });
 
       const updatedUser = await DB.User.findByAddress(address);
@@ -214,7 +217,7 @@ module.exports = ({ transactionService, DB }) => {
 
   const getUser = async (httpRequest) => {
     try {
-      const { address } = httpRequest.query;
+      const { address, auth0Id } = httpRequest.query;
       if (address) {
         const user = await DB.User.findByAddress(address);
         if (!user) {
@@ -232,6 +235,14 @@ module.exports = ({ transactionService, DB }) => {
             user
           },
         };
+      } else if (auth0Id) {
+        const user = await DB.User.findByAuth0Id(auth0Id);
+        return {
+          status: 200,
+          data: {
+            user
+          }
+        }
       } else {
         const users = await DB.User.findAll();
         if (!users) {
