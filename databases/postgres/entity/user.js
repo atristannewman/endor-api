@@ -3,6 +3,7 @@ const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
 const { userAddressValidate } = require("../../../validation/userAddress");
+const { userAddressesValidate } = require("../../../validation/userAddresses.js");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
 const { userAuth0IdValidate } = require("../../../validation/userAuth0Id");
 
@@ -124,6 +125,20 @@ const findByAddress = async (address) => {
     return await User.findOne({
       where: {
         address
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const findByAddresses = async (addresses) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    userAddressesValidate({ addresses });
+    return await User.findOne({
+      where: {
+        addresses
       }
     });
   } catch (error) {

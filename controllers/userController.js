@@ -67,7 +67,7 @@ module.exports = ({ transactionService, DB }) => {
     try {
       const {
         auth0Id,
-        address,
+        addresses,
         hasMoonbird,
         hasProof,
         username,
@@ -78,8 +78,8 @@ module.exports = ({ transactionService, DB }) => {
         notificationPreferences
       } = httpRequest.body;
       
-      const userAddress = await DB.User.findByAddress(address);
-      if (userAddress) {
+      const userByAddress = await DB.User.findByAddress(address);
+      if (userByAddress) {
         return {
           status: 409,
           data: {
@@ -88,8 +88,18 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
 
-      const userAuth0Id = await DB.User.findByAddress(auth0Id);
-      if (userAuth0Id) {
+      const userByAddresses = await DB.User.findByAddresses(addresses);
+      if (userByAddresses) {
+        return {
+          status: 409,
+          data: {
+            message: "User address already exists",
+          },
+        };
+      }
+
+      const userByAuth0Id = await DB.User.findByAddress(auth0Id);
+      if (userByAuth0Id) {
         return {
           status: 409,
           data: {
@@ -98,8 +108,8 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
 
-      const userUsername = await DB.User.findByUsername(username);
-      if (userUsername) {
+      const userByUsername = await DB.User.findByUsername(username);
+      if (userByUsername) {
         return {
           status: 409,
           data: {
@@ -110,7 +120,7 @@ module.exports = ({ transactionService, DB }) => {
       
       const user = await DB.User.create({
         auth0Id,
-        address,
+        addresses,
         hasProof,
         hasMoonbird,
         username,
@@ -141,7 +151,7 @@ module.exports = ({ transactionService, DB }) => {
   const updateUser = async (httpRequest) => {
     try {
       const {
-        address, 
+        addresses, 
         username, 
         hostRating, 
         profileImageUrl, 
@@ -150,7 +160,7 @@ module.exports = ({ transactionService, DB }) => {
         deviceToken,
         auth0Id } =
         httpRequest.body;
-      const user = await DB.User.findByAddress(address);
+      const user = await DB.User.findByAddress(addresses);
       if (!user) {
         return {
           status: 404,

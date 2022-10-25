@@ -6,7 +6,7 @@ module.exports = ({ validate }) => {
 
       return Object.freeze({
         getAuth0Id: () => args.auth0Id,
-        getAddress: () => args.address,
+        getAddresses: () => args.addresses,
         getHasProof: () => args.hasProof,
         getHasMoonBird: () => args.hasMoonbird,
         getUsername: () => args.username,
