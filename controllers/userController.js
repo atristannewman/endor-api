@@ -119,7 +119,7 @@ module.exports = ({ transactionService, DB }) => {
       
       const user = await DB.User.create({
         auth0Id,
-        walletAddressesArray,
+        walletAddresses: walletAddressesArray,
         hasProof,
         hasMoonbird,
         username,
@@ -150,6 +150,7 @@ module.exports = ({ transactionService, DB }) => {
   const updateUser = async (httpRequest) => {
     try {
       console.log("userController updateUser")
+
       const {
         walletAddresses, 
         username, 
@@ -167,6 +168,26 @@ module.exports = ({ transactionService, DB }) => {
         walletAddressesArray = [walletAddressesArray]
       } else {
         walletAddressesArray = walletAddressesArray.split(",")
+      }
+
+      const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
+      if (!userByAuth0Id) {
+        return {
+          status: 409,
+          data: {
+            message: "User auth0 id does not exists",
+          },
+        };
+      }
+
+      const userByAddresses = await DB.User.findByAddresses(walletAddressesArray);
+      if (userByAddresses && userByAddresses.auth0Id != auth0Id) {
+        return {
+          status: 409,
+          data: {
+            message: "Wallet address registered to another wallet",
+          },
+        };
       }
       
       console.log(`newWalletAddresses count ${walletAddressesArray.length}`)
@@ -255,62 +276,43 @@ module.exports = ({ transactionService, DB }) => {
 
   const getUser = async (httpRequest) => {
     try {
-      const { address, auth0Id } = httpRequest.query;
+      const { auth0Id } = httpRequest.query;
 
-      console.log(`getting user with address ${address}`)
-      if (address) {
-        const user = await DB.User.findByAddress(address);
-        if (!user) {
-          return {
-            status: 404,
-            data: {
-              message: "User is not found",
-            },
-          };
-        }
+      const user = await DB.User.findByAuth0Id(auth0Id);
 
-        return {
-          status: 200,
-          data: {
-            user
-          },
-        };
-      } else if (auth0Id) {
-        const user = await DB.User.findByAuth0Id(auth0Id);
+      if (user) {
         return {
           status: 200,
           data: {
             user
           }
         }
-      } else {
-        const users = await DB.User.findAll();
-        if (!users) {
-          return {
-            status: 404,
-            data: {
-              message: "No users were found",
-            },
-          };
-        }
-        const usersInfo = users.map((user) => {
-          const userData = user.dataValues;
-          return {
-            walletAddress: userData.address,
-            imageurl: userData.profileImageUrl,
-            hostRating: userData.hostRating,
-            username: userData.username,
-            deviceToken: userData.deviceToken
-          };
-        });
-
+      } else if (!user) {
         return {
-          status: 200,
+          status: 404,
           data: {
-            usersInfo,
+            message: "No user found",
           },
         };
       }
+
+      const usersInfo = users.map((user) => {
+        const userData = user.dataValues;
+        return {
+          walletAddress: userData.address,
+          imageurl: userData.profileImageUrl,
+          hostRating: userData.hostRating,
+          username: userData.username,
+          deviceToken: userData.deviceToken
+        };
+      });
+
+      return {
+        status: 200,
+        data: {
+          usersInfo,
+        },
+      };
     } catch (error) {
       return {
         status: 500,

@@ -11,7 +11,7 @@ const { auth, requiresAuth } = require('express-openid-connect');
 
 require("dotenv").config();
 
-const PORT = process.env.PORT || '5432';
+const PORT = process.env.PORT || '23.90.200.170';
 
 app.use(express.json());
 app.use(cors());
