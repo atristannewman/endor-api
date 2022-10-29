@@ -231,6 +231,18 @@ const findByUsername = async (username) => {
   }
 };
 
+const findByUUID = async (uuid) => {
+  try {
+    return await User.findOne({
+      where: {
+        uuid
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const update = async (id, args) => {
   try {
     User.update(args, {
@@ -289,12 +301,11 @@ const deleteByAddress = async (address) => {
   }
 };
 
-const deleteByAuth0Id = async (auth0Id) => {
+const deleteByUUID = async (uuid) => {
   try {
-    userAuth0IdValidate({ auth0Id });
     User.destroy({
       where: {
-        auth0Id
+        uuid
       }
     });
   } catch (error) {
@@ -308,12 +319,11 @@ module.exports = Object.freeze({
   update,
   findByAddress,
   findByAddresses,
+  findByUUID,
   findAll,
-  deleteByAddress,
+  deleteByUUID,
   findByUsername,
   findAllWithLocation,
   findByAuth0Id,
-  deleteByAddress,
-  deleteByAuth0Id,
   updateByAuth0Id
 });

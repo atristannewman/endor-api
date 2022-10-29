@@ -1,4 +1,16 @@
 module.exports = ({ transactionService, DB }) => {
+  const urlencodedToRawAddressesArray = async (walletAddresses) => {
+    let walletAddressesArray = walletAddresses
+    // Clean x-www-urlencoded data
+    if(!walletAddressesArray.includes(",") && walletAddresses.length) {
+      walletAddressesArray = [walletAddressesArray]
+    } else {
+      walletAddressesArray = walletAddressesArray.split(",")
+    }
+
+    return walletAddressesArray
+  }
+
   const getProfile = async (httpRequest) => {
     try {
       const { address } = httpRequest.query;
@@ -65,7 +77,6 @@ module.exports = ({ transactionService, DB }) => {
 
   const createUser = async (httpRequest) => {
     try {
-      console.log("userController createUser line 68")
       const {
         auth0Id,
         walletAddresses,
@@ -79,15 +90,9 @@ module.exports = ({ transactionService, DB }) => {
         notificationPreferences
       } = httpRequest.body;
 
-      let walletAddressesArray = walletAddresses;
-      // Clean x-www-urlencoded data
-      if (!walletAddressesArray.includes(",") && walletAddresses.length) {
-        walletAddressesArray = [walletAddressesArray]
-      } else {
-        walletAddressesArray = walletAddressesArray.split(",")
-      }
+      const cleanAddressesArray = urlencodedToRawAddressesArray(walletAddresses)
 
-      const userByAddresses = await DB.User.findByAddresses(walletAddressesArray);
+      const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
       if (userByAddresses) {
         return {
           status: 409,
@@ -119,7 +124,7 @@ module.exports = ({ transactionService, DB }) => {
       
       const user = await DB.User.create({
         auth0Id,
-        walletAddresses: walletAddressesArray,
+        walletAddresses: cleanAddressesArray,
         hasProof,
         hasMoonbird,
         username,
@@ -149,7 +154,6 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
-      console.log("userController updateUser")
 
       const {
         walletAddresses, 
@@ -162,13 +166,7 @@ module.exports = ({ transactionService, DB }) => {
         auth0Id 
       } = httpRequest.body;
 
-      let walletAddressesArray = walletAddresses;
-      // Clean x-www-urlencoded data
-      if (!walletAddressesArray.includes(",") && walletAddresses.length) {
-        walletAddressesArray = [walletAddressesArray]
-      } else {
-        walletAddressesArray = walletAddressesArray.split(",")
-      }
+      const cleanAddressesArray = urlencodedToRawAddressesArray(walletAddresses)
 
       const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
       if (!userByAuth0Id) {
@@ -180,7 +178,7 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
 
-      const userByAddresses = await DB.User.findByAddresses(walletAddressesArray);
+      const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
       if (userByAddresses && userByAddresses.auth0Id != auth0Id) {
         return {
           status: 409,
@@ -189,9 +187,7 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
-      
-      console.log(`newWalletAddresses count ${walletAddressesArray.length}`)
-      
+            
       await DB.User.updateByAuth0Id(auth0Id, {
         username,
         hostRating,
@@ -199,10 +195,9 @@ module.exports = ({ transactionService, DB }) => {
         location,
         notificationPreferences,
         deviceToken,
-        walletAddresses: walletAddressesArray
+        walletAddresses: cleanAddressesArray
       });
 
-      console.log("user controller user updated")
       const updatedUser = await DB.User.findByAuth0Id(auth0Id);
       return {
         status: 200,
@@ -223,10 +218,10 @@ module.exports = ({ transactionService, DB }) => {
 
   const deleteUser = async (httpRequest) => {
     try {
-      const { address, auth0Id } = httpRequest.query;
+      const { uuid } = httpRequest.query;
 
-      const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
-      if (!userByAuth0Id) {
+      const userByUUID = await DB.User.findByUUID(uuid);
+      if (!userByUUID) {
         return {
           status: 404,
           data: {
@@ -234,29 +229,9 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
-
-      if (address) {
-        const user = await DB.User.findByAddress(address);
-        if (!user) {
-          return {
-            status: 404,
-            data: {
-              message: "User is not found",
-            },
-          };
-        }
-
-        await DB.User.deleteByAddress(address);
-        return {
-          status: 200,
-          data: {
-            message: "User is deleted successfully",
-          },
-        };
-      }
      
-      if (auth0Id) {
-        await DB.User.deleteByAuth0Id(auth0Id);
+      if (userByUUID) {
+        await DB.User.deleteByUUID(uuid);
         return {
           status: 200,
           data: {
