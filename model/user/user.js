@@ -2,10 +2,12 @@
 module.exports = ({ validate }) => {
   return (args) => {
     try {
+      console.log("validating user")
       validate(args);
 
       return Object.freeze({
-        getAddress: () => args.address,
+        getAuth0Id: () => args.auth0Id,
+        getWalletAddresses: () => args.walletAddresses,
         getHasProof: () => args.hasProof,
         getHasMoonBird: () => args.hasMoonbird,
         getUsername: () => args.username,
