@@ -25,8 +25,5 @@ const schema = Joi.object({
 });
 
 exports.validate = (args) => {
-  console.log(`args wallet addresses ${args.walletAddress}`)
-  console.log("user validate function")
-  
   return Joi.attempt(args, schema, "Failed parameter validation for User");
 };

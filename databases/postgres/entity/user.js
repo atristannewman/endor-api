@@ -125,13 +125,11 @@ const findByAddress = async (address) => {
   // eslint-disable-next-line no-useless-catch
   try {
     userAddressValidate({ address });
-    console.log(`sequelize looking for address: ${address}`)
     const userByAddress = await User.findOne({
       where: {
         walletAddresses: { [Sequelize.contains]: [address] }
       }
     });
-    console.log(`found user: ${userByAddress}`)
     
     return userByAddress
   } catch (error) {
@@ -151,15 +149,12 @@ const findByAddresses = async (walletAddresses) => {
 
         for(j=0; j<walletAddresses.length; j++) {
           if (allUsers[i].walletAddresses.includes(walletAddresses[j])) {
-            console.log(`found user id ${allUsers[i].uuid} with wallet addresses ${allUsers[i].walletAddresses} wallet`)
-            console.log(`found user id ${allUsers[i].uuid} with ${walletAddresses[j]} wallet`)
             return allUsers[i]
           }
         }
       }  
     }
 
-    console.log("user not found in db (entity user find by addresses)")
     return
   } catch (error) {
     throw error;
