@@ -65,9 +65,10 @@ module.exports = ({ transactionService, DB }) => {
 
   const createUser = async (httpRequest) => {
     try {
+      console.log("userController createUser line 68")
       const {
         auth0Id,
-        addresses,
+        walletAddresses,
         hasMoonbird,
         hasProof,
         username,
@@ -77,18 +78,16 @@ module.exports = ({ transactionService, DB }) => {
         location,
         notificationPreferences
       } = httpRequest.body;
-      
-      const userByAddress = await DB.User.findByAddress(address);
-      if (userByAddress) {
-        return {
-          status: 409,
-          data: {
-            message: "User address already exists",
-          },
-        };
+
+      let walletAddressesArray = walletAddresses;
+      // Clean x-www-urlencoded data
+      if (!walletAddressesArray.includes(",") && walletAddresses.length) {
+        walletAddressesArray = [walletAddressesArray]
+      } else {
+        walletAddressesArray = walletAddressesArray.split(",")
       }
 
-      const userByAddresses = await DB.User.findByAddresses(addresses);
+      const userByAddresses = await DB.User.findByAddresses(walletAddressesArray);
       if (userByAddresses) {
         return {
           status: 409,
@@ -98,7 +97,7 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
 
-      const userByAuth0Id = await DB.User.findByAddress(auth0Id);
+      const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
       if (userByAuth0Id) {
         return {
           status: 409,
@@ -120,7 +119,7 @@ module.exports = ({ transactionService, DB }) => {
       
       const user = await DB.User.create({
         auth0Id,
-        addresses,
+        walletAddressesArray,
         hasProof,
         hasMoonbird,
         username,
@@ -150,35 +149,40 @@ module.exports = ({ transactionService, DB }) => {
 
   const updateUser = async (httpRequest) => {
     try {
+      console.log("userController updateUser")
       const {
-        addresses, 
+        walletAddresses, 
         username, 
         hostRating, 
         profileImageUrl, 
         location, 
         notificationPreferences,
         deviceToken,
-        auth0Id } =
-        httpRequest.body;
-      const user = await DB.User.findByAddress(addresses);
-      if (!user) {
-        return {
-          status: 404,
-          message: "user is not found",
-        };
-      }
+        auth0Id 
+      } = httpRequest.body;
 
-      await DB.User.updateByAddress(address, {
+      let walletAddressesArray = walletAddresses;
+      // Clean x-www-urlencoded data
+      if (!walletAddressesArray.includes(",") && walletAddresses.length) {
+        walletAddressesArray = [walletAddressesArray]
+      } else {
+        walletAddressesArray = walletAddressesArray.split(",")
+      }
+      
+      console.log(`newWalletAddresses count ${walletAddressesArray.length}`)
+      
+      await DB.User.updateByAuth0Id(auth0Id, {
         username,
         hostRating,
         profileImageUrl,
         location,
         notificationPreferences,
         deviceToken,
-        auth0Id
+        walletAddresses: walletAddressesArray
       });
 
-      const updatedUser = await DB.User.findByAddress(address);
+      console.log("user controller user updated")
+      const updatedUser = await DB.User.findByAuth0Id(auth0Id);
       return {
         status: 200,
         data: {
@@ -198,9 +202,10 @@ module.exports = ({ transactionService, DB }) => {
 
   const deleteUser = async (httpRequest) => {
     try {
-      const { address } = httpRequest.query;
-      const user = await DB.User.findByAddress(address);
-      if (!user) {
+      const { address, auth0Id } = httpRequest.query;
+
+      const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
+      if (!userByAuth0Id) {
         return {
           status: 404,
           data: {
@@ -208,13 +213,36 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
-      await DB.User.deleteByAddress(address);
-      return {
-        status: 200,
-        data: {
-          message: "User is deleted successfully",
-        },
-      };
+
+      if (address) {
+        const user = await DB.User.findByAddress(address);
+        if (!user) {
+          return {
+            status: 404,
+            data: {
+              message: "User is not found",
+            },
+          };
+        }
+
+        await DB.User.deleteByAddress(address);
+        return {
+          status: 200,
+          data: {
+            message: "User is deleted successfully",
+          },
+        };
+      }
+     
+      if (auth0Id) {
+        await DB.User.deleteByAuth0Id(auth0Id);
+        return {
+          status: 200,
+          data: {
+            message: "User is deleted successfully",
+          },
+        };
+      }
     } catch (error) {
       return {
         status: 500,
@@ -228,6 +256,8 @@ module.exports = ({ transactionService, DB }) => {
   const getUser = async (httpRequest) => {
     try {
       const { address, auth0Id } = httpRequest.query;
+
+      console.log(`getting user with address ${address}`)
       if (address) {
         const user = await DB.User.findByAddress(address);
         if (!user) {

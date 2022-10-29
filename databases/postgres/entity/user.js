@@ -2,7 +2,7 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
-const { userAddressValidate } = require("../../../validation/userAddress");
+const { userAddressValidate } = require("../../../validation/userAddress.js");
 const { userAddressesValidate } = require("../../../validation/userAddresses.js");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
 const { userAuth0IdValidate } = require("../../../validation/userAuth0Id");
@@ -23,9 +23,10 @@ const User = db.define(
       type: Sequelize.STRING,
       allowNull: false
     },
-    address: {
-      type: Sequelize.STRING,
-      allowNull: false
+    walletAddresses: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+      allowNull: false,
+      notEmpty: true
     },
     profileImageUrl: {
       type: Sequelize.STRING,
@@ -80,6 +81,7 @@ const User = db.define(
 );
 
 const create = async (args) => {
+
   const userInstance = makeUser(args);
 
   let location = userInstance.getLocation();
@@ -102,7 +104,7 @@ const create = async (args) => {
   try {
     return await User.create({
       auth0Id: userInstance.getAuth0Id(),
-      address: userInstance.getAddress(),
+      walletAddresses: userInstance.getWalletAddresses(),
       hasProof: userInstance.getHasProof(),
       hasMoonbird: userInstance.getHasMoonBird(),
       username: userInstance.getUsername(),
@@ -118,29 +120,47 @@ const create = async (args) => {
   }
 };
 
+
 const findByAddress = async (address) => {
   // eslint-disable-next-line no-useless-catch
   try {
     userAddressValidate({ address });
-    return await User.findOne({
+    console.log(`sequelize looking for address: ${address}`)
+    const userByAddress = await User.findOne({
       where: {
-        address
+        walletAddresses: { [Sequelize.contains]: [address] }
       }
     });
+    console.log(`found user: ${userByAddress}`)
+    
+    return userByAddress
   } catch (error) {
     throw error;
   }
 };
 
-const findByAddresses = async (addresses) => {
+const findByAddresses = async (walletAddresses) => {
   // eslint-disable-next-line no-useless-catch
-  try {
-    userAddressesValidate({ addresses });
-    return await User.findOne({
-      where: {
-        addresses
-      }
-    });
+  try { 
+    userAddressesValidate({ walletAddresses });
+
+    const allUsers = await User.findAll();
+    
+    for(i=0; i<allUsers.length; i++) {
+      if (allUsers[i].walletAddresses) {
+
+        for(j=0; j<walletAddresses.length; j++) {
+          if (allUsers[i].walletAddresses.includes(walletAddresses[j])) {
+            console.log(`found user id ${allUsers[i].uuid} with wallet addresses ${allUsers[i].walletAddresses} wallet`)
+            console.log(`found user id ${allUsers[i].uuid} with ${walletAddresses[j]} wallet`)
+            return allUsers[i]
+          }
+        }
+      }  
+    }
+
+    console.log("user not found in db (entity user find by addresses)")
+    return
   } catch (error) {
     throw error;
   }
@@ -223,9 +243,8 @@ const update = async (id, args) => {
   }
 };
 
-const updateByAddress = async (address, args) => {
+const updateByAuth0Id = async (auth0Id, args) => {
   try {
-    userAddressValidate({ address });
     userUpdateValidate(args);
 
     const location = args?.location;
@@ -245,9 +264,10 @@ const updateByAddress = async (address, args) => {
       }
     }
 
+    console.log("entitiy user user update by auth0 id line 265")
     return User.update(args, {
       where: {
-        address
+        auth0Id
       }
     });
   } catch (error) {
@@ -261,7 +281,20 @@ const deleteByAddress = async (address) => {
     userAddressValidate({ address });
     User.destroy({
       where: {
-        address
+        walletAddresses: {$contains: address}
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteByAuth0Id = async (auth0Id) => {
+  try {
+    userAuth0IdValidate({ auth0Id });
+    User.destroy({
+      where: {
+        auth0Id
       }
     });
   } catch (error) {
@@ -273,11 +306,14 @@ module.exports = Object.freeze({
   User,
   create,
   update,
-  updateByAddress,
   findByAddress,
+  findByAddresses,
   findAll,
   deleteByAddress,
   findByUsername,
   findAllWithLocation,
-  findByAuth0Id
+  findByAuth0Id,
+  deleteByAddress,
+  deleteByAuth0Id,
+  updateByAuth0Id
 });

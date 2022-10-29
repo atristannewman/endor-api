@@ -1,7 +1,7 @@
 const Joi = require("joi");
 
 const schema = Joi.object({
-    addresses: Joi.array().items(Joi.string()).required(),
+    walletAddresses: Joi.array().items(Joi.string()).required(),
 });
 
 exports.userAddressesValidate = (args) => {

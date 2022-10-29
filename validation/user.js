@@ -3,7 +3,7 @@ const { FLOAT } = require("sequelize");
 
 const schema = Joi.object({
   auth0Id: Joi.string().required(),
-  address: Joi.string().required(),
+  walletAddresses: Joi.array().items(Joi.string()).required(),
   hasProof: Joi.boolean().required(),
   hasMoonbird: Joi.boolean().required(),
   username:Joi.string().optional(),
@@ -25,5 +25,11 @@ const schema = Joi.object({
 });
 
 exports.validate = (args) => {
+  console.log(`args wallet addresses length ${args.walletAddresses.length}`)
+  console.log("user validate function")
+  let walletAddresses = args.walletAddresses;
+  walletAddresses = walletAddresses.split(",");
+  args.walletAddresses = walletAddresses;
+  
   return Joi.attempt(args, schema, "Failed parameter validation for User");
 };
