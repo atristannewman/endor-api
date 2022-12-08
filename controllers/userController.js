@@ -251,43 +251,71 @@ module.exports = ({ transactionService, DB }) => {
 
   const getUser = async (httpRequest) => {
     try {
-      const { auth0Id } = httpRequest.query;
+      const { auth0Id, address } = httpRequest.query;
 
-      const user = await DB.User.findByAuth0Id(auth0Id);
-
-      if (user) {
-        return {
-          status: 200,
-          data: {
-            user
+      // Return user with this auth0Id
+      if (auth0Id) {
+        console.log("auth0Id sent")
+        const user = await DB.User.findByAuth0Id(auth0Id);
+        if (user) {
+          return {
+            status: 200,
+            data: {
+              user
+            }
           }
+        } else if (!user) {
+          return {
+            status: 404,
+            data: {
+              message: "No user found",
+            },
+          };
         }
-      } else if (!user) {
-        return {
-          status: 404,
-          data: {
-            message: "No user found",
-          },
-        };
       }
 
-      const usersInfo = users.map((user) => {
-        const userData = user.dataValues;
-        return {
-          walletAddress: userData.address,
-          imageurl: userData.profileImageUrl,
-          hostRating: userData.hostRating,
-          username: userData.username,
-          deviceToken: userData.deviceToken
-        };
-      });
+      // Return user with this address
+      if (address) {
+        console.log("address sent")
+        const user = await DB.User.findByAddresses([address]);
 
-      return {
-        status: 200,
-        data: {
-          usersInfo,
-        },
-      };
+        if (user) {
+          return {
+            status: 200,
+            data: {
+              user
+            }
+          }
+        } else if (!user) {
+          return {
+            status: 404,
+            data: {
+              message: "No user found",
+            },
+          };
+        }
+      }
+
+
+    //   
+
+    //   const usersInfo = users.map((user) => {
+    //     const userData = user.dataValues;
+    //     return {
+    //       walletAddress: userData.address,
+    //       imageurl: userData.profileImageUrl,
+    //       hostRating: userData.hostRating,
+    //       username: userData.username,
+    //       deviceToken: userData.deviceToken
+    //     };
+    //   });
+
+    //   return {
+    //     status: 200,
+    //     data: {
+    //       usersInfo,
+    //     },
+    //   };
     } catch (error) {
       return {
         status: 500,

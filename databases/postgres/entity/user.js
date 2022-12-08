@@ -137,29 +137,58 @@ const findByAddress = async (address) => {
   }
 };
 
+const arrayOfUsersWallets = async (users) => {
+  var arrayOfWallets = []
+  var index = 0
+
+  do {
+    arrayOfWallets.push(users[index].walletAddresses)
+    index++
+
+    if (index === users.length) {
+      return arrayOfWallets
+    }
+  } while (index < users.length);
+}
+
+const getIndexOfMatchingWallets = async (arrayOfAllUserWallets, walletAddresses) => {
+  var returnIndex = null
+  var index = 0
+
+  do {
+    arrayOfAllUserWallets[index].forEach((address) =>{
+      if(walletAddresses.includes(address)) {
+        returnIndex = index
+      }
+    })
+
+    index++
+  } while (!returnIndex || index < arrayOfAllUserWallets.length);
+  console.log(`ln 167 returnIndex ${returnIndex}`)
+
+  return returnIndex
+}
+
 const findByAddresses = async (walletAddresses) => {
   // eslint-disable-next-line no-useless-catch
   try { 
     userAddressesValidate({ walletAddresses });
-
-    const allUsers = await User.findAll();
-    
-    for(i=0; i<allUsers.length; i++) {
-      if (allUsers[i].walletAddresses) {
-
-        for(j=0; j<walletAddresses.length; j++) {
-          if (allUsers[i].walletAddresses.includes(walletAddresses[j])) {
-            return allUsers[i]
-          }
-        }
-      }  
-    }
-
-    return
+    const allUsers = await User.findAll()
+    const arrayOfAllUserWallets = await arrayOfUsersWallets(allUsers)
+    const indexOfMatchingWallets = await getIndexOfMatchingWallets(arrayOfAllUserWallets, walletAddresses)
+    return allUsers[indexOfMatchingWallets]
   } catch (error) {
     throw error;
   }
 };
+
+const addressesInTrueWallets = async (addresses, trueAddresses) => {
+  let returnAddresses = addresses.filter( address => {
+    walletAddresses.includes(address)
+  })
+
+  return returnAddresses
+}
 
 const findByAuth0Id = async (auth0Id) => {
   // eslint-disable-next-line no-useless-catch
