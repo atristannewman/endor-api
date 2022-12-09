@@ -27,7 +27,26 @@ module.exports = ({ DB }) => {
     }
   };
 
+  const getTokenproofWalletForNonce = async (httpRequest) => {
+    try {
+      console.log(`authenticationController.js ln 32 httpRequest.query ${JSON.stringify(httpRequest.query)}`)
+      const {nonce} = httpRequest.query
+      console.log(`authenticationController.js ln 34 nonce ${JSON.stringify(nonce)}`)
+      const walletAddress = await DB.TokenproofAddress.findByNonce(nonce)
+      console.log(`authenticationController.js ln 36 nonce ${JSON.stringify(walletAddress)}`)
+      return {
+        status: 200,
+        data: {
+          walletAddress
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
   return Object.freeze({
-    createTokenproofAddress
+    createTokenproofAddress,
+    getTokenproofWalletForNonce
   });
 };

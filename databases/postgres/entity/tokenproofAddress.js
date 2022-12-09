@@ -34,7 +34,26 @@ const create = async (args) => {
     }
 };
 
+const findByNonce = async (args) => {
+  try {
+    console.log(`tokenproofAddress.js ln 39 args: ${args}`)
+    const tokenproofAddress = await await TokenproofAddress.findOne({
+      where: {
+        nonce: args
+      }
+    });
+
+    console.log(`tokenproofAddress.js ln 46 tokenproofAddress.walletAddress: ${tokenproofAddress.walletAddress}`)
+
+    return tokenproofAddress.walletAddress
+  } catch (error) {
+  console.log(error);
+  throw error;
+  }
+};
+
 module.exports = Object.freeze({
     TokenproofAddress,
-    create
+    create,
+    findByNonce
 })
