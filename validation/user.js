@@ -2,13 +2,14 @@ const Joi = require("joi");
 const { FLOAT } = require("sequelize");
 
 const schema = Joi.object({
-  address: Joi.string().required(),
+  auth0Id: Joi.string().required(),
+  walletAddresses: Joi.array().items(Joi.string()).required(),
   hasProof: Joi.boolean().required(),
   hasMoonbird: Joi.boolean().required(),
   username:Joi.string().optional(),
   hostRating:Joi.number().optional(),
   profileImageUrl:Joi.string().optional(),
-  deviceToken: Joi.string().optional(),
+  deviceToken: Joi.string().optional().allow('null',null),
   username:Joi.string().required(),
   hostRating:Joi.number().required(),
   profileImageUrl:Joi.string().optional(),

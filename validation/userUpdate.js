@@ -16,6 +16,7 @@ const schema = Joi.object({
     latitude:Joi.number().required().allow('null',null,''),
     longitude:Joi.number().required().allow('null',null,'')
   }).optional().allow('','null',null),
+  walletAddresses: Joi.array().items(Joi.string()).required()
 });
 
 exports.userUpdateValidate = (args) => {

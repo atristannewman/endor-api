@@ -2,8 +2,10 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
 const makeUser = require("../../../model/user");
-const { userAddressValidate } = require("../../../validation/userAddress");
+const { userAddressValidate } = require("../../../validation/userAddress.js");
+const { userAddressesValidate } = require("../../../validation/userAddresses.js");
 const { userUpdateValidate } = require("../../../validation/userUpdate");
+const { userAuth0IdValidate } = require("../../../validation/userAuth0Id");
 
 const User = db.define(
   "user",
@@ -17,9 +19,14 @@ const User = db.define(
       type: Sequelize.STRING,
       allowNull: false
     },
-    address: {
+    auth0Id: {
       type: Sequelize.STRING,
       allowNull: false
+    },
+    walletAddresses: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+      allowNull: false,
+      notEmpty: true
     },
     profileImageUrl: {
       type: Sequelize.STRING,
@@ -74,6 +81,7 @@ const User = db.define(
 );
 
 const create = async (args) => {
+
   const userInstance = makeUser(args);
 
   let location = userInstance.getLocation();
@@ -95,7 +103,8 @@ const create = async (args) => {
 
   try {
     return await User.create({
-      address: userInstance.getAddress(),
+      auth0Id: userInstance.getAuth0Id(),
+      walletAddresses: userInstance.getWalletAddresses(),
       hasProof: userInstance.getHasProof(),
       hasMoonbird: userInstance.getHasMoonBird(),
       username: userInstance.getUsername(),
@@ -111,13 +120,83 @@ const create = async (args) => {
   }
 };
 
+
 const findByAddress = async (address) => {
   // eslint-disable-next-line no-useless-catch
   try {
     userAddressValidate({ address });
+    const userByAddress = await User.findOne({
+      where: {
+        walletAddresses: { [Sequelize.contains]: [address] }
+      }
+    });
+    
+    return userByAddress
+  } catch (error) {
+    throw error;
+  }
+};
+
+const arrayOfUsersWallets = async (users) => {
+  var arrayOfWallets = []
+  var index = 0
+
+  do {
+    arrayOfWallets.push(users[index].walletAddresses)
+    index++
+
+    if (index === users.length) {
+      return arrayOfWallets
+    }
+  } while (index < users.length);
+}
+
+const getIndexOfMatchingWallets = async (arrayOfAllUserWallets, walletAddresses) => {
+  var returnIndex = null
+  var index = 0
+
+  do {
+    arrayOfAllUserWallets[index].forEach((address) =>{
+      if(walletAddresses.includes(address)) {
+        returnIndex = index
+      }
+    })
+
+    index++
+  } while (!returnIndex || index < arrayOfAllUserWallets.length);
+  console.log(`ln 167 returnIndex ${returnIndex}`)
+
+  return returnIndex
+}
+
+const findByAddresses = async (walletAddresses) => {
+  // eslint-disable-next-line no-useless-catch
+  try { 
+    userAddressesValidate({ walletAddresses });
+    const allUsers = await User.findAll()
+    const arrayOfAllUserWallets = await arrayOfUsersWallets(allUsers)
+    const indexOfMatchingWallets = await getIndexOfMatchingWallets(arrayOfAllUserWallets, walletAddresses)
+    return allUsers[indexOfMatchingWallets]
+  } catch (error) {
+    throw error;
+  }
+};
+
+const addressesInTrueWallets = async (addresses, trueAddresses) => {
+  let returnAddresses = addresses.filter( address => {
+    walletAddresses.includes(address)
+  })
+
+  return returnAddresses
+}
+
+const findByAuth0Id = async (auth0Id) => {
+  // eslint-disable-next-line no-useless-catch
+  try {
+    userAuth0IdValidate({ auth0Id });
     return await User.findOne({
       where: {
-        address
+        auth0Id
       }
     });
   } catch (error) {
@@ -176,6 +255,18 @@ const findByUsername = async (username) => {
   }
 };
 
+const findByUUID = async (uuid) => {
+  try {
+    return await User.findOne({
+      where: {
+        uuid
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const update = async (id, args) => {
   try {
     User.update(args, {
@@ -188,9 +279,8 @@ const update = async (id, args) => {
   }
 };
 
-const updateByAddress = async (address, args) => {
+const updateByAuth0Id = async (auth0Id, args) => {
   try {
-    userAddressValidate({ address });
     userUpdateValidate(args);
 
     const location = args?.location;
@@ -210,9 +300,10 @@ const updateByAddress = async (address, args) => {
       }
     }
 
+    console.log("entitiy user user update by auth0 id line 265")
     return User.update(args, {
       where: {
-        address
+        auth0Id
       }
     });
   } catch (error) {
@@ -226,7 +317,19 @@ const deleteByAddress = async (address) => {
     userAddressValidate({ address });
     User.destroy({
       where: {
-        address
+        walletAddresses: {$contains: address}
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+const deleteByUUID = async (uuid) => {
+  try {
+    User.destroy({
+      where: {
+        uuid
       }
     });
   } catch (error) {
@@ -238,10 +341,13 @@ module.exports = Object.freeze({
   User,
   create,
   update,
-  updateByAddress,
   findByAddress,
+  findByAddresses,
+  findByUUID,
   findAll,
-  deleteByAddress,
+  deleteByUUID,
   findByUsername,
-  findAllWithLocation
+  findAllWithLocation,
+  findByAuth0Id,
+  updateByAuth0Id
 });

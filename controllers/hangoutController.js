@@ -28,8 +28,6 @@ module.exports = ({ DB }) => {
         const users = usersWithLocation;
         console.log(`Number of users with location: ${users.length}`);
 
-        // Need to Discuss
-        // Min Distance Currently set to 1km
         // Geo Location or lat, long
         let i = 0;
         while (i < users.length) {
@@ -38,7 +36,10 @@ module.exports = ({ DB }) => {
             { latitude: users[i].location.latitude, longitude: users[i].location.longitude },
             0.1
           );
+
           distance = geolib.convertDistance(distance, "mi");
+          console.log(`user prefered distance from hangout: ${users[i].notificationPreferences.distanceFromPossibleAttendees} 
+          distance hangout is from user ${distance}`)
           if (distance <= users[i].notificationPreferences.distanceFromPossibleAttendees) {
             potentialUserArray.push({
               address: users[i].address,
@@ -47,10 +48,11 @@ module.exports = ({ DB }) => {
               deviceToken: users[i].deviceToken
             });
           }
+
           ++i;
         }
         i = 0;
-        console.log(`Number of users found within their preference of the new hangout ${potentialUserArray.length}`);
+        console.log(`Number of users found within their distance preference of the new hangout ${potentialUserArray.length}`);
 
         while (k < potentialUserArray.length) {
           potentialUser = potentialUserArray[k];
