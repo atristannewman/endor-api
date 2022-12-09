@@ -1,13 +1,25 @@
 /* eslint-disable no-useless-catch */
 // const geolib = require("geolib");
 
+
 module.exports = ({ DB }) => {
-  const createTokenproofAuthentication = async (httpRequest) => {
+  const createTokenproofAddress = async (httpRequest) => {
     try {
+      console.log(`authenticationController.js ln 7 httpRequest.body ${JSON.stringify(httpRequest.body)}`)
+      const nonce = httpRequest.body.nonce
+      const walletAddress = httpRequest.body.account
+
+      const tokenproofAddress = {
+        nonce,
+        walletAddress
+      }
+
+      DB.TokenproofAddress.create(tokenproofAddress);
+
       return {
         status: 200,
         data: {
-          message: "looks like we made it"
+          message: "tokenproof address created"
         }
       };
     } catch (error) {
@@ -16,6 +28,6 @@ module.exports = ({ DB }) => {
   };
 
   return Object.freeze({
-    createTokenproofAuthentication
+    createTokenproofAddress
   });
 };

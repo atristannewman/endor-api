@@ -55,7 +55,7 @@ module.exports = ({ transactionService, DB }) => {
     }
   };
 
-  const getAllUsers = async (httpRequest) => {
+  const getAllUsers = async () => {
     try {
       const allUsers = await DB.User.findAll();
 
