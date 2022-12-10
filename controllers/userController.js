@@ -90,7 +90,10 @@ module.exports = ({ transactionService, DB }) => {
         notificationPreferences
       } = httpRequest.body;
 
-      const cleanAddressesArray = urlencodedToRawAddressesArray(walletAddresses)
+      const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
+      console.log(`userController.js ln 94 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
+      console.log(`userController.js ln 94 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
+      console.log(`userController.js ln 94 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
 
       const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
       if (userByAddresses) {

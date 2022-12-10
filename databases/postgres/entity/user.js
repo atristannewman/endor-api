@@ -156,6 +156,7 @@ const getIndexOfMatchingWallets = async (arrayOfAllUserWallets, walletAddresses)
   var index = 0
 
   do {
+    console.log(`user.js ln 159 arrayOfAllUserWallets[index] ${JSON.stringify(arrayOfAllUserWallets[index])}`)
     arrayOfAllUserWallets[index].forEach((address) =>{
       if(walletAddresses.includes(address)) {
         returnIndex = index
@@ -163,7 +164,8 @@ const getIndexOfMatchingWallets = async (arrayOfAllUserWallets, walletAddresses)
     })
 
     index++
-  } while (!returnIndex || index < arrayOfAllUserWallets.length);
+    console.log(`user.js ln 167 index arrayOfAllUserWallets.length ${JSON.stringify(index)} ${JSON.stringify(arrayOfAllUserWallets.length)}`)
+  } while (!returnIndex && index < arrayOfAllUserWallets.length);
   console.log(`ln 167 returnIndex ${returnIndex}`)
 
   return returnIndex
