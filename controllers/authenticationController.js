@@ -5,7 +5,6 @@
 module.exports = ({ DB }) => {
   const createTokenproofAddress = async (httpRequest) => {
     try {
-      console.log(`authenticationController.js ln 7 httpRequest.body ${JSON.stringify(httpRequest.body)}`)
       const nonce = httpRequest.body.nonce
       const walletAddress = httpRequest.body.account
 
@@ -29,11 +28,9 @@ module.exports = ({ DB }) => {
 
   const getTokenproofWalletForNonce = async (httpRequest) => {
     try {
-      console.log(`authenticationController.js ln 32 httpRequest.query ${JSON.stringify(httpRequest.query)}`)
       const {nonce} = httpRequest.query
-      console.log(`authenticationController.js ln 34 nonce ${JSON.stringify(nonce)}`)
       const walletAddress = await DB.TokenproofAddress.findByNonce(nonce)
-      console.log(`authenticationController.js ln 36 nonce ${JSON.stringify(walletAddress)}`)
+
       return {
         status: 200,
         data: {
