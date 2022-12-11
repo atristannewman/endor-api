@@ -142,7 +142,10 @@ const arrayOfUsersWallets = async (users) => {
   var index = 0
 
   do {
-    arrayOfWallets.push(users[index].walletAddresses)
+    // Had to clean the letters here, because if you call toLowerCase on the array, it won't adjust the elemenst
+    // characters.
+    const userWalletAddressesLowerCase = users[index].walletAddresses.map((address) => {return address.toLowerCase()})
+    arrayOfWallets.push(userWalletAddressesLowerCase)
     index++
 
     if (index === users.length) {
@@ -151,24 +154,28 @@ const arrayOfUsersWallets = async (users) => {
   } while (index < users.length);
 }
 
-const getIndexOfMatchingWallets = async (arrayOfAllUserWallets, walletAddresses) => {
+const getIndexOfMatchingWallets = async (arrayOfAllUserWalletArrays, walletAddresses) => {
   var returnIndex = null
   var index = 0
 
   do {
-    console.log(`user.js ln 159 arrayOfAllUserWallets[index] ${JSON.stringify(arrayOfAllUserWallets[index])}`)
-    arrayOfAllUserWallets[index].forEach((address) =>{
-      if(walletAddresses.includes(address)) {
+    arrayOfAllUserWalletArrays[index].forEach((address) =>{
+      
+      if(walletAddresses.includes(address.toLowerCase())) {
         returnIndex = index
       }
     })
 
-    index++
-    console.log(`user.js ln 167 index arrayOfAllUserWallets.length ${JSON.stringify(index)} ${JSON.stringify(arrayOfAllUserWallets.length)}`)
-  } while (!returnIndex && index < arrayOfAllUserWallets.length);
-  console.log(`ln 167 returnIndex ${returnIndex}`)
+    if (index == arrayOfAllUserWalletArrays.length - 1) {
+      return
+    }
 
-  return returnIndex
+    if(returnIndex) {
+      console.log("Return index set")
+      return returnIndex
+    }
+    index++
+  } while (!returnIndex && index < arrayOfAllUserWalletArrays.length);
 }
 
 const findByAddresses = async (walletAddresses) => {
@@ -177,8 +184,9 @@ const findByAddresses = async (walletAddresses) => {
     userAddressesValidate({ walletAddresses });
     const allUsers = await User.findAll()
     const arrayOfAllUserWallets = await arrayOfUsersWallets(allUsers)
-    const indexOfMatchingWallets = await getIndexOfMatchingWallets(arrayOfAllUserWallets, walletAddresses)
-    return allUsers[indexOfMatchingWallets]
+    const cleanSearchedWalletAddresses = walletAddresses.map((address) => {return address.toLowerCase()})
+    const indexOfUserWithMatchingWallet = await getIndexOfMatchingWallets(arrayOfAllUserWallets, cleanSearchedWalletAddresses)
+    return allUsers[indexOfUserWithMatchingWallet]
   } catch (error) {
     throw error;
   }

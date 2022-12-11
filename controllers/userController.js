@@ -281,6 +281,7 @@ module.exports = ({ transactionService, DB }) => {
       if (address) {
         console.log("address sent")
         const user = await DB.User.findByAddresses([address]);
+        console.log(`userController.js ln 284 user ${user}`)
 
         if (user) {
           return {
@@ -299,26 +300,6 @@ module.exports = ({ transactionService, DB }) => {
         }
       }
 
-
-    //   
-
-    //   const usersInfo = users.map((user) => {
-    //     const userData = user.dataValues;
-    //     return {
-    //       walletAddress: userData.address,
-    //       imageurl: userData.profileImageUrl,
-    //       hostRating: userData.hostRating,
-    //       username: userData.username,
-    //       deviceToken: userData.deviceToken
-    //     };
-    //   });
-
-    //   return {
-    //     status: 200,
-    //     data: {
-    //       usersInfo,
-    //     },
-    //   };
     } catch (error) {
       return {
         status: 500,
