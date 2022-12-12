@@ -1,7 +1,7 @@
 module.exports = ({ transactionService, DB }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
     console.log(`userController.js ln 3 walletAddresses ${walletAddresses}`)
-    if (!walletAddressesArray) {
+    if (!walletAddresses) {
       return []
     }
 
