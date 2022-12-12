@@ -1,6 +1,10 @@
 module.exports = ({ transactionService, DB }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
     console.log(`userController.js ln 3 walletAddresses ${walletAddresses}`)
+    if (!walletAddressesArray) {
+      return []
+    }
+
     let walletAddressesArray = walletAddresses
     // Clean x-www-urlencoded data
     if(!walletAddressesArray.includes(",") && walletAddresses.length) {
