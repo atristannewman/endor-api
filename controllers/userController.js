@@ -3,6 +3,7 @@ module.exports = ({ transactionService, DB }) => {
     let walletAddressesArray = walletAddresses
     // Clean x-www-urlencoded data
     if(!walletAddressesArray.includes(",") && walletAddresses.length) {
+      urlencodedToRawAddressesArray
       walletAddressesArray = [walletAddressesArray]
     } else {
       walletAddressesArray = walletAddressesArray.split(",")
@@ -169,7 +170,11 @@ module.exports = ({ transactionService, DB }) => {
         auth0Id 
       } = httpRequest.body;
 
-      const cleanAddressesArray = urlencodedToRawAddressesArray(walletAddresses)
+      console.log(`userController.js ln 172 walletAddresses: ${JSON.stringify(walletAddresses)}`)
+
+      const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
+
+      console.log(`userController.js ln 176 cleanAddressesArray: ${JSON.stringify(cleanAddressesArray)}`)
 
       const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
       if (!userByAuth0Id) {
