@@ -204,11 +204,14 @@ const findByAuth0Id = async (auth0Id) => {
   // eslint-disable-next-line no-useless-catch
   try {
     userAuth0IdValidate({ auth0Id });
-    return await User.findOne({
+    const userByAuth0Id = await User.findOne({
       where: {
         auth0Id
       }
-    });
+    })
+    console.log(`user.js ln 212 userByAuth0Id ${JSON.stringify(userByAuth0Id)}`)
+
+    return userByAuth0Id
   } catch (error) {
     throw error;
   }

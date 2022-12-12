@@ -1,15 +1,16 @@
 module.exports = ({ transactionService, DB }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
+    console.log(`userController.js ln 3 walletAddresses ${walletAddresses}`)
     let walletAddressesArray = walletAddresses
     // Clean x-www-urlencoded data
     if(!walletAddressesArray.includes(",") && walletAddresses.length) {
       urlencodedToRawAddressesArray
       walletAddressesArray = [walletAddressesArray]
-    } else {
+    } else if (walletAddresses) {
       walletAddressesArray = walletAddressesArray.split(",")
     }
-
-    return walletAddressesArray
+    console.log(`userController.js ln 12 walletAddressesArray ${walletAddressesArray}`)
+    return !walletAddressesArray ? [] : walletAddressesArray
   }
 
   const getProfile = async (httpRequest) => {
@@ -160,7 +161,7 @@ module.exports = ({ transactionService, DB }) => {
     try {
 
       const {
-        walletAddresses, 
+        walletAddresses,
         username, 
         hostRating, 
         profileImageUrl, 
@@ -170,13 +171,14 @@ module.exports = ({ transactionService, DB }) => {
         auth0Id 
       } = httpRequest.body;
 
-      console.log(`userController.js ln 172 walletAddresses: ${JSON.stringify(walletAddresses)}`)
+      console.log(`userController ln 174 updateUser ${JSON.stringify(httpRequest.body)}`)
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
-
-      console.log(`userController.js ln 176 cleanAddressesArray: ${JSON.stringify(cleanAddressesArray)}`)
-
       const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
+
+      console.log(`userController.js ln 179 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
+      console.log(`userController.js ln 180 typeof cleanAddressesArray ${JSON.stringify(typeof cleanAddressesArray)}`)
+
       if (!userByAuth0Id) {
         return {
           status: 409,
@@ -187,6 +189,7 @@ module.exports = ({ transactionService, DB }) => {
       }
 
       const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
+      console.log(`userController.js ln 1 userByAddresses: ${JSON.stringify(userByAddresses)}`)
       if (userByAddresses && userByAddresses.auth0Id != auth0Id) {
         return {
           status: 409,
@@ -196,6 +199,7 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
             
+      console.log(`userController.js ln 200 cleanAddressesArray ${cleanAddressesArray}`)
       await DB.User.updateByAuth0Id(auth0Id, {
         username,
         hostRating,
