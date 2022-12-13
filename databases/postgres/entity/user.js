@@ -209,7 +209,6 @@ const findByAuth0Id = async (auth0Id) => {
         auth0Id
       }
     })
-    console.log(`user.js ln 212 userByAuth0Id ${JSON.stringify(userByAuth0Id)}`)
 
     return userByAuth0Id
   } catch (error) {

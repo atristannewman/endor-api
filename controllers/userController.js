@@ -180,9 +180,6 @@ module.exports = ({ transactionService, DB }) => {
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
       const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
 
-      console.log(`userController.js ln 179 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
-      console.log(`userController.js ln 180 typeof cleanAddressesArray ${JSON.stringify(typeof cleanAddressesArray)}`)
-
       if (!userByAuth0Id) {
         return {
           status: 409,
@@ -203,7 +200,6 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
             
-      console.log(`userController.js ln 200 cleanAddressesArray ${cleanAddressesArray}`)
       await DB.User.updateByAuth0Id(auth0Id, {
         username,
         hostRating,
