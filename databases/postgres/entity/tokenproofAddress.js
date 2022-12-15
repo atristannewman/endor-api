@@ -15,7 +15,11 @@ const TokenproofAddress = db.define(
         type: Sequelize.STRING,
         allowNull: false,
         primaryKey: true
-      }
+      },
+    },
+    {
+      // don't add the timestamp attributes (updatedAt, createdAt)
+      timestamps: false
     }
 )
 
