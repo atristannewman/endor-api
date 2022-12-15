@@ -3,15 +3,12 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('tokenproofAddresses', {
-      nonce: {
-        type: Sequelize.STRING,
-        primaryKey: true,
-      },
+      nonce: Sequelize.STRING,
       walletAddress: Sequelize.STRING
     })
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("hangout");
+    await queryInterface.dropTable("tokenproofAddresses");
   },
 };
