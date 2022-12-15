@@ -15,8 +15,6 @@ module.exports = ({ validate }) => {
         getHost: () => args.host
       });
 
-      console.log(`return object: ${returnObject}`);
-
       return returnObject;
     } catch (error) {
       throw error;

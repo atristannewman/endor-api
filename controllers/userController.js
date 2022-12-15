@@ -1,6 +1,5 @@
 module.exports = ({ transactionService, DB }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
-    console.log(`userController.js ln 3 walletAddresses ${walletAddresses}`)
     if (!walletAddresses) {
       return []
     }
@@ -13,7 +12,6 @@ module.exports = ({ transactionService, DB }) => {
     } else if (walletAddresses) {
       walletAddressesArray = walletAddressesArray.split(",")
     }
-    console.log(`userController.js ln 12 walletAddressesArray ${walletAddressesArray}`)
     return !walletAddressesArray ? [] : walletAddressesArray
   }
 
@@ -97,9 +95,6 @@ module.exports = ({ transactionService, DB }) => {
       } = httpRequest.body;
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
-      console.log(`userController.js ln 94 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
-      console.log(`userController.js ln 94 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
-      console.log(`userController.js ln 94 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
 
       const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
       if (userByAddresses) {
@@ -290,7 +285,6 @@ module.exports = ({ transactionService, DB }) => {
       if (address) {
         console.log("address sent")
         const user = await DB.User.findByAddresses([address]);
-        console.log(`userController.js ln 284 user ${user}`)
 
         if (user) {
           return {
