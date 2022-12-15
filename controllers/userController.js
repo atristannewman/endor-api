@@ -8,12 +8,11 @@ module.exports = ({ transactionService, DB }) => {
     let walletAddressesArray = walletAddresses
     // Clean x-www-urlencoded data
     if(!walletAddressesArray.includes(",") && walletAddresses.length) {
-      urlencodedToRawAddressesArray
       walletAddressesArray = [walletAddressesArray]
     } else if (walletAddresses) {
       walletAddressesArray = walletAddressesArray.split(",")
     }
-    console.log(`userController.js ln 12 walletAddressesArray ${walletAddressesArray}`)
+    console.log(`userController.js ln 12 walletAddressesArray ${JSON.stringify(walletAddressesArray)}`)
     return !walletAddressesArray ? [] : walletAddressesArray
   }
 
@@ -97,9 +96,9 @@ module.exports = ({ transactionService, DB }) => {
       } = httpRequest.body;
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
-      console.log(`userController.js ln 94 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
-      console.log(`userController.js ln 94 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
-      console.log(`userController.js ln 94 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
+      console.log(`userController.js ln 100 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
+      console.log(`userController.js ln 101 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
+      console.log(`userController.js ln 102 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
 
       const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
       if (userByAddresses) {

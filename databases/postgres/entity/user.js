@@ -181,9 +181,12 @@ const getIndexOfMatchingWallets = async (arrayOfAllUserWalletArrays, walletAddre
 const findByAddresses = async (walletAddresses) => {
   // eslint-disable-next-line no-useless-catch
   try { 
+    console.log(`ln 184 user.js findByAddresses walletAddresses ${JSON.stringify(walletAddresses)}`)
     userAddressesValidate({ walletAddresses });
     const allUsers = await User.findAll()
+    console.log(`ln 187 user.js findByAddresses walletAddresses ${JSON.stringify(walletAddresses)}`)
     const arrayOfAllUserWallets = await arrayOfUsersWallets(allUsers)
+    console.log(`ln 189 user.js findByAddresses walletAddresses ${JSON.stringify(walletAddresses)}`)
     const cleanSearchedWalletAddresses = walletAddresses.map((address) => {return address.toLowerCase()})
     const indexOfUserWithMatchingWallet = await getIndexOfMatchingWallets(arrayOfAllUserWallets, cleanSearchedWalletAddresses)
     return allUsers[indexOfUserWithMatchingWallet]
