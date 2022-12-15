@@ -5,7 +5,7 @@ const makeTokenproofAddress = require("../../../model/tokenproofAddress");
 const { userAddressValidate } = require("../../../validation/userAddress.js");
 
 const TokenproofAddress = db.define(
-    "tokenproofAddress",
+    "tokenproofAddresses",
     {
       walletAddress: {
         type: Sequelize.STRING,
