@@ -5,7 +5,7 @@ const makeTokenproofAddress = require("../../../model/tokenproofAddress");
 const { userAddressValidate } = require("../../../validation/userAddress.js");
 
 const TokenproofAddress = db.define(
-    "tokenproofAddress",
+    "tokenproofAddresses",
     {
       walletAddress: {
         type: Sequelize.STRING,
@@ -15,7 +15,11 @@ const TokenproofAddress = db.define(
         type: Sequelize.STRING,
         allowNull: false,
         primaryKey: true
-      }
+      },
+    },
+    {
+      // don't add the timestamp attributes (updatedAt, createdAt)
+      timestamps: false
     }
 )
 

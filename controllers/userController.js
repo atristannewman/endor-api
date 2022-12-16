@@ -7,7 +7,6 @@ module.exports = ({ transactionService, DB }) => {
     let walletAddressesArray = walletAddresses
     // Clean x-www-urlencoded data
     if(!walletAddressesArray.includes(",") && walletAddresses.length) {
-      urlencodedToRawAddressesArray
       walletAddressesArray = [walletAddressesArray]
     } else if (walletAddresses) {
       walletAddressesArray = walletAddressesArray.split(",")
