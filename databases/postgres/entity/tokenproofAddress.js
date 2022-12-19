@@ -40,7 +40,7 @@ const create = async (args) => {
 
 const findByNonce = async (args) => {
   try {
-    const tokenproofAddress = await await TokenproofAddress.findOne({
+    const tokenproofAddress = await TokenproofAddress.findOne({
       where: {
         nonce: args
       }
