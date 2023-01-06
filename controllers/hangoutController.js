@@ -2,8 +2,11 @@
 const geolib = require("geolib");
 const appleNotification = require("../services/appleNotificationService");
 const googleServices = require("../services/googleServices");
+const moralisService = require("../services/moralisService");
+const {User} = require("../databases/postgres/entity/user");
 
 module.exports = ({ DB }) => {
+  // CREATE
   const createHangout = async (httpRequest) => {
     try {
       const { name, startTime, endTime, address, tags, host } = httpRequest.body;
@@ -102,6 +105,77 @@ module.exports = ({ DB }) => {
     }
   };
 
+  // READ
+  const getHangouts = async (httpRequest) => {
+    try {
+      const uuid = httpRequest.query.uuid
+      var hangouts = null
+
+      if(uuid) {
+        hangouts = await getHangoutsForUUID(uuid)
+      } else {
+        hangouts = await DB.Hangout.findAll();
+      } 
+
+      return {
+        status: 200,
+        data: {
+          hangouts
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getHangoutsForUUID = async (uuid) => {
+    try {
+      console.log(`hangoutController.js ln 136 uuid ${uuid}`)
+      const user = await User.findOne({
+        where: {
+          uuid
+        }
+      });
+      // console.log(`hangoutController.js ln 140 user ${JSON.stringify(user)}`)
+
+      const userWallets = user.walletAddresses
+      console.log(`hangoutController.js ln 146 userWallets ${JSON.stringify(userWallets)}`)
+      const testAddresses = ["0x4038f1a494f8ec245cf85Ea385E53FA111958b01", 
+      "0x7d22aF94809C95324c81CbBcFd7C26C9d4B665d8"]
+      var nFTContracts = []
+      var index = 0
+
+      do {
+        console.log(`hangoutController.js ln 154 testAddresses[index] ${testAddresses[index]}`)
+        const nFTContracts = await moralisService.getNFTsForAddress(testAddresses[index])
+        const eRC721Contracts = nFTContracts.filter(function (nft) {
+          return nft.contract_type === "ERC721"
+        });
+        nFTContracts.push.bind(eRC721Contracts)
+
+        index++
+      } while (testAddresses.length > index)
+      // const nFTContracts = moralis.getNFTContracts(userWallets)
+      // var hangouts = []
+      // nFTContracts.forEach((contract) => {
+      //   hangouts.push(DB.Hangout.where({
+      //     contractAddress === contract
+      //   }))
+      // })
+      console.log(`hangoutController.js ln 169 nFTContracts ${nFTContracts}`)
+
+      return {
+        status: 200,
+        data: {
+          hangouts
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // UPDATE
   const updateHangout = async (httpRequest) => {
     try {
       const {
@@ -132,6 +206,7 @@ module.exports = ({ DB }) => {
     }
   };
 
+  // DELETE
   const deleteHangout = async (httpRequest) => {
     try {
       const { id } = httpRequest.body;
@@ -150,26 +225,11 @@ module.exports = ({ DB }) => {
     }
   };
 
-  const getHangouts = async () => {
-    try {
-      const hangouts = await DB.Hangout.findAll({
-
-      });
-      return {
-        status: 200,
-        data: {
-          hangouts
-        }
-      };
-    } catch (error) {
-      throw error;
-    }
-  };
-
   return Object.freeze({
     createHangout,
     updateHangout,
     deleteHangout,
-    getHangouts
+    getHangouts,
+    getHangoutsForUUID
   });
 };

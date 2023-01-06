@@ -158,21 +158,26 @@ const getIndexOfMatchingWallets = async (arrayOfAllUserWalletArrays, walletAddre
   var returnIndex = null
   var index = 0
 
+  console.log(`ln 161 arrayOfAllUserWalletArrays ${arrayOfAllUserWalletArrays} walletAddresses ${walletAddresses}`)
   do {
     arrayOfAllUserWalletArrays[index].forEach((address) =>{
-      
+      console.log(`ln 164 address ${address} walletAddresses ${walletAddresses}`)
+      console.log(`ln 165 walletAddresses.includes(address.toLowerCase()) ${walletAddresses.includes(address.toLowerCase())} `)
+
       if(walletAddresses.includes(address.toLowerCase())) {
         returnIndex = index
       }
     })
 
+    if(returnIndex) {
+      return returnIndex
+    }
+
+    // Escapes the while loop at last index
     if (index == arrayOfAllUserWalletArrays.length - 1) {
       return
     }
 
-    if(returnIndex) {
-      return returnIndex
-    }
     index++
   } while (!returnIndex && index < arrayOfAllUserWalletArrays.length);
 }
@@ -186,8 +191,10 @@ const findByAddresses = async (walletAddresses) => {
     console.log(`ln 187 user.js findByAddresses walletAddresses ${JSON.stringify(walletAddresses)}`)
     const arrayOfAllUserWallets = await arrayOfUsersWallets(allUsers)
     console.log(`ln 189 user.js findByAddresses walletAddresses ${JSON.stringify(walletAddresses)}`)
-    const cleanSearchedWalletAddresses = walletAddresses.map((address) => {return address.toLowerCase()})
+    const cleanSearchedWalletAddresses = walletAddresses.map(address => address.toLowerCase())
+    console.log(`ln 191 cleanSearchedWalletAddresses ${JSON.stringify(cleanSearchedWalletAddresses)}`)
     const indexOfUserWithMatchingWallet = await getIndexOfMatchingWallets(arrayOfAllUserWallets, cleanSearchedWalletAddresses)
+    console.log(`ln 193 indexOfUserWithMatchingWallet ${indexOfUserWithMatchingWallet}`)
     return allUsers[indexOfUserWithMatchingWallet]
   } catch (error) {
     throw error;
