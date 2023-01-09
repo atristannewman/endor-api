@@ -12,5 +12,6 @@ module.exports = {
     await queryInterface.changeColumn('user', 'profileImageUrl',{
       type: Sequelize.STRING,
       allowNull: true
-})
+    })
+  },
 };
