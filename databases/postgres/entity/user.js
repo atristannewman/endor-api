@@ -29,7 +29,7 @@ const User = db.define(
       notEmpty: true
     },
     profileImageUrl: {
-      type: Sequelize.STRING,
+      type: Sequelize.STRING(2049),
       allowNull: true
     },
     hasProof: {
