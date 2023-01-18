@@ -7,10 +7,10 @@ module.exports = {
       type: Sequelize.JSON,
             allowNull: true,
             defaultValue: {
-              logoUrl: DataTypes.STRING,
-              ethFloorPrice: DataTypes.DOUBLE,
-              name: DataTypes.STRING,
-              contractAddress: DataTypes.STRING
+              logoUrl: Sequelize.STRING,
+              ethFloorPrice: Sequelize.DOUBLE,
+              name: Sequelize.STRING,
+              contractAddress: Sequelize.STRING
             }
     });
   },
