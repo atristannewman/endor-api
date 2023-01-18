@@ -82,7 +82,7 @@ const User = db.define(
           name: Sequelize.STRING,
           contractAddress: Sequelize.STRING
       }
-  }
+    }
   },
   {
     timestamps: false,
