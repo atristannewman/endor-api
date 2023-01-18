@@ -15,7 +15,8 @@ module.exports = ({ validate }) => {
         getProfileImageUrl: () => args.profileImageUrl,
         getNotificationPreferences: () => args.notificationPreferences === "null" ? null : args.notificationPreferences,
         getLocation: () => args.location === "null" ? null : args.location,
-        getDeviceToken: () => args.deviceToken
+        getDeviceToken: () => args.deviceToken,
+        getNFTs: () => args.NFTs
       });
     } catch (error) {
       throw error;
