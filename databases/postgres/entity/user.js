@@ -74,14 +74,18 @@ const User = db.define(
       }
     },
     NFTs: {
-      type: Sequelize.JSON,
-      allowNull: true,
-      defaultValue: {
+      type: Sequelize.ARRAY({
+        type: Sequelize.JSONB,
+        defaultValue: {
           logoUrl: Sequelize.STRING,
           ethFloorPrice: Sequelize.DOUBLE,
           name: Sequelize.STRING,
           contractAddress: Sequelize.STRING
-      }
+        },
+        allowNull: false
+    }),
+      allowNull: true,
+      defaultValue: []
     }
   },
   {

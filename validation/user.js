@@ -21,7 +21,13 @@ const schema = Joi.object({
     minHostRating: Joi.number().required(),
     minPossibleAttendees: Joi.number().required(),
     distanceFromPossibleAttendees: Joi.number().required()
-  }).optional().allow('','null',null)
+  }).optional().allow('','null',null),
+  NFTs: Joi.array().items(Joi.object({
+    logoUrl: Joi.string().required(),
+    ethFloorPrice: Joi.number().required(),
+    name: Joi.string().required(),
+    contractAddress: Joi.string().required()
+  })).required()
 });
 
 exports.validate = (args) => {
