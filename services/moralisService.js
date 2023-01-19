@@ -18,3 +18,23 @@ module.exports.getNFTsForAddress = async (address) => {
         console.error(error);
     }
 }
+
+
+//CLEAN
+
+module.exports.getNFTCollectionsForWallet = async (walletAddress) => {
+  try {
+    const config = {
+        method: "get",
+        url: `https://api.moralis.io/v2/nfts?wallet=${walletAddress}`,
+        headers: {
+            "x-api-key": process.env.MORALIS_TOKEN,
+        },
+    };
+    const response = await axios(config);
+
+    return response.data.nfts;
+  } catch (err) {
+    console.error(err);
+  }
+}

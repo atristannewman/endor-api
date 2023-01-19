@@ -13,6 +13,24 @@ module.exports = {
               contractAddress: Sequelize.STRING
             }
     });
+
+    await sequelize.queryInterface.addColumn(
+      'user',
+      'NFTs',
+      {
+        type: Sequelize.ARRAY({
+          type: Sequelize.JSONB,
+                allowNull: false,
+                defaultValue: {
+                  logoUrl: Sequelize.STRING,
+                  ethFloorPrice: Sequelize.DOUBLE,
+                  name: Sequelize.STRING,
+                  contractAddress: Sequelize.STRING
+                }
+        }),
+        allowNull: true,
+      }
+    );
   },
 
   async down (queryInterface, Sequelize) {

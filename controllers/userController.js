@@ -1,4 +1,4 @@
-module.exports = ({ transactionService, DB }) => {
+module.exports = ({ transactionService, DB, moralisService }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
     console.log(`userController.js ln 3 walletAddresses ${walletAddresses}`)
     if (!walletAddresses) {
@@ -129,6 +129,9 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
+
+      const usersNFTs = await getNFTCollectionsForWallets(cleanAddressesArray)
+      console.log(`usersNFTs ${usersNFTs}`)
       
       const user = await DB.User.create({
         auth0Id,
@@ -159,6 +162,12 @@ module.exports = ({ transactionService, DB }) => {
       };
     }
   };
+
+  const getNFTCollectionsForWallets = async (walletAddresses) => {
+    const nFTCollections = await moralisService.getNFTCollectionsForWallet(walletAddresses[0])
+    console.log(`userController ln168 nFTCollections ${nFTCollections}`)
+    return nFTCollections
+  }
 
   const updateUser = async (httpRequest) => {
     try {
