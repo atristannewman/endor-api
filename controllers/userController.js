@@ -100,7 +100,11 @@ module.exports = ({ transactionService, DB, moralisService }) => {
       console.log(`userController.js ln 101 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
       console.log(`userController.js ln 102 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
 
-      const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
+      const addressesArrayWithoutTestWallet = cleanAddressesArray.filter(address =>{
+        return address != "0xbebc733c64deba1c494e5b01b89ee16b5cafd2c5" // test wallet
+      })
+      
+      const userByAddresses = await DB.User.findByAddresses(addressesArrayWithoutTestWallet);
       if (userByAddresses) {
         return {
           status: 409,
@@ -197,7 +201,11 @@ module.exports = ({ transactionService, DB, moralisService }) => {
         };
       }
 
-      const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
+      const addressesArrayWithoutTestWallet = cleanAddressesArray.filter(address =>{
+        return address != "0xbebc733c64deba1c494e5b01b89ee16b5cafd2c5" // test wallet
+      })
+
+      const userByAddresses = await DB.User.findByAddresses(addressesArrayWithoutTestWallet);
       console.log(`userController.js ln 1 userByAddresses: ${JSON.stringify(userByAddresses)}`)
       if (userByAddresses && userByAddresses.auth0Id != auth0Id) {
         return {

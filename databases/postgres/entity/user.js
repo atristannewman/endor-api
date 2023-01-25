@@ -211,7 +211,7 @@ const findByAddresses = async (walletAddresses) => {
     console.log(`ln 191 cleanSearchedWalletAddresses ${JSON.stringify(cleanSearchedWalletAddresses)}`)
     const indexOfUserWithMatchingWallet = await getIndexOfMatchingWallets(arrayOfAllUserWallets, cleanSearchedWalletAddresses)
     console.log(`ln 193 indexOfUserWithMatchingWallet ${indexOfUserWithMatchingWallet}`)
-    return allUsers[indexOfUserWithMatchingWallet]
+    return indexOfUserWithMatchingWallet ? allUsers[indexOfUserWithMatchingWallet] : null
   } catch (error) {
     throw error;
   }
