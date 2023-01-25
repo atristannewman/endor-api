@@ -1,6 +1,8 @@
 const connectDatabase = require("../databases");
 // const associations = require("../databases/associations");
 const transactionService = require("../services/transaction");
+const moralisService = require("../services/moralisService");
+
 const makeTransactionController = require("./transactionController");
 const makeUserController = require("./userController");
 const makeVendorController = require("./vendorController");
@@ -11,7 +13,7 @@ const makeAuthenticationController = require("./authenticationController");
 const DB = connectDatabase({ db: "postgres", isMock: false });
 
 const transactionController = makeTransactionController({ transactionService });
-const userController = makeUserController({ transactionService, DB });
+const userController = makeUserController({ transactionService, DB, moralisService });
 const vendorController = makeVendorController({ DB });
 const hangoutController = makeHangoutController({ DB });
 const notificationController = makeNotificationController({ DB });

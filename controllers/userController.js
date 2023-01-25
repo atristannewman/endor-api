@@ -1,4 +1,4 @@
-module.exports = ({ transactionService, DB }) => {
+module.exports = ({ transactionService, DB, moralisService }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
     if (!walletAddresses) {
       return []
@@ -94,9 +94,15 @@ module.exports = ({ transactionService, DB }) => {
       } = httpRequest.body;
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
+      console.log(`userController.js ln 100 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
+      console.log(`userController.js ln 101 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
+      console.log(`userController.js ln 102 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
 
-      const testWalletAddress = "0xbebc733c64deba1c494e5b01b89ee16b5cafd2c5"
-      const userByAddresses = cleanAddressesArray.includes(testWalletAddress) ? null : await DB.User.findByAddresses(cleanAddressesArray);
+      const addressesArrayWithoutTestWallet = cleanAddressesArray.filter(address =>{
+        return address != "0xbebc733c64deba1c494e5b01b89ee16b5cafd2c5" // test wallet
+      })
+      
+      const userByAddresses = await DB.User.findByAddresses(addressesArrayWithoutTestWallet);
       if (userByAddresses) {
         return {
           status: 409,
@@ -125,6 +131,9 @@ module.exports = ({ transactionService, DB }) => {
           },
         };
       }
+
+      // const usersNFTs = await getNFTCollectionsForWallets(cleanAddressesArray)
+      // console.log(`usersNFTs ${usersNFTs}`)
       
       const user = await DB.User.create({
         auth0Id,
@@ -156,6 +165,12 @@ module.exports = ({ transactionService, DB }) => {
     }
   };
 
+  const getNFTCollectionsForWallets = async (walletAddresses) => {
+    const nFTCollections = await moralisService.getNFTCollectionsForWallet(walletAddresses[0])
+    console.log(`userController ln168 nFTCollections ${nFTCollections}`)
+    return nFTCollections
+  }
+
   const updateUser = async (httpRequest) => {
     try {
 
@@ -184,7 +199,11 @@ module.exports = ({ transactionService, DB }) => {
         };
       }
 
-      const userByAddresses = await DB.User.findByAddresses(cleanAddressesArray);
+      const addressesArrayWithoutTestWallet = cleanAddressesArray.filter(address =>{
+        return address != "0xbebc733c64deba1c494e5b01b89ee16b5cafd2c5" // test wallet
+      })
+
+      const userByAddresses = await DB.User.findByAddresses(addressesArrayWithoutTestWallet);
       console.log(`userController.js ln 1 userByAddresses: ${JSON.stringify(userByAddresses)}`)
       if (userByAddresses && userByAddresses.auth0Id != auth0Id) {
         return {

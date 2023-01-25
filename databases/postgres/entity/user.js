@@ -73,6 +73,21 @@ const User = db.define(
         longitude: null
       }
     }
+    // ,
+    // NFTs: {
+    //   type: Sequelize.ARRAY({
+    //     type: Sequelize.JSONB,
+    //     defaultValue: {
+    //       logoUrl: Sequelize.STRING,
+    //       ethFloorPrice: Sequelize.DOUBLE,
+    //       name: Sequelize.STRING,
+    //       contractAddress: Sequelize.STRING
+    //     },
+    //     allowNull: false
+    // }),
+    //   allowNull: true,
+    //   defaultValue: []
+    // }
   },
   {
     timestamps: false,
@@ -195,7 +210,7 @@ const findByAddresses = async (walletAddresses) => {
     console.log(`ln 191 cleanSearchedWalletAddresses ${JSON.stringify(cleanSearchedWalletAddresses)}`)
     const indexOfUserWithMatchingWallet = await getIndexOfMatchingWallets(arrayOfAllUserWallets, cleanSearchedWalletAddresses)
     console.log(`ln 193 indexOfUserWithMatchingWallet ${indexOfUserWithMatchingWallet}`)
-    return allUsers[indexOfUserWithMatchingWallet]
+    return indexOfUserWithMatchingWallet ? allUsers[indexOfUserWithMatchingWallet] : null
   } catch (error) {
     throw error;
   }
