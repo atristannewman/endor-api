@@ -185,7 +185,6 @@ const getIndexOfMatchingWallets = async (arrayOfAllUserWalletArrays, walletAddre
     })
 
     if(returnIndex) {
-      console.log("Return index set")
       return returnIndex
     }
 
@@ -337,7 +336,6 @@ const updateByAuth0Id = async (auth0Id, args) => {
       }
     }
 
-    console.log("entitiy user user update by auth0 id line 265")
     return User.update(args, {
       where: {
         auth0Id

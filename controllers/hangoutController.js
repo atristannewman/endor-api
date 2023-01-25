@@ -29,7 +29,6 @@ module.exports = ({ DB }) => {
         let potentialDistanceFromPossibleAttendees;
         let user;
         const users = usersWithLocation;
-        console.log(`Number of users with location: ${users.length}`);
 
         // Geo Location or lat, long
         let i = 0;
@@ -55,7 +54,6 @@ module.exports = ({ DB }) => {
           ++i;
         }
         i = 0;
-        console.log(`Number of users found within their distance preference of the new hangout ${potentialUserArray.length}`);
 
         while (k < potentialUserArray.length) {
           potentialUser = potentialUserArray[k];
@@ -75,7 +73,6 @@ module.exports = ({ DB }) => {
           }
           l = 0;
           if (potentialUserCount >= (potentialNotificationPreferences.minPossibleAttendees)) {
-            console.log("Attendees Found For Potential User: ", potentialUser.address);
             notifiedUserArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
           } else {
             console.log("Attendees Not Found For Potential User: ", potentialUser.address);
@@ -94,9 +91,7 @@ module.exports = ({ DB }) => {
           ++l;
         }
         k = 0;
-        console.log("Total Notified Users", notifiedUserArray.length);
         notifiedUserArray = notifiedUserArray.map(a => a.address);
-        console.log(`notified user array: ${notifiedUserArray}`);
       }
       // const hangouts = await DB.Hangout.findAll();
       return {

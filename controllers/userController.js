@@ -1,6 +1,5 @@
 module.exports = ({ transactionService, DB, moralisService }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
-    console.log(`userController.js ln 3 walletAddresses ${walletAddresses}`)
     if (!walletAddresses) {
       return []
     }
@@ -12,7 +11,6 @@ module.exports = ({ transactionService, DB, moralisService }) => {
     } else if (walletAddresses) {
       walletAddressesArray = walletAddressesArray.split(",")
     }
-    console.log(`userController.js ln 12 walletAddressesArray ${JSON.stringify(walletAddressesArray)}`)
     return !walletAddressesArray ? [] : walletAddressesArray
   }
 
@@ -306,7 +304,6 @@ module.exports = ({ transactionService, DB, moralisService }) => {
       if (address) {
         console.log("address sent")
         const user = await DB.User.findByAddresses([address]);
-        console.log(`userController.js ln 284 user ${user}`)
 
         if (user) {
           return {
