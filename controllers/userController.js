@@ -130,8 +130,8 @@ module.exports = ({ transactionService, DB, moralisService }) => {
         };
       }
 
-      const usersNFTs = await getNFTCollectionsForWallets(cleanAddressesArray)
-      console.log(`usersNFTs ${usersNFTs}`)
+      // const usersNFTs = await getNFTCollectionsForWallets(cleanAddressesArray)
+      // console.log(`usersNFTs ${usersNFTs}`)
       
       const user = await DB.User.create({
         auth0Id,

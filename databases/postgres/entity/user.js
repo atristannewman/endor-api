@@ -72,21 +72,22 @@ const User = db.define(
         latitude: null,
         longitude: null
       }
-    },
-    NFTs: {
-      type: Sequelize.ARRAY({
-        type: Sequelize.JSONB,
-        defaultValue: {
-          logoUrl: Sequelize.STRING,
-          ethFloorPrice: Sequelize.DOUBLE,
-          name: Sequelize.STRING,
-          contractAddress: Sequelize.STRING
-        },
-        allowNull: false
-    }),
-      allowNull: true,
-      defaultValue: []
     }
+    // ,
+    // NFTs: {
+    //   type: Sequelize.ARRAY({
+    //     type: Sequelize.JSONB,
+    //     defaultValue: {
+    //       logoUrl: Sequelize.STRING,
+    //       ethFloorPrice: Sequelize.DOUBLE,
+    //       name: Sequelize.STRING,
+    //       contractAddress: Sequelize.STRING
+    //     },
+    //     allowNull: false
+    // }),
+    //   allowNull: true,
+    //   defaultValue: []
+    // }
   },
   {
     timestamps: false,
