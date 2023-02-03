@@ -5,8 +5,6 @@ module.exports = {
     await queryInterface.createTable('notifications', {
       topic: {
         type: Sequelize.STRING,
-        primaryKey: true,
-        unique: true,
         allowNull: false
       },
       deviceTokenQueue: {
@@ -24,6 +22,10 @@ module.exports = {
           allowNull: false
         }),
         defaultValue: []
+      },
+      topicId: {
+        type: Sequelize.STRING,
+        defaultValue: null,
       }
     })
   },
