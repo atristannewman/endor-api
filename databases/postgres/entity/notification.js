@@ -37,7 +37,8 @@ const create = async (args) => {
     return await Notification.create({
       topic: notificationInstance.getTopic(),
       deviceTokenQueue: notificationInstance.getDeviceTokenQueue(),
-      subscriberDeviceTokens: notificationInstance.getSubscriberDeviceTokens()
+      subscriberDeviceTokens: notificationInstance.getSubscriberDeviceTokens(),
+      topicId: notificationInstance.getTopicId()
     });
   } catch (error) {
     console.log(error);
@@ -75,7 +76,8 @@ const updateByTopic = async (topic, args) => {
     return await Notification.upsert({
         topic,
         deviceTokenQueue: args.deviceTokenQueue,
-        subscriberDeviceTokens: args.subscriberDeviceTokens
+        subscriberDeviceTokens: args.subscriberDeviceTokens,
+        topicId: args.topicId
     });
   } catch (error) {
     console.log(`error in notification update: ${error}`);
@@ -83,10 +85,11 @@ const updateByTopic = async (topic, args) => {
   }
 };
 
-const deleteByTopic = async (topic) => {
+const deleteByTopic = async (topic, topicId) => {
   try {
     Notification.destroy({
       where: {
+        topicId, 
         topic
       }
     });

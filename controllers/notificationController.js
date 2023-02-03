@@ -22,7 +22,8 @@ module.exports = ({ DB }) => {
       DB.Notification.create({
         topic,
         deviceTokenQueue,
-        subscriberDeviceTokens
+        subscriberDeviceTokens,
+        topicId
       })
 
       const notifications = await DB.Notification.findAll()

@@ -13,7 +13,8 @@ module.exports = ({ validate }) => {
           getSubscriberDeviceTokens: () => {
             const subscriberDeviceTokensArgs = JSON.parse(JSON.stringify(args.deviceTokenQueue));
             return subscriberDeviceTokensArgs;
-          }
+          },
+          getTopicId: () => args.topicId
         });
 
         return returnObject;
