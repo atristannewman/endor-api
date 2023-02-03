@@ -2,6 +2,7 @@
 module.exports = ({ validate }) => {
     return (args) => {
       try {
+        console.log("notification model")
         validate(args);
         console.log("forming notification return object")
         const returnObject = Object.freeze({

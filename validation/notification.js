@@ -9,5 +9,6 @@ const schema = Joi.object({
 });
 
 exports.validate = (args) => {
+  console.log("validating create notification args")
   return schema.validate(args);
 };

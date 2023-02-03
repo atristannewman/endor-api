@@ -7,7 +7,13 @@ const Notification = db.define("notifications", {
     topic: {
       type: Sequelize.STRING,
       primaryKey: true,
-      unique: true,
+      unique: false,
+      allowNull: false
+    },
+    topicId: {
+      type: Sequelize.STRING,
+      primaryKey: true,
+      unique: false,
       allowNull: false
     },
     deviceTokenQueue: {
@@ -31,6 +37,7 @@ const Notification = db.define("notifications", {
 });
 
 const create = async (args) => {
+  console.log("notification entity ln 40")
   const notificationInstance = makeNotification(args);
   try {
     console.log("make notification");

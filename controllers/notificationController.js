@@ -17,7 +17,7 @@ module.exports = ({ DB }) => {
   const createNotificationQueue = async (httpRequest) => {
     try{
       console.log(`httpRequest ${JSON.stringify(httpRequest)}`)
-      const {topic, deviceTokenQueue, subscriberDeviceTokens} = httpRequest.body
+      const {topic, deviceTokenQueue, subscriberDeviceTokens, topicId} = httpRequest.body
       console.log(`httpRequest.body ${JSON.stringify(httpRequest.body)}`)
       DB.Notification.create({
         topic,
