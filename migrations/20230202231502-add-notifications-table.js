@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('notifications', {
+    await queryInterface.changeTable('notifications', {
       topic: {
         type: Sequelize.STRING,
         allowNull: false
