@@ -2,6 +2,7 @@ const appleNotification = require("../services/appleNotificationService");
 const geolib = require("geolib");
 const { INTEGER } = require("sequelize");
 const user = require("../model/user");
+
 exports.setNotificationToken = function (req, res, next) {
   const user = req.user;
   user.apn_token = req.body.token;
@@ -12,6 +13,44 @@ exports.setNotificationToken = function (req, res, next) {
 };
 
 module.exports = ({ DB }) => {
+
+  const createNotificationQueue = async (httpRequest) => {
+    try{
+      console.log(`httpRequest ${JSON.stringify(httpRequest)}`)
+      const {topic, deviceTokenQueue, subscriberDeviceTokens} = httpRequest.body
+      console.log(`httpRequest.body ${JSON.stringify(httpRequest.body)}`)
+      DB.Notification.create({
+        topic,
+        deviceTokenQueue,
+        subscriberDeviceTokens
+      })
+
+      const notifications = await DB.Notification.findAll()
+
+      return {
+        status: 200,
+        notifications
+      }
+    } catch (error) {
+      throw error;
+    }   
+  }
+
+  const getNotificationQueues = async () => {
+    try{
+      const notifications = await DB.Notification.findAll();
+      console.log(`notifications ${JSON.stringify(notifications)}`)
+
+      return {
+        status: 200,
+        data: {
+          notifications
+        }
+      };
+    } catch (error) {
+      throw error;
+    }   
+  }
 
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
@@ -229,6 +268,8 @@ module.exports = ({ DB }) => {
   };
 
   return Object.freeze({
-    sendHangoutPromptNotification
+    sendHangoutPromptNotification,
+    getNotificationQueues,
+    createNotificationQueue
   });
 };
