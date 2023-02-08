@@ -120,13 +120,17 @@ const removeSubscriberWithTopicAndId = async ({topic, topicId, subscriber}) => {
     });
 
     if (subscriber) {
-      let newDeviceTokens = notification.subscriberDeviceTokens.filter((token) =>{
+      let newSubscribersDeviceTokens = notification.subscriberDeviceTokens.filter((token) =>{
         return token != subscriber
       })
-      console.log(`${Array.isArray(newDeviceTokens)}`)
+
+      let newQueueDeviceTokens = notification.deviceTokenQueue.filter((token) =>{
+        return token != subscriber
+      })
 
       return await notification.update({
-        subscriberDeviceTokens: newDeviceTokens
+        subscriberDeviceTokens: newSubscribersDeviceTokens,
+        deviceTokenQueue: newQueueDeviceTokens
       });
     } else {
       throw("no subscriber token sent")
