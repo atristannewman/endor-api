@@ -53,6 +53,35 @@ module.exports = ({ DB }) => {
     }   
   }
 
+  const updateNotificationSubscribers = async ({query, body}) => {
+    try{
+      let deviceToken = ""
+      console.log(`query ${JSON.stringify(query)}`)
+
+      if (query.queuer) {
+        throw("Must send subscriber to update instead of queuer")
+      }
+
+      await DB.Notification.updateSubscribersWithTopicAndId({
+        topic: body.topic,
+        topicId: body.topicId,
+        subscriber: query["subscriber"]
+      }).then((subscribedToken) => {
+        deviceToken = subscribedToken
+      })
+
+      return {
+        status: 200,
+        data: {
+          deviceToken,
+          message: "added to notification"
+        }
+      };
+    } catch (error) {
+      throw error;
+    }   
+  }
+
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
     let users = [];
@@ -271,6 +300,7 @@ module.exports = ({ DB }) => {
   return Object.freeze({
     sendHangoutPromptNotification,
     getNotificationQueues,
-    createNotificationQueue
+    createNotificationQueue,
+    updateNotificationSubscribers
   });
 };

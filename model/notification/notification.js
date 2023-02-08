@@ -12,7 +12,7 @@ module.exports = ({ validate }) => {
             return deviceTokenQueueArgs;
           },
           getSubscriberDeviceTokens: () => {
-            const subscriberDeviceTokensArgs = JSON.parse(JSON.stringify(args.deviceTokenQueue));
+            const subscriberDeviceTokensArgs = JSON.parse(JSON.stringify(args.subscriberDeviceTokens));
             return subscriberDeviceTokensArgs;
           },
           getTopicId: () => args.topicId
