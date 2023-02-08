@@ -77,7 +77,7 @@ const findByTopic = async (topic) => {
   }
 };
 
-const updateSubscribersWithTopicAndId = async ({topic, topicId, subscriber}) => {
+const addSubscriberWithTopicAndId = async ({topic, topicId, subscriber}) => {
   try {
     console.log(`update by topic: ${JSON.stringify(topic)}, topicId: ${JSON.stringify(topicId)}, subscriber: ${JSON.stringify(subscriber)}`);
 
@@ -93,6 +93,36 @@ const updateSubscribersWithTopicAndId = async ({topic, topicId, subscriber}) => 
         return token != subscriber
       })
       newDeviceTokens.push(subscriber)
+      console.log(`${Array.isArray(newDeviceTokens)}`)
+
+      return await notification.update({
+        subscriberDeviceTokens: newDeviceTokens
+      });
+    } else {
+      throw("no subscriber token sent")
+    }
+    
+  } catch (error) {
+    console.log(`error in notification update: ${error}`);
+    throw error;
+  }
+};
+
+const removeSubscriberWithTopicAndId = async ({topic, topicId, subscriber}) => {
+  try {
+    console.log(`update by topic: ${JSON.stringify(topic)}, topicId: ${JSON.stringify(topicId)}, subscriber: ${JSON.stringify(subscriber)}`);
+
+    let notification = await Notification.findOne({
+      where: {
+        topic: String(topic),
+        topicId: String(topicId)
+      }
+    });
+
+    if (subscriber) {
+      let newDeviceTokens = notification.subscriberDeviceTokens.filter((token) =>{
+        return token != subscriber
+      })
       console.log(`${Array.isArray(newDeviceTokens)}`)
 
       return await notification.update({
@@ -124,8 +154,9 @@ const deleteByTopic = async (topic, topicId) => {
 module.exports = Object.freeze({
   Notification,
   create,
-  updateSubscribersWithTopicAndId,
+  addSubscriberWithTopicAndId,
   deleteByTopic,
   findAll,
-  findByTopic
+  findByTopic,
+  removeSubscriberWithTopicAndId
 });

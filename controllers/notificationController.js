@@ -53,7 +53,7 @@ module.exports = ({ DB }) => {
     }   
   }
 
-  const updateNotificationSubscribers = async ({query, body}) => {
+  const addNotificationSubscriber = async ({query, body}) => {
     try{
       let deviceToken = ""
       console.log(`query ${JSON.stringify(query)}`)
@@ -62,7 +62,7 @@ module.exports = ({ DB }) => {
         throw("Must send subscriber to update instead of queuer")
       }
 
-      await DB.Notification.updateSubscribersWithTopicAndId({
+      await DB.Notification.addSubscriberWithTopicAndId({
         topic: body.topic,
         topicId: body.topicId,
         subscriber: query["subscriber"]
@@ -74,12 +74,41 @@ module.exports = ({ DB }) => {
         status: 200,
         data: {
           deviceToken,
-          message: "added to notification"
+          message: "added subscriber to notification"
         }
       };
     } catch (error) {
       throw error;
     }   
+  }
+
+  const removeNotificationSubscriber = async ({query, body}) => { 
+    try{
+      let deviceToken = ""
+      console.log(`query ${JSON.stringify(query)}`)
+
+      if (query.queuer) {
+        throw("Must send subscriber to update instead of queuer")
+      }
+
+      await DB.Notification.removeSubscriberWithTopicAndId({
+        topic: body.topic,
+        topicId: body.topicId,
+        subscriber: query["subscriber"]
+      }).then((subscribedToken) => {
+        deviceToken = subscribedToken
+      })
+
+      return {
+        status: 200,
+        data: {
+          deviceToken,
+          message: "removed subscriber from notification"
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
@@ -301,6 +330,7 @@ module.exports = ({ DB }) => {
     sendHangoutPromptNotification,
     getNotificationQueues,
     createNotificationQueue,
-    updateNotificationSubscribers
+    addNotificationSubscriber,
+    removeNotificationSubscriber
   });
 };

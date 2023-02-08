@@ -6,7 +6,8 @@ const requestHandler = require("../requestHandler");
 notificationsRouter.post("/hangout",requestHandler(notificationController.sendHangoutPromptNotification));
 notificationsRouter.post("/queues",requestHandler(notificationController.createNotificationQueue));
 notificationsRouter.get("/queues", requestHandler(notificationController.getNotificationQueues));
-notificationsRouter.put("/queues", requestHandler(notificationController.updateNotificationSubscribers));
+notificationsRouter.put("/queues", requestHandler(notificationController.addNotificationSubscriber));
+notificationsRouter.delete("/queues", requestHandler(notificationController.removeNotificationSubscriber));
 
 
 module.exports = notificationsRouter;
