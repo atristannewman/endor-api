@@ -111,6 +111,27 @@ module.exports = ({ DB }) => {
     }
   }
 
+  const notifyNotificationSubscribers = async ({query, body}) => { 
+    try{
+      console.log(`query ${JSON.stringify(query)}`)
+
+      await DB.Notification.refreshQueueWithTopicAndId({
+        topic: body.topic,
+        topicId: body.topicId,
+        notifier: query["notifier"]
+      })
+
+      return {
+        status: 200,
+        data: {
+          message: `${body.topic} ${body.topicId} notification queue refreshed`
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
     let users = [];
@@ -331,6 +352,7 @@ module.exports = ({ DB }) => {
     getNotificationQueues,
     createNotificationQueue,
     addNotificationSubscriber,
-    removeNotificationSubscriber
+    removeNotificationSubscriber,
+    notifyNotificationSubscribers
   });
 };

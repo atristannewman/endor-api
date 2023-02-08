@@ -138,6 +138,33 @@ const removeSubscriberWithTopicAndId = async ({topic, topicId, subscriber}) => {
   }
 };
 
+const refreshQueueWithTopicAndId = async ({topic, topicId, notifier}) => {
+  try {
+    console.log(`update by topic: ${JSON.stringify(topic)}, topicId: ${JSON.stringify(topicId)}`);
+
+    const notification = await Notification.findOne({
+      where: {
+        topic: String(topic),
+        topicId: String(topicId)
+      }
+    });
+
+    const newQueueTokens = notification.subscriberDeviceTokens.filter((token) => {
+      return token != notifier
+    })
+
+    console.log(`newQueueTokens ${JSON.stringify(newQueueTokens)}`)
+
+    return await notification.update({
+      deviceTokenQueue: newQueueTokens
+    });
+    
+  } catch (error) {
+    console.log(`error in notification update: ${error}`);
+    throw error;
+  }
+};
+
 const deleteByTopic = async (topic, topicId) => {
   try {
     Notification.destroy({
@@ -158,5 +185,6 @@ module.exports = Object.freeze({
   deleteByTopic,
   findAll,
   findByTopic,
-  removeSubscriberWithTopicAndId
+  removeSubscriberWithTopicAndId,
+  refreshQueueWithTopicAndId
 });
