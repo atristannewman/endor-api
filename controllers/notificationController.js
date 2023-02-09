@@ -111,7 +111,7 @@ module.exports = ({ DB }) => {
     }
   }
 
-  const notifyNotificationSubscribers = async ({query, body}) => { 
+  const queueNotificationSubscribers = async ({query, body}) => { 
     try{
       console.log(`query ${JSON.stringify(query)}`)
 
@@ -131,6 +131,78 @@ module.exports = ({ DB }) => {
       throw error;
     }
   }
+
+  const notifyQueue = async ({body}) => {
+    try {
+      console.log(`notify by topic: ${JSON.stringify(body.topic)}, topicId: ${JSON.stringify(body.topicId)}}`);
+  
+      var notification = await DB.Notification.findByTopicAndId({
+          topic: String(body.topic),
+          topicId: String(body.topicId)
+      });
+
+      // Build the push message
+      let notificationMessage = null
+      switch (body.topic) {
+        case "chat":
+          notificationMessage = "New message in Hangout Chat"
+      }
+      
+      // Build the push payload
+      const notificationPayload = {
+        topic: body.topic,
+        topicId: body.topicId
+      }
+
+      // Creates encryption key
+      let encryptionKeyArray = process.env.DEVICE_TOKEN_ENCRYPTION_KEY.split(',');
+
+      let encryptionKey = {};
+      let decryptionKey = {};
+      encryptionKeyArray.forEach((item) => {
+        let itemArray = item.split(':');
+        encryptionKey[itemArray[1]] = itemArray[0];
+        decryptionKey[itemArray[0]] = itemArray[1];
+      })
+  
+      // Go through all encrypted tokens in queue..
+      // notification.deviceTokenQueue.forEach((token) => {
+      let deviceQueue = notification.deviceTokenQueue
+
+      // Notify queued devices
+      deviceQueue.forEach((token) => {
+        console.log(`popped token ${token}`)
+        // Encrypt device tokens
+        const deviceTokenArray = token.split("")
+        const encryptedDeviceToken = deviceTokenArray.map((char) => {return `${encryptionKey[char]}:`}).join("")
+        
+        // Decrypt device tokens
+        encryptedDeviceTokenArray = encryptedDeviceToken.split(":");
+        const decryptedDeviceToken = encryptedDeviceTokenArray.map((char) => {return `${decryptionKey[char] ? decryptionKey[char] : ""}`}).join("")
+
+        console.log(`decryptedDeviceToken ${decryptedDeviceToken}`)
+        appleNotification.sendNotification(decryptedDeviceToken, notificationMessage, notificationPayload)
+
+        return notification
+      })
+      
+      const {topic, topicId} = notification
+      const notified = []
+
+      DB.Notification.removeNotifiedFromQueue({topic, topicId, notified})
+
+      return {
+        status: 200,
+        data: {
+          message: `${body.topic} ${body.topicId} notification queue notified`
+        }
+      };
+      
+    } catch (error) {
+      console.log(`error queue failed to be notified ${error}`);
+      throw error;
+    }
+  };
 
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
@@ -353,6 +425,7 @@ module.exports = ({ DB }) => {
     createNotificationQueue,
     addNotificationSubscriber,
     removeNotificationSubscriber,
-    notifyNotificationSubscribers
+    queueNotificationSubscribers,
+    notifyQueue
   });
 };

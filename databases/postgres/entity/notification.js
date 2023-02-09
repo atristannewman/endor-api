@@ -64,11 +64,12 @@ const findAll = async () => {
   }
 };
 
-const findByTopic = async (topic) => {
+const findByTopicAndId = async ({topic, topicId}) => {
   try {
     return await Notification.findOne({
       where: {
-        topic
+        topic,
+        topicId
       }
     });
   } catch (error) {
@@ -144,7 +145,7 @@ const removeSubscriberWithTopicAndId = async ({topic, topicId, subscriber}) => {
 
 const refreshQueueWithTopicAndId = async ({topic, topicId, notifier}) => {
   try {
-    console.log(`update by topic: ${JSON.stringify(topic)}, topicId: ${JSON.stringify(topicId)}`);
+    console.log(`refresh by topic: ${JSON.stringify(topic)}, topicId: ${JSON.stringify(topicId)}`);
 
     const notification = await Notification.findOne({
       where: {
@@ -169,6 +170,39 @@ const refreshQueueWithTopicAndId = async ({topic, topicId, notifier}) => {
   }
 };
 
+const removeNotifiedFromQueue = async ({topic, topicId, notified}) => {
+  try {
+    console.log(`remove by topic: ${JSON.stringify(topic)}, topicId: ${JSON.stringify(topicId)}, notified: ${JSON.stringify(notified)}`);
+
+    let notification = await Notification.findOne({
+      where: {
+        topic: String(topic),
+        topicId: String(topicId)
+      }
+    });
+
+    if (!Array.isArray(notified)) {
+      let newQueueDeviceTokens = notification.deviceTokenQueue.filter((token) =>{
+        return token != notified
+      })
+
+      return await notification.update({
+        deviceTokenQueue: newQueueDeviceTokens
+      });
+    } else if (notified){
+      return await notification.update({
+        deviceTokenQueue: notified
+      });
+    } else {
+      throw("no notified token sent")
+    }
+    
+  } catch (error) {
+    console.log(`error in notifier failed to be removed from queue ${error}`);
+    throw error;
+  }
+};
+
 const deleteByTopic = async (topic, topicId) => {
   try {
     Notification.destroy({
@@ -182,13 +216,27 @@ const deleteByTopic = async (topic, topicId) => {
   }
 };
 
+const update = async (notification) => {
+  try {
+    notification.update({
+      where: {
+        topicId, 
+        topic
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = Object.freeze({
   Notification,
   create,
   addSubscriberWithTopicAndId,
   deleteByTopic,
   findAll,
-  findByTopic,
+  findByTopicAndId,
   removeSubscriberWithTopicAndId,
-  refreshQueueWithTopicAndId
+  refreshQueueWithTopicAndId,
+  removeNotifiedFromQueue
 });
