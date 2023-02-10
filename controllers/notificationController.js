@@ -98,7 +98,7 @@ module.exports = ({ DB }) => {
         topicId: body.topicId,
         subscriber: query["subscriber"]
       }).then((subscribedToken) => {
-        deviceToken = subscribedToken
+        deviceToken = query["subscriber"]
       })
 
       return {
@@ -205,6 +205,33 @@ module.exports = ({ DB }) => {
       throw error;
     }
   };
+
+  const getSubscriberNotificationsForTopic = async ({query, body}) => {
+    try{
+      const subscriberToken = query["subscriber"]
+      const topic = body.topic
+      const notifications = await DB.Notification.findAll();
+      let subscribedNotifications = notifications.filter((notification) => {
+        return notification.subscriberDeviceTokens.includes(subscriberToken) &&
+        notification.topic === topic
+      }).map(({topic, topicId}) => {
+        return {
+          topic,
+          topicId,
+          subscriberToken
+        }
+      })
+
+      return {
+        status: 200,
+        data: {
+          notifications: subscribedNotifications
+        }
+      };
+    } catch (error) {
+      throw error;
+    }   
+  }
 
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
@@ -428,6 +455,7 @@ module.exports = ({ DB }) => {
     addNotificationSubscriber,
     removeNotificationSubscriber,
     queueNotificationSubscribers,
-    notifyQueue
+    notifyQueue,
+    getSubscriberNotificationsForTopic
   });
 };
