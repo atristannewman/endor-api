@@ -66,8 +66,10 @@ module.exports = ({ DB }) => {
         topic: body.topic,
         topicId: body.topicId,
         subscriber: query["subscriber"]
-      }).then((subscribedToken) => {
-        deviceToken = subscribedToken
+      }).then((notification) => {
+        if (notification.subscriberDeviceTokens.includes(query["subscriber"])) {
+          deviceToken = query["subscriber"]
+        }
       })
 
       return {

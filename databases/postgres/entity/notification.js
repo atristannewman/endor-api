@@ -99,6 +99,7 @@ const addSubscriberWithTopicAndId = async ({topic, topicId, subscriber}) => {
       return await notification.update({
         subscriberDeviceTokens: newDeviceTokens
       });
+      
     } else {
       throw("no subscriber token sent")
     }
