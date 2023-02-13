@@ -209,7 +209,7 @@ module.exports = ({ DB }) => {
   const getSubscriberNotificationsForTopic = async ({query, body}) => {
     try{
       const subscriberToken = query["subscriber"]
-      const topic = body.topic
+      const topic = query["topic"]
       const notifications = await DB.Notification.findAll();
       let subscribedNotifications = notifications.filter((notification) => {
         return notification.subscriberDeviceTokens.includes(subscriberToken) &&
