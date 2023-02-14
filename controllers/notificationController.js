@@ -157,13 +157,11 @@ module.exports = ({ DB }) => {
       }
 
       // Creates encryption key
-      let encryptionKeyArray = process.env.DEVICE_TOKEN_ENCRYPTION_KEY.split(',');
-
-      let encryptionKey = {};
+      let decryptionKeyArray = process.env.DEVICE_TOKEN_ENCRYPTION_KEY.split(',');
       let decryptionKey = {};
-      encryptionKeyArray.forEach((item) => {
+      
+      decryptionKeyArray.forEach((item) => {
         let itemArray = item.split(':');
-        encryptionKey[itemArray[1]] = itemArray[0];
         decryptionKey[itemArray[0]] = itemArray[1];
       })
   
@@ -173,16 +171,9 @@ module.exports = ({ DB }) => {
 
       // Notify queued devices
       deviceQueue.forEach((token) => {
-        console.log(`popped token ${token}`)
         // Encrypt device tokens
-        const deviceTokenArray = token.split("")
-        const encryptedDeviceToken = deviceTokenArray.map((char) => {return `${encryptionKey[char]}:`}).join("")
-        
-        // Decrypt device tokens
-        encryptedDeviceTokenArray = encryptedDeviceToken.split(":");
-        const decryptedDeviceToken = encryptedDeviceTokenArray.map((char) => {return `${decryptionKey[char] ? decryptionKey[char] : ""}`}).join("")
-
-        console.log(`decryptedDeviceToken ${decryptedDeviceToken}`)
+        const deviceTokenArray = token.split(":")
+        const decryptedDeviceToken = deviceTokenArray.map((char) => {return decryptionKey[char]}).join("")
         appleNotification.sendNotification(decryptedDeviceToken, notificationMessage, notificationPayload)
 
         return notification
