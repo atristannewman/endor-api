@@ -136,6 +136,7 @@ module.exports = ({ DB }) => {
 
   const notifyQueue = async ({body}) => {
     try {
+      console.log(`notify by topic: ${JSON.stringify(body.topic)}, topicId: ${JSON.stringify(body.topicId)}}`);
   
       var notification = await DB.Notification.findByTopicAndId({
           topic: String(body.topic),
@@ -157,11 +158,14 @@ module.exports = ({ DB }) => {
 
       // Creates encryption key
       let decryptionKeyArray = process.env.DEVICE_TOKEN_ENCRYPTION_KEY.split(',');
+      console.log(`decryptionKeyArray ${decryptionKeyArray}`)
       let decryptionKey = {};
       decryptionKeyArray.forEach((item) => {
         let itemArray = item.split(':');
+        console.log(`itemArray ${itemArray}`)
         decryptionKey[itemArray[0]] = itemArray[1];
       })
+      console.log(`decryptionKey ${JSON.stringify(decryptionKey)}`)
   
       // Go through all encrypted tokens in queue..
       // notification.deviceTokenQueue.forEach((token) => {
@@ -169,9 +173,12 @@ module.exports = ({ DB }) => {
 
       // Notify queued devices
       deviceQueue.forEach((token) => {
+        console.log(`token ${token}`)
         // Encrypt device tokens
         const deviceTokenArray = token.split(":")
+        console.log(`deviceTokenArray ${deviceTokenArray}`)
         const decryptedDeviceToken = deviceTokenArray.map((char) => {return decryptionKey[char]}).join("")
+        console.log(`decryptedDeviceToken ${decryptedDeviceToken}`)
         appleNotification.sendNotification(decryptedDeviceToken, notificationMessage, notificationPayload)
 
         return notification
