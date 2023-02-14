@@ -136,7 +136,6 @@ module.exports = ({ DB }) => {
 
   const notifyQueue = async ({body}) => {
     try {
-      console.log(`notify by topic: ${JSON.stringify(body.topic)}, topicId: ${JSON.stringify(body.topicId)}}`);
   
       var notification = await DB.Notification.findByTopicAndId({
           topic: String(body.topic),
@@ -158,36 +157,30 @@ module.exports = ({ DB }) => {
 
       // Creates encryption key
       let decryptionKeyArray = process.env.DEVICE_TOKEN_ENCRYPTION_KEY.split(',');
-      console.log(`decryptionKeyArray ${decryptionKeyArray}`)
       let decryptionKey = {};
-      // decryptionKeyArray.forEach((item) => {
-      //   let itemArray = item.split(':');
-      //   console.log(`itemArray ${itemArray}`)
-      //   decryptionKey[itemArray[0]] = itemArray[1];
-      // })
-      // console.log(`decryptionKey ${JSON.stringify(decryptionKey)}`)
+      decryptionKeyArray.forEach((item) => {
+        let itemArray = item.split(':');
+        decryptionKey[itemArray[0]] = itemArray[1];
+      })
   
-      // // Go through all encrypted tokens in queue..
-      // // notification.deviceTokenQueue.forEach((token) => {
-      // let deviceQueue = notification.deviceTokenQueue
+      // Go through all encrypted tokens in queue..
+      // notification.deviceTokenQueue.forEach((token) => {
+      let deviceQueue = notification.deviceTokenQueue
 
-      // // Notify queued devices
-      // deviceQueue.forEach((token) => {
-      //   console.log(`token ${token}`)
-      //   // Encrypt device tokens
-      //   const deviceTokenArray = token.split(":")
-      //   console.log(`deviceTokenArray ${deviceTokenArray}`)
-      //   const decryptedDeviceToken = deviceTokenArray.map((char) => {return decryptionKey[char]}).join("")
-      //   console.log(`decryptedDeviceToken ${decryptedDeviceToken}`)
-      //   appleNotification.sendNotification(decryptedDeviceToken, notificationMessage, notificationPayload)
+      // Notify queued devices
+      deviceQueue.forEach((token) => {
+        // Encrypt device tokens
+        const deviceTokenArray = token.split(":")
+        const decryptedDeviceToken = deviceTokenArray.map((char) => {return decryptionKey[char]}).join("")
+        appleNotification.sendNotification(decryptedDeviceToken, notificationMessage, notificationPayload)
 
-      //   return notification
-      // })
+        return notification
+      })
       
-      // const {topic, topicId} = notification
-      // const notified = []
+      const {topic, topicId} = notification
+      const notified = []
 
-      // DB.Notification.removeNotifiedFromQueue({topic, topicId, notified})
+      DB.Notification.removeNotifiedFromQueue({topic, topicId, notified})
 
       return {
         status: 200,
