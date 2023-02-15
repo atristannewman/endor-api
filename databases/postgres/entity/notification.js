@@ -6,13 +6,11 @@ const makeNotification = require("../../../model/notification");
 const Notification = db.define("notifications", {
     topic: {
       type: Sequelize.STRING,
-      primaryKey: true,
       unique: false,
       allowNull: false
     },
     topicId: {
       type: Sequelize.STRING,
-      primaryKey: true,
       unique: false,
       allowNull: false
     },

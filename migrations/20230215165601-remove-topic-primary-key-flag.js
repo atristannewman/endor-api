@@ -2,10 +2,39 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    return
+    await queryInterface.changeTable('notifications', {
+      topic: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: false,
+        primaryKey: false
+      },
+      deviceTokenQueue: {
+        type: Sequelize.ARRAY({
+          type: Sequelize.STRING,
+          unique: true,
+          allowNull: false
+        }),
+        defaultValue: []
+      },
+      subscriberDeviceTokens: {
+        type: Sequelize.ARRAY({
+          type: Sequelize.STRING,
+          unique: true,
+          allowNull: false
+        }),
+        defaultValue: []
+      },
+      topicId: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+        primaryKey: false,
+        unique: false
+      }
+    })
   },
 
   async down(queryInterface, Sequelize) {
-   return
+    await queryInterface.dropTable("notifications");
   },
 };
