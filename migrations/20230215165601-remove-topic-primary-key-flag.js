@@ -2,7 +2,12 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.changeTable('notifications', {
+    await queryInterface.addTable('notifications', {
+      uuid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV1,
+        primaryKey: true
+      },
       topic: {
         type: Sequelize.STRING,
         allowNull: false,
