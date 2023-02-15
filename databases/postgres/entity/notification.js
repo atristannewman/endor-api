@@ -4,6 +4,11 @@ const db = require("../sequelize");
 const makeNotification = require("../../../model/notification");
 
 const Notification = db.define("notifications", {
+    uuid: {
+      type: Sequelize.UUID,
+      defaultValue: Sequelize.UUIDV1,
+      primaryKey: true
+    },
     topic: {
       type: Sequelize.STRING,
       unique: false,
