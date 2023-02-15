@@ -3,6 +3,7 @@ const geolib = require("geolib");
 const appleNotification = require("../services/appleNotificationService");
 const googleServices = require("../services/googleServices");
 const moralisService = require("../services/moralisService");
+const notificationController = require("../controllers/notificationController");
 const {User} = require("../databases/postgres/entity/user");
 
 module.exports = ({ DB }) => {
@@ -18,6 +19,15 @@ module.exports = ({ DB }) => {
         tags,
         host
       });
+
+      // Create notification for new hangouts chat
+      notificationController.createNotificationQueue({
+        topic:"chat", 
+        deviceTokenQueue: [], 
+        subscriberDeviceTokens: [], 
+        topicId: hangout.id
+      })
+
       const location = await googleServices.geoCoding(address);
 
       if (hangout) {
