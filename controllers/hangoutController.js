@@ -221,15 +221,14 @@ module.exports = ({ DB, notificationController }) => {
   // DELETE
   const deleteHangout = async (httpRequest) => {
     try {
-      const { id } = httpRequest.body;
-      await DB.Hangout.deleteById(id).then(
-        function () { const hangouts = DB.Hangout.findAll(); }
-      );
+      const { id } = httpRequest.query;
+
+      await DB.Hangout.deleteById(id)
 
       return {
         status: 200,
         data: {
-          hangouts
+          message: "Hangout removed."
         }
       };
     } catch (error) {
