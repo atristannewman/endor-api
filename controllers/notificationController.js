@@ -2,8 +2,9 @@ const appleNotification = require("../services/appleNotificationService");
 const geolib = require("geolib");
 const { INTEGER } = require("sequelize");
 const user = require("../model/user");
+const requestHandler = require("../requestHandler");
 
-exports.setNotificationToken = function (req, res, next) {
+module.exports.setNotificationToken = function (req, res, next) {
   const user = req.user;
   user.apn_token = req.body.token;
   user.save(function (err) {
@@ -12,14 +13,20 @@ exports.setNotificationToken = function (req, res, next) {
   });
 };
 
+// module.exports.
+
 module.exports = ({ DB }) => {
+
+  const createNotificationQueueForHangout = function (notification) {
+    DB.Notification.create(notification)
+  };
 
   const createNotificationQueue = async (httpRequest) => {
     try{
       console.log(`httpRequest ${JSON.stringify(httpRequest)}`)
       const {topic, deviceTokenQueue, subscriberDeviceTokens, topicId} = httpRequest.body
       console.log(`httpRequest.body ${JSON.stringify(httpRequest.body)}`)
-      DB.Notification.create({
+      createNotificationQueueForHangout({
         topic,
         deviceTokenQueue,
         subscriberDeviceTokens,
@@ -452,6 +459,7 @@ module.exports = ({ DB }) => {
     removeNotificationSubscriber,
     queueNotificationSubscribers,
     notifyQueue,
-    getSubscriberNotificationsForTopic
+    getSubscriberNotificationsForTopic,
+    createNotificationQueueForHangout
   });
 };

@@ -3,10 +3,9 @@ const geolib = require("geolib");
 const appleNotification = require("../services/appleNotificationService");
 const googleServices = require("../services/googleServices");
 const moralisService = require("../services/moralisService");
-const notificationController = require("../controllers/notificationController");
 const {User} = require("../databases/postgres/entity/user");
 
-module.exports = ({ DB }) => {
+module.exports = ({ DB, notificationController }) => {
   // CREATE
   const createHangout = async (httpRequest) => {
     try {
@@ -19,14 +18,17 @@ module.exports = ({ DB }) => {
         tags,
         host
       });
-
+      console.log(`notificationController ${notificationController}`)
       // Create notification for new hangouts chat
-      notificationController.createNotificationQueue({
-        topic:"chat", 
+      console.log(`hangout.id ${hangout.id}`)
+      const newNotification = {
+        topic: "chat", 
         deviceTokenQueue: [], 
         subscriberDeviceTokens: [], 
         topicId: hangout.id
-      })
+      }
+      console.log(`newNotification ${newNotification}`)
+      notificationController.createNotificationQueueForHangout(newNotification)
 
       const location = await googleServices.geoCoding(address);
 
