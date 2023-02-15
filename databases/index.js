@@ -2,6 +2,8 @@ const postgres = require("./postgres");
 const {User} = require("./postgres/entity/user");
 const {Hangout} = require("./postgres/entity/hangout");
 const {TokenproofAddress} = require("./postgres/entity/tokenproofAddress");
+const {Notification} = require("./postgres/entity/notification");
+
 const DB_DIALECT = {
   postgres: "postgres",
   mysql: "mysql",
@@ -27,6 +29,7 @@ module.exports = ({ db, isMock }) => {
   const Vendor = selectedDB.Vendor.Vendor;
   const Hangout = selectedDB.Hangout.Hangout;
   const TokenproofAddress = selectedDB.TokenproofAddress.TokenproofAddress;
+  const Notification = selectedDB.Notification.Notification;
 
   return selectedDB;
 };

@@ -15,8 +15,8 @@ const DB = connectDatabase({ db: "postgres", isMock: false });
 const transactionController = makeTransactionController({ transactionService });
 const userController = makeUserController({ transactionService, DB, moralisService });
 const vendorController = makeVendorController({ DB });
-const hangoutController = makeHangoutController({ DB });
 const notificationController = makeNotificationController({ DB });
+const hangoutController = makeHangoutController({ DB, notificationController });
 const authenticationController = makeAuthenticationController({ DB });
 
 module.exports = Object.freeze({

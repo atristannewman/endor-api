@@ -2,7 +2,9 @@ const appleNotification = require("../services/appleNotificationService");
 const geolib = require("geolib");
 const { INTEGER } = require("sequelize");
 const user = require("../model/user");
-exports.setNotificationToken = function (req, res, next) {
+const requestHandler = require("../requestHandler");
+
+module.exports.setNotificationToken = function (req, res, next) {
   const user = req.user;
   user.apn_token = req.body.token;
   user.save(function (err) {
@@ -11,7 +13,228 @@ exports.setNotificationToken = function (req, res, next) {
   });
 };
 
+// module.exports.
+
 module.exports = ({ DB }) => {
+
+  const createNotificationQueueForHangout = function (notification) {
+    DB.Notification.create(notification)
+  };
+
+  const createNotificationQueue = async (httpRequest) => {
+    try{
+      console.log(`httpRequest ${JSON.stringify(httpRequest)}`)
+      const {topic, deviceTokenQueue, subscriberDeviceTokens, topicId} = httpRequest.body
+      console.log(`httpRequest.body ${JSON.stringify(httpRequest.body)}`)
+      createNotificationQueueForHangout({
+        topic,
+        deviceTokenQueue,
+        subscriberDeviceTokens,
+        topicId
+      })
+
+      const notifications = await DB.Notification.findAll()
+
+      return {
+        status: 200,
+        notifications
+      }
+    } catch (error) {
+      throw error;
+    }   
+  }
+
+  const getNotificationQueues = async () => {
+    try{
+      const notifications = await DB.Notification.findAll();
+      console.log(`notifications ${JSON.stringify(notifications)}`)
+
+      return {
+        status: 200,
+        data: {
+          notifications
+        }
+      };
+    } catch (error) {
+      throw error;
+    }   
+  }
+
+  const addNotificationSubscriber = async ({query, body}) => {
+    try{
+      let deviceToken = ""
+      console.log(`query ${JSON.stringify(query)}`)
+
+      if (query.queuer) {
+        throw("Must send subscriber to update instead of queuer")
+      }
+
+      await DB.Notification.addSubscriberWithTopicAndId({
+        topic: body.topic,
+        topicId: body.topicId,
+        subscriber: query["subscriber"]
+      }).then((notification) => {
+        if (notification.subscriberDeviceTokens.includes(query["subscriber"])) {
+          deviceToken = query["subscriber"]
+        }
+      })
+
+      return {
+        status: 200,
+        data: {
+          deviceToken,
+          message: "added subscriber to notification"
+        }
+      };
+    } catch (error) {
+      throw error;
+    }   
+  }
+
+  const removeNotificationSubscriber = async ({query, body}) => { 
+    try{
+      let deviceToken = ""
+      console.log(`query ${JSON.stringify(query)}`)
+
+      if (query.queuer) {
+        throw("Must send subscriber to update instead of queuer")
+      }
+
+      await DB.Notification.removeSubscriberWithTopicAndId({
+        topic: body.topic,
+        topicId: body.topicId,
+        subscriber: query["subscriber"]
+      }).then((subscribedToken) => {
+        deviceToken = query["subscriber"]
+      })
+
+      return {
+        status: 200,
+        data: {
+          deviceToken,
+          message: "removed subscriber from notification"
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  const queueNotificationSubscribers = async ({query, body}) => { 
+    try{
+      console.log(`query ${JSON.stringify(query)}`)
+
+      await DB.Notification.refreshQueueWithTopicAndId({
+        topic: body.topic,
+        topicId: body.topicId,
+        notifier: query["notifier"]
+      })
+
+      return {
+        status: 200,
+        data: {
+          message: `${body.topic} ${body.topicId} notification queue refreshed`
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  const notifyQueue = async ({body}) => {
+    try {
+      console.log(`notify by topic: ${JSON.stringify(body.topic)}, topicId: ${JSON.stringify(body.topicId)}}`);
+  
+      var notification = await DB.Notification.findByTopicAndId({
+          topic: String(body.topic),
+          topicId: String(body.topicId)
+      });
+
+      // Build the push message
+      let notificationMessage = null
+      switch (body.topic) {
+        case "chat":
+          notificationMessage = "New message in Hangout Chat"
+      }
+      
+      // Build the push payload
+      const notificationPayload = {
+        topic: body.topic,
+        topicId: body.topicId
+      }
+
+      // Creates encryption key
+      let decryptionKeyArray = process.env.DEVICE_TOKEN_ENCRYPTION_KEY.split(',');
+      console.log(`decryptionKeyArray ${decryptionKeyArray}`)
+      let decryptionKey = {};
+      decryptionKeyArray.forEach((item) => {
+        let itemArray = item.split(':');
+        console.log(`itemArray ${itemArray}`)
+        decryptionKey[itemArray[0]] = itemArray[1];
+      })
+      console.log(`decryptionKey ${JSON.stringify(decryptionKey)}`)
+  
+      // Go through all encrypted tokens in queue..
+      // notification.deviceTokenQueue.forEach((token) => {
+      let deviceQueue = notification.deviceTokenQueue
+
+      // Notify queued devices
+      deviceQueue.forEach((token) => {
+        console.log(`token ${token}`)
+        // Encrypt device tokens
+        const deviceTokenArray = token.split(":")
+        console.log(`deviceTokenArray ${deviceTokenArray}`)
+        const decryptedDeviceToken = deviceTokenArray.map((char) => {return decryptionKey[char]}).join("")
+        console.log(`decryptedDeviceToken ${decryptedDeviceToken}`)
+        appleNotification.sendNotification(decryptedDeviceToken, notificationMessage, notificationPayload)
+
+        return notification
+      })
+      
+      const {topic, topicId} = notification
+      const notified = []
+
+      DB.Notification.removeNotifiedFromQueue({topic, topicId, notified})
+
+      return {
+        status: 200,
+        data: {
+          message: `${body.topic} ${body.topicId} notification queue notified`
+        }
+      };
+      
+    } catch (error) {
+      console.log(`error queue failed to be notified ${error}`);
+      throw error;
+    }
+  };
+
+  const getSubscriberNotificationsForTopic = async ({query, body}) => {
+    try{
+      const subscriberToken = query["subscriber"]
+      const topic = query["topic"]
+      const notifications = await DB.Notification.findAll();
+      let subscribedNotifications = notifications.filter((notification) => {
+        return notification.subscriberDeviceTokens.includes(subscriberToken) &&
+        notification.topic === topic
+      }).map(({topic, topicId}) => {
+        return {
+          topic,
+          topicId,
+          subscriberToken
+        }
+      })
+
+      return {
+        status: 200,
+        data: {
+          notifications: subscribedNotifications
+        }
+      };
+    } catch (error) {
+      throw error;
+    }   
+  }
 
   const sendHangoutPromptNotificationOld = async (httpRequest) => { // Test Api
     const usersByLocation = await DB.User.findAllWithLocation({ raw: true });
@@ -229,6 +452,14 @@ module.exports = ({ DB }) => {
   };
 
   return Object.freeze({
-    sendHangoutPromptNotification
+    sendHangoutPromptNotification,
+    getNotificationQueues,
+    createNotificationQueue,
+    addNotificationSubscriber,
+    removeNotificationSubscriber,
+    queueNotificationSubscribers,
+    notifyQueue,
+    getSubscriberNotificationsForTopic,
+    createNotificationQueueForHangout
   });
 };

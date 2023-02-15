@@ -2,6 +2,7 @@ const User = require("./entity/user");
 const Vendor = require("./entity/vendor");
 const Hangout = require("./entity/hangout");
 const TokenproofAddress = require("./entity/tokenproofAddress");
+const Notification = require("./entity/notification");
 
 module.exports = Object.freeze({
   mockDB: {},
@@ -9,6 +10,7 @@ module.exports = Object.freeze({
     User,
     Vendor,
     Hangout,
-    TokenproofAddress
+    TokenproofAddress,
+    Notification
   },
 });

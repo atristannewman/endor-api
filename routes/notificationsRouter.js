@@ -4,5 +4,13 @@ const { notificationController } = require("../controllers");
 const requestHandler = require("../requestHandler");
 
 notificationsRouter.post("/hangout",requestHandler(notificationController.sendHangoutPromptNotification));
+notificationsRouter.post("/queues",requestHandler(notificationController.createNotificationQueue));
+notificationsRouter.post("/queues/notify", requestHandler(notificationController.queueNotificationSubscribers));
+notificationsRouter.post("/notify", requestHandler(notificationController.notifyQueue));
+notificationsRouter.get("/queues", requestHandler(notificationController.getNotificationQueues));
+notificationsRouter.get("/user", requestHandler(notificationController.getSubscriberNotificationsForTopic));
+notificationsRouter.put("/queues", requestHandler(notificationController.addNotificationSubscriber));
+notificationsRouter.delete("/queues", requestHandler(notificationController.removeNotificationSubscriber));
+
 
 module.exports = notificationsRouter;

@@ -5,7 +5,7 @@ const googleServices = require("../services/googleServices");
 const moralisService = require("../services/moralisService");
 const {User} = require("../databases/postgres/entity/user");
 
-module.exports = ({ DB }) => {
+module.exports = ({ DB, notificationController }) => {
   // CREATE
   const createHangout = async (httpRequest) => {
     try {
@@ -18,6 +18,18 @@ module.exports = ({ DB }) => {
         tags,
         host
       });
+      console.log(`notificationController ${notificationController}`)
+      // Create notification for new hangouts chat
+      console.log(`hangout.id ${hangout.id}`)
+      const newNotification = {
+        topic: "chat", 
+        deviceTokenQueue: [], 
+        subscriberDeviceTokens: [], 
+        topicId: hangout.id
+      }
+      console.log(`newNotification ${newNotification}`)
+      notificationController.createNotificationQueueForHangout(newNotification)
+
       const location = await googleServices.geoCoding(address);
 
       if (hangout) {
@@ -209,15 +221,14 @@ module.exports = ({ DB }) => {
   // DELETE
   const deleteHangout = async (httpRequest) => {
     try {
-      const { id } = httpRequest.body;
-      await DB.Hangout.deleteById(id).then(
-        function () { const hangouts = DB.Hangout.findAll(); }
-      );
+      const { id } = httpRequest.query;
+
+      await DB.Hangout.deleteById(id)
 
       return {
         status: 200,
         data: {
-          hangouts
+          message: "Hangout removed."
         }
       };
     } catch (error) {
