@@ -320,6 +320,7 @@ const update = async (id, args) => {
 
 const updateByAuth0Id = async (auth0Id, args) => {
   try {
+    console.log(`args ${JSON.stringify(args.blockedUserIds)}`)
     userUpdateValidate(args);
 
     const location = args?.location;
