@@ -72,6 +72,9 @@ const User = db.define(
         latitude: null,
         longitude: null
       }
+    },
+    blockedUserIds: {
+      type: Sequelize.ARRAY(Sequelize.STRING)
     }
     // ,
     // NFTs: {
