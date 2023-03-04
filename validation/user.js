@@ -21,7 +21,8 @@ const schema = Joi.object({
     minHostRating: Joi.number().required(),
     minPossibleAttendees: Joi.number().required(),
     distanceFromPossibleAttendees: Joi.number().required()
-  }).optional().allow('','null',null)
+  }).optional().allow('','null',null),
+  blockedUserIds: Joi.array().items(Joi.string()).optional().empty().default([]),
   // ,
   // NFTs: Joi.array().items(Joi.object({
   //   logoUrl: Joi.string().required(),
