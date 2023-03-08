@@ -5,8 +5,8 @@ services:
     container_name: postgres
     image: postgres:latest
     ports:
-      - target: 5432
-        published: 5432
+      - target: 7999
+        published: 7999
     volumes:
       - type: volume
         source: pgdata
