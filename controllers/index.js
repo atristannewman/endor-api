@@ -23,10 +23,7 @@ const vendorController = makeVendorController({ DB });
 const notificationController = makeNotificationController({ DB });
 const hangoutController = makeHangoutController({ DB, notificationController });
 const authenticationController = makeAuthenticationController({ DB });
-const availabilityController = makeAvailabilityController({
-  DB,
-  hangoutController,
-});
+const availabilityController = makeAvailabilityController({ DB });
 
 module.exports = Object.freeze({
   transactionController,

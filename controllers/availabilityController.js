@@ -1,7 +1,7 @@
 const { Hangout } = require('../databases/postgres/entity/hangout');
 const { User } = require('../databases/postgres/entity/user');
 
-module.exports = ({ DB, hangoutController }) => {
+module.exports = ({ DB }) => {
   const updateAvailability = async (httpRequest) => {
     const { user, status, location } = await _validateAndGetParams(
       httpRequest.body
@@ -55,16 +55,18 @@ module.exports = ({ DB, hangoutController }) => {
 
   async function _createHangoutStub(user) {
     // If the user already has a hangout stub, do nothing and return
-    const hangouts = await DB.Hangout.findAll();
     // TODO : replace this with a more efficient way of finding the hangout
+    const hangouts = await DB.Hangout.findAll();
     for (const h of hangouts) {
       if (h.host && h.host.uuid === user.uuid) {
         // TODO : add conditional for checking the type of hangout once implemented
         return;
       }
     }
+
     // create a hangout to represent this user's availability
-    const currDateTime = new Date() + ''; // TODO : reformat this to desired format -- should we use ISO standard?
+    // TODO : reformat this to desired format -- should we use ISO standard?
+    const currDateTime = new Date() + '';
     const hangoutParams = {
       name: "Let's Hang Out!",
       address: 'TBD',
@@ -73,6 +75,7 @@ module.exports = ({ DB, hangoutController }) => {
       host: user,
     };
     // TODO : add the hangout type once implemented
+
     await DB.Hangout.create(hangoutParams);
   }
 

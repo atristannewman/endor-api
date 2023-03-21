@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const User = require('./user.js');
 
-console.log('VALIDATING');
 const schema = Joi.object({
   name: Joi.string().required(),
   address: Joi.string().required(),
