@@ -77,6 +77,9 @@ const User = db.define(
         longitude: null,
       },
     },
+    blockedUserIds: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+    },
     // ,
     // NFTs: {
     //   type: Sequelize.ARRAY({
@@ -373,6 +376,7 @@ const updateByUuid = async (uuid, args) => {
 
 const updateByAuth0Id = async (auth0Id, args) => {
   try {
+    console.log(`args ${JSON.stringify(args.blockedUserIds)}`);
     userUpdateValidate(args);
 
     const location = args?.location;
