@@ -1,9 +1,18 @@
-const express = require("express");
+const express = require('express');
 const authenticationRouter = express.Router();
-const { authenticationController } = require("../controllers");
-const requestHandler = require("../requestHandler");
+const { authenticationController } = require('../controllers');
+const requestHandler = require('../requestHandler');
 
-authenticationRouter.post("/",requestHandler(authenticationController.createTokenproofAddress));
-authenticationRouter.get("/",requestHandler(authenticationController.getTokenproofWalletForNonce));
+console.log('Initializing authenticationRouter');
+console.log('authenticationController: ', authenticationController);
+
+authenticationRouter.post(
+  '/',
+  requestHandler(authenticationController.createTokenproofAddress)
+);
+authenticationRouter.get(
+  '/',
+  requestHandler(authenticationController.getTokenproofWalletForNonce)
+);
 
 module.exports = authenticationRouter;
