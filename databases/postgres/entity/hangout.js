@@ -1,28 +1,30 @@
 /* eslint-disable no-useless-catch */
-const Sequelize = require("sequelize");
-const db = require("../sequelize");
-const makeHangout = require("../../../model/hangout");
-const { User } = require("./user");
+const Sequelize = require('sequelize');
+const db = require('../sequelize');
+const makeHangout = require('../../../model/hangout');
+const { User } = require('./user');
 
-const Hangout = db.define("hangout", {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true
+const Hangout = db.define(
+  'hangout',
+  {
+    id: {
+      type: Sequelize.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    name: Sequelize.STRING,
+    address: Sequelize.STRING,
+    startTime: Sequelize.STRING,
+    endTime: Sequelize.STRING,
+    // tags: Sequelize.ARRAY(Sequelize.STRING), // of strings
+    host: User,
+    type: Sequelize.STRING,
   },
-  name: Sequelize.STRING,
-  address: Sequelize.STRING,
-  startTime: Sequelize.STRING,
-  endTime: Sequelize.STRING,
-  // tags: Sequelize.ARRAY(Sequelize.STRING), // of strings
-  host: User
-
-},
-{
-  timestamps: false,
-  freezeTableName: true
-
-});
+  {
+    timestamps: false,
+    freezeTableName: true,
+  }
+);
 
 // () => {
 //   Hangout.belongsTo(db.user,
@@ -50,14 +52,15 @@ const Hangout = db.define("hangout", {
 const create = async (args) => {
   const hangoutInstance = makeHangout(args);
   try {
-    console.log("make hangout hangout entity");
+    console.log('make hangout hangout entity');
     return await Hangout.create({
       name: hangoutInstance.getName(),
       address: hangoutInstance.getAddress(),
       startTime: hangoutInstance.getStartTime(),
       endTime: hangoutInstance.getEndTime(),
       tags: hangoutInstance.getTags(),
-      host: hangoutInstance.getHost()
+      host: hangoutInstance.getHost(),
+      type: hangoutInstance.getType(),
     });
   } catch (error) {
     console.log(error);
@@ -77,8 +80,8 @@ const findById = async (id) => {
   try {
     return await Hangout.findOne({
       where: {
-        id
-      }
+        id,
+      },
     });
   } catch (error) {
     console.log(`error in hangout find by id: ${error}`);
@@ -96,7 +99,8 @@ const updateById = async (id, args) => {
       startTime: args.startTime,
       endTime: args.endTime,
       tags: Array(JSON.parse(args.tags)),
-      host: args.host
+      host: args.host,
+      type: args.type ? args.type : 'scheduled',
     });
   } catch (error) {
     console.log(`error in hangout update: ${error}`);
@@ -108,8 +112,8 @@ const deleteById = async (id) => {
   try {
     Hangout.destroy({
       where: {
-        id
-      }
+        id,
+      },
     });
   } catch (error) {
     throw error;
@@ -122,5 +126,5 @@ module.exports = Object.freeze({
   updateById,
   deleteById,
   findAll,
-  findById
+  findById,
 });

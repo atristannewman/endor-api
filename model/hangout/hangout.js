@@ -16,6 +16,7 @@ module.exports = ({ validate }) => {
           return tagArgs;
         },
         getHost: () => args.host,
+        getType: () => args.type,
       });
 
       return returnObject;
