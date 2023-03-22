@@ -6,7 +6,7 @@ CREATE ROLE localuser WITH LOGIN;
 ALTER USER localuser WITH PASSWORD 'local123'; # We don't care about password strength for local (DONT USE THIS CONVENTION IN PROD)
 ALTER ROLE localuser CREATEDB;
 \q
-psql postgres -U localuser
+psql postgres -U localuser;
 CREATE DATABASE flocklocal;
 GRANT ALL PRIVILEGES ON DATABASE flocklocal TO localuser;
 \q

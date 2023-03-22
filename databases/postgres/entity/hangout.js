@@ -91,6 +91,20 @@ const findById = async (id) => {
   }
 };
 
+const findAvailableByUserId = async (userId) => {
+  try {
+    return await Hangout.findOne({
+      where: {
+        userId: userId,
+        type: 'available',
+      },
+    });
+  } catch (error) {
+    console.log(`error in hangout find by id: ${error}`);
+    throw error;
+  }
+};
+
 const updateById = async (id, args) => {
   try {
     console.log(`update by id: ${id}, args: ${args}`);
@@ -129,4 +143,5 @@ module.exports = Object.freeze({
   deleteById,
   findAll,
   findById,
+  findAvailableByUserId,
 });

@@ -55,13 +55,10 @@ module.exports = ({ DB }) => {
 
   async function _createHangoutStub(user) {
     // If the user already has a hangout stub, do nothing and return
-    // TODO : replace this with a more efficient way of finding the hangout
-    const hangouts = await DB.Hangout.findAll();
-    for (const h of hangouts) {
-      if (h.host && h.host.uuid === user.uuid) {
-        // TODO : add conditional for checking the type of hangout once implemented
-        return;
-      }
+    const hangout = await DB.Hangout.findAvailableByUserId(user.uuid);
+    if (hangout) {
+      console.log('User already has a hangout stub. Doing nothing.');
+      return;
     }
 
     // create a hangout to represent this user's availability
@@ -73,26 +70,18 @@ module.exports = ({ DB }) => {
       startTime: currDateTime,
       endTime: '',
       host: user,
+      userId: user.uuid,
+      type: 'available',
     };
-    // TODO : add the hangout type once implemented
-
     await DB.Hangout.create(hangoutParams);
   }
 
   async function _removeHangoutStub(user) {
     // delete the hangout representing this user's availability
     console.log('Deleting the stub hangout since user is no longer available');
-    const hangouts = await DB.Hangout.findAll();
-
-    // TODO : replace this with a more efficient way of finding the hangout
-    for (const h of hangouts) {
-      if (h.host && h.host.uuid === user.uuid) {
-        console.log('hangout retrieved: ', h);
-        const hangoutResponse = await DB.Hangout.deleteById(h.id);
-        console.log(hangoutResponse);
-        break;
-      }
-    }
+    const hangout = await DB.Hangout.findAvailableByUserId(user.uuid);
+    if (hangout) await DB.Hangout.deleteById(hangout.id);
+    else console.log('User does not have a hangout stub. Doing nothing.');
   }
 
   return Object.freeze({
