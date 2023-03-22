@@ -7,7 +7,9 @@ module.exports = ({ DB }) => {
       httpRequest.body
     );
 
-    await _updateUserLocation(user.uuid, location);
+    if (status === 'available' && location) {
+      await _updateUserLocation(user.uuid, location);
+    }
 
     if (status === 'available') {
       await _createHangoutStub(user);
