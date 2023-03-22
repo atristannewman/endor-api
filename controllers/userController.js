@@ -182,12 +182,14 @@ module.exports = ({ transactionService, DB, moralisService }) => {
         location, 
         notificationPreferences,
         deviceToken,
-        auth0Id 
+        auth0Id,
+        blockedUserIds
       } = httpRequest.body;
 
       console.log(`userController ln 174 updateUser ${JSON.stringify(httpRequest.body)}`)
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
+      const cleanBlockedUserIdsArray = await urlencodedToRawAddressesArray(blockedUserIds)
       const userByAuth0Id = await DB.User.findByAuth0Id(auth0Id);
 
       if (!userByAuth0Id) {
@@ -221,7 +223,8 @@ module.exports = ({ transactionService, DB, moralisService }) => {
         location,
         notificationPreferences,
         deviceToken,
-        walletAddresses: cleanAddressesArray
+        walletAddresses: cleanAddressesArray,
+        blockedUserIds: cleanBlockedUserIdsArray
       });
 
       const updatedUser = await DB.User.findByAuth0Id(auth0Id);

@@ -16,7 +16,8 @@ module.exports = ({ validate }) => {
         getNotificationPreferences: () => args.notificationPreferences === "null" ? null : args.notificationPreferences,
         getLocation: () => args.location === "null" ? null : args.location,
         getDeviceToken: () => args.deviceToken,
-        getNFTs: () => args.NFTs
+        getNFTs: () => args.NFTs,
+        getBlockedUserIds: () => args.blockedUserIds
       });
     } catch (error) {
       throw error;
