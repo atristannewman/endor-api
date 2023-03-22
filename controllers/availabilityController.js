@@ -40,7 +40,7 @@ module.exports = ({ DB }) => {
         uuid,
       },
     });
-    if (!user) throw new Error('User does not exist with corresponding uuid.');
+    if (!user) throw new Error(`User not found: [ ${uuid} ] `);
     return user;
   }
 
@@ -48,7 +48,10 @@ module.exports = ({ DB }) => {
     try {
       const res = await DB.User.updateByUuid(uuid, { location: location });
     } catch (err) {
-      console.log('Error updating user location in database. ', err);
+      console.log(
+        `Error updating user location in database for user : [ ${user.uuid} ] `,
+        err
+      );
       throw new Error('Error updating user location');
     }
   }
@@ -57,7 +60,9 @@ module.exports = ({ DB }) => {
     // If the user already has a hangout stub, do nothing and return
     const hangout = await DB.Hangout.findAvailableByUserId(user.uuid);
     if (hangout) {
-      console.log('User already has a hangout stub. Doing nothing.');
+      console.log(
+        `User [ ${user.uuid} ] already has a hangout stub. Doing nothing.`
+      );
       return;
     }
 
@@ -74,14 +79,20 @@ module.exports = ({ DB }) => {
       type: 'available',
     };
     await DB.Hangout.create(hangoutParams);
+    console.log(`Available Hangout stub created for user: [ ${user.uuid} ]`);
   }
 
   async function _removeHangoutStub(user) {
     // delete the hangout representing this user's availability
     console.log('Deleting the stub hangout since user is no longer available');
     const hangout = await DB.Hangout.findAvailableByUserId(user.uuid);
-    if (hangout) await DB.Hangout.deleteById(hangout.id);
-    else console.log('User does not have a hangout stub. Doing nothing.');
+    if (hangout) {
+      await DB.Hangout.deleteById(hangout.id);
+      console.log(`Deleted Available Hangout stub for user : [ ${user.uuid} ]`);
+    } else
+      console.log(
+        `User [ ${user.uuid} ] does not have a hangout stub. Doing nothing.`
+      );
   }
 
   return Object.freeze({

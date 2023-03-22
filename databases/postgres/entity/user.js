@@ -318,9 +318,7 @@ const findByUUID = async (uuid) => {
 };
 
 const update = async (id, args) => {
-  console.log('update called');
   try {
-    console.log('args: ', args);
     User.update(args, {
       where: {
         id,
@@ -332,9 +330,7 @@ const update = async (id, args) => {
 };
 
 const updateByUuid = async (uuid, args) => {
-  console.log('update called');
   try {
-    console.log('args: ', args);
     User.update(args, {
       where: {
         uuid: uuid,

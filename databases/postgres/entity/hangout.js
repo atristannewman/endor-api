@@ -107,7 +107,6 @@ const findAvailableByUserId = async (userId) => {
 
 const updateById = async (id, args) => {
   try {
-    console.log(`update by id: ${id}, args: ${args}`);
     return await Hangout.upsert({
       id,
       name: args.name,
