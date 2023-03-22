@@ -158,6 +158,9 @@ const findByAddress = async (address) => {
 };
 
 const arrayOfUsersWallets = async (users) => {
+  if (!users || users.length == 0) {
+    return [];
+  }
   var arrayOfWallets = [];
   var index = 0;
 
@@ -182,23 +185,15 @@ const getIndexOfMatchingWallets = async (
   arrayOfAllUserWalletArrays,
   walletAddresses
 ) => {
+  if (!arrayOfAllUserWalletArrays || arrayOfAllUserWalletArrays.length == 0) {
+    return;
+  }
+
   var returnIndex = null;
   var index = 0;
 
-  console.log(
-    `ln 161 arrayOfAllUserWalletArrays ${arrayOfAllUserWalletArrays} walletAddresses ${walletAddresses}`
-  );
   do {
     arrayOfAllUserWalletArrays[index].forEach((address) => {
-      console.log(
-        `ln 164 address ${address} walletAddresses ${walletAddresses}`
-      );
-      console.log(
-        `ln 165 walletAddresses.includes(address.toLowerCase()) ${walletAddresses.includes(
-          address.toLowerCase()
-        )} `
-      );
-
       if (walletAddresses.includes(address.toLowerCase())) {
         returnIndex = index;
       }
@@ -218,40 +213,16 @@ const getIndexOfMatchingWallets = async (
 };
 
 const findByAddresses = async (walletAddresses) => {
-  // eslint-disable-next-line no-useless-catch
   try {
-    console.log(
-      `ln 184 user.js findByAddresses walletAddresses ${JSON.stringify(
-        walletAddresses
-      )}`
-    );
     userAddressesValidate({ walletAddresses });
     const allUsers = await User.findAll();
-    console.log(
-      `ln 187 user.js findByAddresses walletAddresses ${JSON.stringify(
-        walletAddresses
-      )}`
-    );
     const arrayOfAllUserWallets = await arrayOfUsersWallets(allUsers);
-    console.log(
-      `ln 189 user.js findByAddresses walletAddresses ${JSON.stringify(
-        walletAddresses
-      )}`
-    );
     const cleanSearchedWalletAddresses = walletAddresses.map((address) =>
       address.toLowerCase()
-    );
-    console.log(
-      `ln 191 cleanSearchedWalletAddresses ${JSON.stringify(
-        cleanSearchedWalletAddresses
-      )}`
     );
     const indexOfUserWithMatchingWallet = await getIndexOfMatchingWallets(
       arrayOfAllUserWallets,
       cleanSearchedWalletAddresses
-    );
-    console.log(
-      `ln 193 indexOfUserWithMatchingWallet ${indexOfUserWithMatchingWallet}`
     );
     return indexOfUserWithMatchingWallet
       ? allUsers[indexOfUserWithMatchingWallet]

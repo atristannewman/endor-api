@@ -17,6 +17,7 @@ module.exports = ({ validate }) => {
         },
         getHost: () => args.host,
         getType: () => args.type,
+        getUserId: () => args.userId,
       });
 
       return returnObject;

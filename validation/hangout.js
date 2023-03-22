@@ -9,6 +9,7 @@ const schema = Joi.object({
   tags: Joi.array().items(Joi.string()).optional(),
   host: Joi.object({ User }).required(),
   type: Joi.string().optional(),
+  userId: Joi.string().optional(),
 });
 
 exports.validate = (args) => {

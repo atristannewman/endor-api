@@ -19,6 +19,7 @@ const Hangout = db.define(
     // tags: Sequelize.ARRAY(Sequelize.STRING), // of strings
     host: User,
     type: Sequelize.STRING,
+    userId: Sequelize.UUID,
   },
   {
     timestamps: false,
@@ -61,6 +62,7 @@ const create = async (args) => {
       tags: hangoutInstance.getTags(),
       host: hangoutInstance.getHost(),
       type: hangoutInstance.getType(),
+      userId: hangoutInstance.getUserId(),
     });
   } catch (error) {
     console.log(error);
