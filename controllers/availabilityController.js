@@ -69,12 +69,10 @@ module.exports = ({ DB }) => {
     }
 
     // create a hangout to represent this user's availability
-    // TODO : reformat this to desired format -- should we use ISO standard?
-    const currDateTime = new Date() + '';
     const hangoutParams = {
       name: "Let's Hang Out!",
       address: 'TBD',
-      startTime: currDateTime,
+      startTime: _getCurrDateString(),
       endTime: '',
       host: user,
       userId: user.uuid,
@@ -82,6 +80,15 @@ module.exports = ({ DB }) => {
     };
     await DB.Hangout.create(hangoutParams);
     console.log(`Available Hangout stub created for user: [ ${user.uuid} ]`);
+  }
+
+  function _getCurrDateString() {
+    const currDatetime = new Date();
+    const fullDateString = `${currDatetime.getFullYear()}-${currDatetime.getMonth()}-${currDatetime.getDate()}`;
+    const fullTimeString = `${currDatetime.getHours()}:${currDatetime.getMinutes()}:${currDatetime.getSeconds()}`;
+    const timezoneOffsetString = `${currDatetime.getTimezoneOffset()}`;
+    const fullDatetimeString = `${fullDateString} ${fullTimeString} +${timezoneOffsetString}`;
+    return fullDatetimeString;
   }
 
   async function _removeHangoutStub(user) {
