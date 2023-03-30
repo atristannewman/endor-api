@@ -329,6 +329,18 @@ const update = async (id, args) => {
   }
 };
 
+const updateByUuid = async (uuid, args) => {
+  try {
+    User.update(args, {
+      where: {
+        uuid: uuid,
+      },
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 const updateByAuth0Id = async (auth0Id, args) => {
   try {
     console.log(`args ${JSON.stringify(args.blockedUserIds)}`);
@@ -391,6 +403,7 @@ module.exports = Object.freeze({
   User,
   create,
   update,
+  updateByUuid,
   findByAddress,
   findByAddresses,
   findByUUID,

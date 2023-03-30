@@ -1,5 +1,5 @@
-const Joi = require("joi");
-const User = require("./user.js")
+const Joi = require('joi');
+const User = require('./user.js');
 
 const schema = Joi.object({
   name: Joi.string().required(),
@@ -7,7 +7,9 @@ const schema = Joi.object({
   startTime: Joi.string().required(),
   endTime: Joi.string().optional(),
   tags: Joi.array().items(Joi.string()).optional(),
-  host: Joi.object({User}).required(),
+  host: Joi.object({ User }).required(),
+  type: Joi.string().optional(),
+  userId: Joi.string().optional(),
 });
 
 exports.validate = (args) => {

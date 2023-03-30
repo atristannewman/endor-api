@@ -1,16 +1,17 @@
-const express = require("express");
+const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const cors = require("cors");
-const transactionRouter = require("./routes/transactionRouter");
-const userRouter = require("./routes/userRouter");
-const vendorRouter = require("./routes/vendorRouter");
-const hangoutsRouter = require("./routes/hangoutsRouter");
-const notificationsRouter = require("./routes/notificationsRouter");
-const authenticationRouter = require("./routes/authenticationRouter");
+const cors = require('cors');
+const transactionRouter = require('./routes/transactionRouter');
+const userRouter = require('./routes/userRouter');
+const vendorRouter = require('./routes/vendorRouter');
+const hangoutsRouter = require('./routes/hangoutsRouter');
+const notificationsRouter = require('./routes/notificationsRouter');
+const authenticationRouter = require('./routes/authenticationRouter');
+const availabilityRouter = require('./routes/availabilityRouter');
 const { auth, requiresAuth } = require('express-openid-connect');
 
-require("dotenv").config();
+require('dotenv').config();
 
 const PORT = process.env.PORT || '23.90.200.170';
 
@@ -19,13 +20,13 @@ app.use(cors());
 app.use(bodyParser.urlencoded());
 
 // ----- Routes ------ //
-app.use("/api/transactions", transactionRouter);
-app.use("/api/users", userRouter);
-app.use("/api/vendors", vendorRouter);
-app.use("/api/hangouts", hangoutsRouter);
-app.use("/api/notifications", notificationsRouter);
-app.use("/api/authentication", authenticationRouter);
-
+app.use('/api/transactions', transactionRouter);
+app.use('/api/users', userRouter);
+app.use('/api/vendors', vendorRouter);
+app.use('/api/hangouts', hangoutsRouter);
+app.use('/api/notifications', notificationsRouter);
+app.use('/api/authentication', authenticationRouter);
+app.use('/api/availability', availabilityRouter);
 
 // ----- from Auth0 start ------ //
 const auth0Configuration = {
@@ -46,18 +47,17 @@ app.use(auth(auth0Configuration));
 
 // req.oidc.isAuthenticated is provided from the auth router
 app.get('/', (req, res) => {
-    if (req.oidc.isAuthenticated()) {
-      res.send({
-        'loginStatus': 'Logged in',
-        'profileAuth0Id': req.oidc.user.sub
-      })
-    } else {
-      res.send({
-        'loginStatus': 'Logged out'
-      })
-    }
+  if (req.oidc.isAuthenticated()) {
+    res.send({
+      loginStatus: 'Logged in',
+      profileAuth0Id: req.oidc.user.sub,
+    });
+  } else {
+    res.send({
+      loginStatus: 'Logged out',
+    });
   }
-);
+});
 
 // The /profile route will show the user profile as JSON
 app.get('/profile', requiresAuth(), (req, res) => {

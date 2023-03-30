@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.addColumn(
       'hangout', // name of Source model
-      'user_id', // name of the key we're adding 
+      'user_id', // name of the key we're adding
       {
         type: Sequelize.UUID,
         references: {
@@ -20,7 +20,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     await queryInterface.removeColumn(
       'hangout', // name of Source model
-      'user_id',
+      'user_id'
     );
-  }
+  },
 };

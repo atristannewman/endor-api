@@ -9,10 +9,15 @@ module.exports = ({ validate }) => {
         getStartTime: () => args.startTime,
         getEndTime: () => args.endTime,
         getTags: () => {
-          const tagArgs = JSON.parse(JSON.stringify(args.tags));
+          console.log('args.tags: ', args.tags);
+          const tagArgs = args.tags
+            ? JSON.parse(JSON.stringify(args.tags))
+            : [];
           return tagArgs;
         },
-        getHost: () => args.host
+        getHost: () => args.host,
+        getType: () => args.type,
+        getUserId: () => args.userId,
       });
 
       return returnObject;
