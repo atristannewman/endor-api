@@ -2,7 +2,7 @@
 module.exports = ({ validate }) => {
   return (args) => {
     try {
-      console.log("validating user")
+      console.log('validating user');
       validate(args);
 
       return Object.freeze({
@@ -13,11 +13,16 @@ module.exports = ({ validate }) => {
         getUsername: () => args.username,
         getHostRating: () => args.hostRating,
         getProfileImageUrl: () => args.profileImageUrl,
-        getNotificationPreferences: () => args.notificationPreferences === "null" ? null : args.notificationPreferences,
-        getLocation: () => args.location === "null" ? null : args.location,
+        getNotificationPreferences: () =>
+          args.notificationPreferences === 'null'
+            ? null
+            : args.notificationPreferences,
+        getLocation: () => (args.location === 'null' ? null : args.location),
         getDeviceToken: () => args.deviceToken,
         getNFTs: () => args.NFTs,
-        getBlockedUserIds: () => args.blockedUserIds
+        getBlockedUserIds: () => args.blockedUserIds,
+        getAvailabilityStatus: () => args.availabilityStatus,
+        availabilityLastModifiedDate: () => args.availabilityLastModifiedDate,
       });
     } catch (error) {
       throw error;

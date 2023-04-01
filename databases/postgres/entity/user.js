@@ -8,6 +8,7 @@ const {
 } = require('../../../validation/userAddresses.js');
 const { userUpdateValidate } = require('../../../validation/userUpdate');
 const { userAuth0IdValidate } = require('../../../validation/userAuth0Id');
+const { getCurrDateString } = require('../../../utils/dateUtil.js');
 
 const User = db.define(
   'user',
@@ -80,6 +81,15 @@ const User = db.define(
     blockedUserIds: {
       type: Sequelize.ARRAY(Sequelize.STRING),
     },
+    availabilityStatus: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+    availabilityLastModifiedDate: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
+
     // ,
     // NFTs: {
     //   type: Sequelize.ARRAY({
@@ -399,6 +409,27 @@ const deleteByUUID = async (uuid) => {
   }
 };
 
+const updateAvailabilityStatusByUUID = async (uuid, availabilityStatus) => {
+  if (!uuid || !availabilityStatus) throw new Error('Missing required fields');
+  if (!['unavailable', 'available'].includes(availabilityStatus))
+    throw new Error('Invalid availabilityStatus');
+  try {
+    User.update(
+      {
+        availabilityStatus,
+        availabilityLastModifiedDate: getCurrDateString(),
+      },
+      {
+        where: {
+          uuid,
+        },
+      }
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = Object.freeze({
   User,
   create,
@@ -413,4 +444,5 @@ module.exports = Object.freeze({
   findAllWithLocation,
   findByAuth0Id,
   updateByAuth0Id,
+  updateAvailabilityStatusByUUID,
 });
