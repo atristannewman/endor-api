@@ -30,6 +30,8 @@ module.exports = ({ DB }) => {
       return JSON.stringify(this.cache);
     }
   }
+
+  // create cache instance and populate from DB on startup:
   const locationCache = new LocationCache();
   locationCache.populateCacheWithAvailableUsers();
 
