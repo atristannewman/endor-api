@@ -12,7 +12,8 @@ module.exports = (controller) => {
       const response = await controller(httpRequest);
       res.status(response.status).send({ data: response.data });
     } catch (error) {
-      res.status(400).send({ message: "Error - " + error.message });
+      console.log(error);
+      res.status(400).send({ message: 'Error - ' + error.message });
     }
   };
 };

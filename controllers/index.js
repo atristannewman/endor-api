@@ -2,7 +2,7 @@ const connectDatabase = require('../databases');
 // const associations = require("../databases/associations");
 const transactionService = require('../services/transaction');
 const moralisService = require('../services/moralisService');
-
+const makeLocationService = require('../services/locationService');
 const makeTransactionController = require('./transactionController');
 const makeUserController = require('./userController');
 const makeVendorController = require('./vendorController');
@@ -13,6 +13,7 @@ const makeAvailabilityController = require('./availabilityController');
 
 const DB = connectDatabase({ db: 'postgres', isMock: false });
 
+const locationService = makeLocationService({ DB });
 const transactionController = makeTransactionController({ transactionService });
 const userController = makeUserController({
   transactionService,
@@ -23,7 +24,10 @@ const vendorController = makeVendorController({ DB });
 const notificationController = makeNotificationController({ DB });
 const hangoutController = makeHangoutController({ DB, notificationController });
 const authenticationController = makeAuthenticationController({ DB });
-const availabilityController = makeAvailabilityController({ DB });
+const availabilityController = makeAvailabilityController({
+  DB,
+  locationService,
+});
 
 module.exports = Object.freeze({
   transactionController,
