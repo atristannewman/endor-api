@@ -430,6 +430,35 @@ const updateAvailabilityStatusByUUID = async (uuid, availabilityStatus) => {
   }
 };
 
+const getAvailableUserUuidsAndLocations = async () => {
+  try {
+    const users = await User.findAll({
+      where: {
+        availabilityStatus: 'available',
+      },
+      attributes: ['uuid', 'location'],
+    });
+    return users;
+  } catch (error) {
+    throw error;
+  }
+};
+
+const getUsersFromListOfUuids = async (uuids) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        uuid: {
+          [Sequelize.Op.in]: uuids,
+        },
+      },
+    });
+    return users;
+  } catch (error) {
+    throw error;
+  }
+};
+
 module.exports = Object.freeze({
   User,
   create,
@@ -445,4 +474,6 @@ module.exports = Object.freeze({
   findByAuth0Id,
   updateByAuth0Id,
   updateAvailabilityStatusByUUID,
+  getAvailableUserUuidsAndLocations,
+  getUsersFromListOfUuids,
 });
