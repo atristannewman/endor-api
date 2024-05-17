@@ -36,6 +36,6 @@
     "eslint-plugin-n": "^15.2.4",
     "eslint-plugin-promise": "^6.0.0",
     "nodemon": "^2.0.15",
-    "sequelize-cli": "^6.4.1"
+    "sequelize-cli": "^6.6.2"
   }
 }
