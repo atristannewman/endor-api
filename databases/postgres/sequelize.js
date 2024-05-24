@@ -28,7 +28,7 @@ let config = {
 if (process.env.PROD_ENV) {
   config.dialectOptions = {
     ssl: {
-      require: true,
+      require: false,
       rejectUnauthorized: false,
     },
   };
