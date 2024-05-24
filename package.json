@@ -27,6 +27,7 @@
     "node-geocoder": "^4.2.0",
     "pg": "^8.7.3",
     "pg-hstore": "^2.3.4",
+    "punycode": "^2.3.1",
     "sequelize": "^6.27.0"
   },
   "devDependencies": {
