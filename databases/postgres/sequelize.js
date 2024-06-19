@@ -10,7 +10,7 @@ const credentials = {
   DIALECT: 'postgres',
   PORT: process.env.DB_PORT,
   // PROD_ENV: process.env.PROD_ENV,
-  DATABASE_URL: process.env.DATABASE_URL,
+  DATABASE_URL: 'localhost',
 };
 
 let config = {
@@ -25,20 +25,20 @@ let config = {
   logging: false,
 };
 
-if (process.env.PROD_ENV) {
+if (process.env.ENV === 'production') {
   config.dialectOptions = {
     ssl: {
       require: false,
       rejectUnauthorized: false,
     },
   };
-  const { DATABASE_URL } = process.env;
-  const dbUrl = url.parse(DATABASE_URL);
-  credentials.USERNAME = dbUrl.auth.substr(0, dbUrl.auth.indexOf(':'));
-  credentials.PASSWORD = dbUrl.auth.substr(
-    dbUrl.auth.indexOf(':') + 1,
-    dbUrl.auth.length
-  );
+
+  const { AWS_RDS_ENDPOINT, AWS_RDS_USERNAME, AWS_RDS_PASSWORD } = process.env;
+  const dbUrl = url.parse(AWS_RDS_ENDPOINT);
+
+  credentials.USERNAME = AWS_RDS_USERNAME
+  credentials.PASSWORD = AWS_RDS_PASSWORD
+  
   credentials.DATABASE = dbUrl.path.slice(1);
   const host = dbUrl.hostname;
   const { port } = dbUrl;
@@ -46,22 +46,24 @@ if (process.env.PROD_ENV) {
   config.port = port;
 }
 
-if (process.env.NODE_ENV == 'local') {
+if (process.env.ENV == 'local') {
   console.log(
-    `Setting up a local database connection: ${process.env.DATABASE_URL}`
+    `Setting up a local database connection`
   );
-  const sequelize = new Sequelize(process.env.DATABASE_URL); // Example for postgres
+
+  const postgresDbUrl = `postgres://${process.env.AWS_RDS_USERNAME}:${process.env.AWS_RDS_PASSWORD}@localhost:${process.env.DB_PORT}/${process.env.AWS_RDS_DBNAME}`
+  const sequelize = new Sequelize(postgresDbUrl); // Example for postgres
 
   sequelize
     .authenticate()
     .then(function (err) {
       console.log(
-        `DB connection has succeeded for ${process.env.DATABASE_URL}`
+        `DB connection has succeeded for ${postgresDbUrl}`
       );
     })
     .catch(function (err) {
       console.log(
-        `Unable to connect to the database ${process.env.DATABASE_URL}`,
+        `Unable to connect to the database ${postgresDbUrl}`,
         err
       );
     });
