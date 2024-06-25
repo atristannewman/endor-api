@@ -25,28 +25,8 @@ let config = {
   logging: false,
 };
 
-if (process.env.ENV === 'production') {
-  config.dialectOptions = {
-    ssl: {
-      require: false,
-      rejectUnauthorized: false,
-    },
-  };
-
-  const { AWS_RDS_ENDPOINT, AWS_RDS_USERNAME, AWS_RDS_PASSWORD } = process.env;
-  const dbUrl = url.parse(AWS_RDS_ENDPOINT);
-
-  credentials.USERNAME = AWS_RDS_USERNAME
-  credentials.PASSWORD = AWS_RDS_PASSWORD
-  
-  credentials.DATABASE = dbUrl.path.slice(1);
-  const host = dbUrl.hostname;
-  const { port } = dbUrl;
-  config.host = host;
-  config.port = port;
-}
-
-if (process.env.ENV == 'local') {
+// MARK: Helper Functions
+function connectToLocal() {
   console.log(
     `Setting up a local database connection`
   );
@@ -69,22 +49,67 @@ if (process.env.ENV == 'local') {
     });
 
   module.exports = sequelize;
-} else {
-  const sequelize = new Sequelize(
-    credentials.DATABASE,
-    credentials.USERNAME,
-    credentials.PASSWORD,
-    config
+}
+
+function connectToDevelopment() {
+  console.log(
+    `Setting up a local database connection`
   );
+
+  const postgresDbUrl = `postgres://${process.env.AWS_RDS_USERNAME}:${process.env.AWS_RDS_PASSWORD}@localhost:${process.env.DB_PORT}/${process.env.AWS_RDS_DBNAME}`
+  const sequelize = new Sequelize(postgresDbUrl); // Example for postgres
 
   sequelize
     .authenticate()
     .then(function (err) {
-      console.log(`DB connection has succeeded.`);
+      console.log(
+        `DB connection has succeeded for ${postgresDbUrl}`
+      );
     })
     .catch(function (err) {
-      console.log('Unable to connect to the database:', err);
+      console.log(
+        `Unable to connect to the database ${postgresDbUrl}`,
+        err
+      );
     });
 
   module.exports = sequelize;
+}
+
+function connectToProduction() {
+  console.log(
+    `Setting up a production database connection`
+  );
+
+  config.dialectOptions = {
+    ssl: {
+      require: false,
+      rejectUnauthorized: false,
+    },
+  };
+
+  const { AWS_RDS_ENDPOINT, AWS_RDS_USERNAME, AWS_RDS_PASSWORD } = process.env;
+  const dbUrl = url.parse(AWS_RDS_ENDPOINT);
+
+  credentials.USERNAME = AWS_RDS_USERNAME
+  credentials.PASSWORD = AWS_RDS_PASSWORD
+  
+  credentials.DATABASE = dbUrl.path.slice(1);
+  const host = dbUrl.hostname;
+  const { port } = dbUrl;
+  config.host = host;
+  config.port = port;
+}
+
+const environment = process.env.ENV
+switch (environment) {
+  case 'production':
+    connectToProduction()
+    break;
+  case 'development':
+    connectToDevelopment()
+    break;
+  default:
+    connectToLocal()
+    break
 }
