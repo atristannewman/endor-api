@@ -46,7 +46,7 @@ if (process.env.ENV === 'production') {
   config.port = port;
 }
 
-if (process.env.ENV == 'development') {
+if (process.env.ENV == 'local') {
   console.log(
     `Setting up a local database connection`
   );
