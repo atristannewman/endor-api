@@ -53,10 +53,10 @@ function connectToLocal() {
 
 function connectToDevelopment() {
   console.log(
-    `Setting up a local database connection`
+    `Setting up a development database connection`
   );
 
-  const postgresDbUrl = `postgres://${process.env.AWS_RDS_USERNAME}:${process.env.AWS_RDS_PASSWORD}@localhost:${process.env.DB_PORT}/${process.env.AWS_RDS_DBNAME}`
+  const postgresDbUrl = `postgres://${process.env.AWS_RDS_USERNAME}:${process.env.AWS_RDS_PASSWORD}@${process.env.AWS_RDS_ENDPOINT}:${process.env.DB_PORT}/${process.env.AWS_RDS_DBNAME}`
   const sequelize = new Sequelize(postgresDbUrl); // Example for postgres
 
   sequelize
@@ -101,6 +101,7 @@ function connectToProduction() {
   config.port = port;
 }
 
+// MARK: Main
 const environment = process.env.ENV
 switch (environment) {
   case 'production':
