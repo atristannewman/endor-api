@@ -2,15 +2,18 @@ require('dotenv').config();
 const Sequelize = require('sequelize');
 const url = require('url');
 
+// Note: Migrations v. CRUD Operations:
+// * These are NOT the same credentials used to migrate dbs. Those are in config/config.js
+
+// MARK: Variables
 const credentials = {
-  DATABASE: process.env.DATABASE,
-  USERNAME: process.env.NAME,
-  PASSWORD: process.env.PASSWORD,
-  HOST: process.env.HOST,
+  DATABASE: process.env.HEROKU_DB_NAME,
+  USERNAME: process.env.HEROKU_DB_USER,
+  PASSWORD: process.env.HEROKU_DB_PASSWORD,
+  HOST: process.env.HEROKU_DB_HOST,
   DIALECT: 'postgres',
   PORT: process.env.DB_PORT,
-  // PROD_ENV: process.env.PROD_ENV,
-  DATABASE_URL: 'localhost',
+  DATABASE_URL: process.env.HEROKU_DB_URI,
 };
 
 let config = {
@@ -23,6 +26,12 @@ let config = {
     idle: 10000,
   },
   logging: false,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  }
 };
 
 // MARK: Helper Functions
@@ -52,30 +61,26 @@ function connectToLocal() {
 }
 
 function connectToDevelopment() {
-  console.log(
-    `Setting up a development database connection`
+  const sequelize = new Sequelize(
+    credentials.DATABASE,
+    credentials.USERNAME,
+    credentials.PASSWORD,
+    config
   );
-
-  const postgresDbUrl = `postgres://${process.env.AWS_RDS_USERNAME}:${process.env.AWS_RDS_PASSWORD}@${process.env.AWS_RDS_ENDPOINT}:${process.env.DB_PORT}/${process.env.AWS_RDS_DBNAME}`
-  const sequelize = new Sequelize(postgresDbUrl); // Example for postgres
 
   sequelize
     .authenticate()
     .then(function (err) {
-      console.log(
-        `DB connection has succeeded for ${postgresDbUrl}`
-      );
+      `DB connection has succeeded for ${process.env.HEROKU_DB_NAME}`
     })
     .catch(function (err) {
-      console.log(
-        `Unable to connect to the database ${postgresDbUrl}`,
-        err
-      );
+      console.log(`Unable to connect to the database ${process.env.HEROKU_DB_NAME}:`, err);
     });
 
   module.exports = sequelize;
 }
 
+// TODO: Convert Production db to Heroku Postgres add-on
 function connectToProduction() {
   console.log(
     `Setting up a production database connection`
