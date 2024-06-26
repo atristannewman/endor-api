@@ -1,14 +1,16 @@
 require('dotenv').config();
 
 module.exports = {
-    username: process.env.USERNAME,
-    password: process.env.PASSWORD,
-    database: process.env.AWS_RDS_DBNAME,
+    username: process.env.HEROKU_DB_USER,
+    password: process.env.HEROKU_DB_PASSWORD,
+    database: process.env.HEROKU_DB_NAME,
     port: process.env.DB_PORT,
-    host: process.env.LOCAL_DATABASE_URL,
+    host: process.env.HEROKU_DB_HOST,
     dialect: 'postgres',
     dialectOptions: {
-      require: false,
-      ssl: false
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      }
     }
 };
