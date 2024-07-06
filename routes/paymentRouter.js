@@ -1,14 +1,9 @@
 const express = require('express');
-const router = express.Router();
-// const paymentController = require('../controllers/paymentController');
+const paymentRouter = express.Router();
+const { paymentController } = require('../controllers');
+const requestHandler = require("../requestHandler");
 
-router.post('/intent', (req, res) => {
-    console.log('intent POST called');
-    res.send('intent POST called');
-});
-router.post('/confirm-intent', (req, res) => {
-    console.log('confirm intent POST called');
-    res.send('confirm intent POST called');
-});
+paymentRouter.post('/intent', requestHandler(paymentController.createPaymentIntent));
+paymentRouter.post('/confirm-intent', requestHandler(paymentController.confirmPaymentIntent));
 
-module.exports = router;
+module.exports = paymentRouter;
