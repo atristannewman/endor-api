@@ -3,6 +3,8 @@ const connectDatabase = require('../databases');
 const transactionService = require('../services/transaction');
 const moralisService = require('../services/moralisService');
 const makeLocationService = require('../services/locationService');
+const paymentService = require('../services/paymentService');
+
 const makeTransactionController = require('./transactionController');
 const makeUserController = require('./userController');
 const makeVendorController = require('./vendorController');
@@ -30,7 +32,7 @@ const availabilityController = makeAvailabilityController({
   DB,
   locationService,
 });
-const paymentController = makePaymentController({ DB });
+const paymentController = makePaymentController({ DB, paymentService });
 
 module.exports = Object.freeze({
   transactionController,

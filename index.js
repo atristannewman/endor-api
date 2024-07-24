@@ -14,7 +14,7 @@ const { auth, requiresAuth } = require('express-openid-connect');
 
 require('dotenv').config();
 
-const PORT = process.env.PORT || '23.90.200.170';
+const LOCAL_PORT = process.env.LOCAL_PORT || '23.90.200.170';
 
 app.use(express.json());
 app.use(cors());
@@ -68,6 +68,6 @@ app.get('/profile', requiresAuth(), (req, res) => {
 
 // ----- from Auth0 end ----- //
 
-app.listen(PORT, () => {
-  console.log(`Server listening on the port::${PORT}`);
+app.listen(LOCAL_PORT, () => {
+  console.log(`Server listening on the port::${LOCAL_PORT}`);
 });
