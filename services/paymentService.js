@@ -25,9 +25,9 @@ const returnUrl = () => {
 async function createPaymentIntent() {
     try {
         console.log('creating payment intent')
-        const { client_secret } = await stripe.paymentIntents.create({
-          amount: '99',
-          currency: 'usd',
+        const { client_secret, amount, currency } = await stripe.paymentIntents.create({
+          amount: amount,
+          currency: currency,
         });
         console.log(`client_secret: ${client_secret}`)
         // await Card.createCard({
