@@ -7,7 +7,7 @@ Pre-requisite
 1. create .env file in the root folder.
 2. Add the following environment variables:]
    ETHSCAN_TOKEN={ask a dev} (deprecated)
-   PORT={what do you want it to be?}
+   LOCAL_PORT={what do you want it to be?}
 3. ETHPLORER_TOKEN={ask a dev} (deprecated)
 4. NAME={ask a dev. its on heroku}
 PASSWORD={ask a dev. its on heroku}

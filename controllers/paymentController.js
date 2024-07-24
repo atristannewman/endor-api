@@ -1,13 +1,14 @@
-module.exports = ({ DB /*paymentService, */}) => {
+module.exports = ({ DB, paymentService}) => {
   const createPaymentIntent = async (httpRequest) => {
-    const { amount, payment_method, user_id } = httpRequest.body;
     try {
       console.log("create payment intent from payment controller called")
-      //const client_secret = await paymentService.createPaymentIntent(amount, payment_method, user_id);
+      const client_secret = await paymentService.createPaymentIntent();
+      console.log(`paymentController.js ln 6 client_secret: ${client_secret}`)
+
       return {
           status: 200,
         data: {
-          test: "create payment intent from payment controller response",
+          clientSecret: client_secret,
         },
       };
     } catch(error) {
@@ -17,9 +18,9 @@ module.exports = ({ DB /*paymentService, */}) => {
   }
   
   const confirmPaymentIntent = async (httpRequest) => {
-    // const { client_secret } = httpRequest.body;
+    const { client_secret } = httpRequest.body;
     try {
-      //const intent = await paymentService.confirmPaymentIntent(client_secret);
+      const intent = await paymentService.confirmPaymentIntent(client_secret);
       return {
           status: 200,
         data: {
