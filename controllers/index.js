@@ -4,6 +4,7 @@ const transactionService = require('../services/transaction');
 const moralisService = require('../services/moralisService');
 const makeLocationService = require('../services/locationService');
 const paymentService = require('../services/paymentService');
+const emailAuthenticationService = require('../services/emailAuthenticationService');
 
 const makeTransactionController = require('./transactionController');
 const makeUserController = require('./userController');
@@ -26,8 +27,11 @@ const userController = makeUserController({
 });
 const vendorController = makeVendorController({ DB });
 const notificationController = makeNotificationController({ DB });
-const hangoutController = makeHangoutController({ DB, notificationController });
-const authenticationController = makeAuthenticationController({ DB });
+const hangoutController = makeHangoutController({ 
+  DB, 
+  notificationController 
+});
+const authenticationController = makeAuthenticationController({ DB, emailAuthenticationService });
 const availabilityController = makeAvailabilityController({
   DB,
   locationService,

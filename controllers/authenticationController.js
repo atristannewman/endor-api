@@ -2,7 +2,7 @@
 // const geolib = require("geolib");
 
 
-module.exports = ({ DB }) => {
+module.exports = ({ DB, emailAuthenticationService }) => {
   const createTokenproofAddress = async (httpRequest) => {
     try {
       const nonce = httpRequest.body.nonce
@@ -42,8 +42,33 @@ module.exports = ({ DB }) => {
     }
   };
 
+  const sendMagicLink = async (httpRequest) => {
+    const { email } = httpRequest.body;
+    if (!email) {
+      return {
+        status: 400,
+        data: { error: 'Email is required' }
+      };
+    }
+  
+    try {
+      await emailAuthenticationService.sendMagicLinkToEmail(email);
+      return {
+        status: 200,
+        data: { message: 'Magic link sent to your email' }
+      };
+    } catch (error) {
+      console.error('Error sending magic link:', error);
+      return {
+        status: 500,
+        data: { error: 'Failed to send magic link' }
+      };
+    }
+  };
+
   return Object.freeze({
     createTokenproofAddress,
-    getTokenproofWalletForNonce
+    getTokenproofWalletForNonce,
+    sendMagicLink
   });
 };
