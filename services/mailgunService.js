@@ -7,7 +7,7 @@ const sendMagicLinkToEmail = async (email, magicLink) => {
     const data = {
         from: config.fromEmail,
         to: email,
-        subject: 'Your Flock App Link',
+        subject: 'Login to Flock App with the link below',
         text: `Click the link to log in: ${magicLink}`,
     };
 
