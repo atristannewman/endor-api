@@ -4,7 +4,7 @@ const transactionService = require('../services/transaction');
 const moralisService = require('../services/moralisService');
 const makeLocationService = require('../services/locationService');
 const paymentService = require('../services/paymentService');
-const emailAuthenticationService = require('../services/emailAuthenticationService');
+const emailAuthenticationService = require('../services/mailgunService');
 
 const makeTransactionController = require('./transactionController');
 const makeUserController = require('./userController');

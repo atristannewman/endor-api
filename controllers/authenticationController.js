@@ -1,5 +1,7 @@
 /* eslint-disable no-useless-catch */
 // const geolib = require("geolib");
+const { sendMagicLinkToEmail } = require('../services/mailgunService');
+const { generateToken } = require('../utils/tokenGenerator');
 
 
 module.exports = ({ DB, emailAuthenticationService }) => {
@@ -52,7 +54,10 @@ module.exports = ({ DB, emailAuthenticationService }) => {
     }
   
     try {
-      await emailAuthenticationService.sendMagicLinkToEmail(email);
+      const token = generateToken();
+      const magicLink = `https://flockapp.com/magic-link?token=${token}`;
+
+      await emailAuthenticationService.sendMagicLinkToEmail(email, magicLink);
       return {
         status: 200,
         data: { message: 'Magic link sent to your email' }
