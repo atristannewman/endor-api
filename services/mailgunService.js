@@ -18,6 +18,7 @@ const sendMagicLinkToEmail = async (email, magicLink) => {
         await mg.messages().send(data);
         console.log(`Magic link sent to ${email}`);
     } catch (error) {
+        console.log("mailgun controller")
         console.error('Error sending magic link:', error);
         throw error;
     }

@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
-const makeVendor = require("../../../model/vendor");
+const makeVendor = require("../../../models/vendor");
 const { User } = require("./user");
 
 const Vendor = db.define("vendors", {

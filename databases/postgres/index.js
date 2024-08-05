@@ -3,6 +3,7 @@ const Vendor = require("./entity/vendor");
 const Hangout = require("./entity/hangout");
 const TokenproofAddress = require("./entity/tokenproofAddress");
 const Notification = require("./entity/notification");
+const MagicLink = require("./entity/magicLink");
 
 module.exports = Object.freeze({
   mockDB: {},
@@ -11,6 +12,7 @@ module.exports = Object.freeze({
     Vendor,
     Hangout,
     TokenproofAddress,
-    Notification
+    Notification,
+    MagicLink
   },
 });

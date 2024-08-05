@@ -1,7 +1,9 @@
 /* eslint-disable no-useless-catch */
 // const geolib = require("geolib");
-const { sendMagicLinkToEmail } = require('../services/mailgunService');
+// const { sendMagicLinkToEmail } = require('../services/mailgunService');
 const { generateToken } = require('../utils/tokenGenerator');
+// const MagicLink = require('../databases/postgres/entity/magicLink');
+const MagicLink = require('../models/magiclink');  // Adjust path as necessary
 
 
 module.exports = ({ DB, emailAuthenticationService }) => {
@@ -55,14 +57,32 @@ module.exports = ({ DB, emailAuthenticationService }) => {
   
     try {
       const token = generateToken();
-      const magicLink = `https://flockapp.com/magic-link?token=${token}`;
+      const expiresAt = new Date(Date.now() + 3600000) // Token expires in 1 hour
+      const magicLinkUrl = `https://flockapp.xyz/magic-link?token=${token}`;
+      const magicLink = await DB.MagicLink.create({
+        email,
+        token,
+        expires_at: expiresAt,
+      })
 
-      await emailAuthenticationService.sendMagicLinkToEmail(email, magicLink);
+      // Save the token in the database
+      // await MagicLink.create({
+      //   email,
+      //   token,
+      //   expires_at: expiresAt,
+      // });
+
+      // Send the magic link via email
+      // await emailAuthenticationService.sendMagicLinkToEmail(email, magicLink);
+      console.log("authenticationController ln 76 error")
       return {
         status: 200,
-        data: { message: 'Magic link sent to your email' }
+        data: {
+          magicLink
+        }
       };
     } catch (error) {
+      console.log("authenticationController ln 84 error")
       console.error('Error sending magic link:', error);
       return {
         status: 500,
@@ -71,9 +91,35 @@ module.exports = ({ DB, emailAuthenticationService }) => {
     }
   };
 
+  const verifyMagicLink = async (httpRequest) => {
+    try {
+      const magicLink = await MagicLink.findOne({ where: { token } });
+
+      if (!magicLink || new Date() > magicLink.expires_at) {
+        return {
+          status: 400,
+          data: { error: 'Invalid or expired token' }
+        };
+      }
+
+      // Token is valid, proceed with authentication or other logic
+      return {
+        status: 200,
+        data: { email: magicLink.email }
+      };
+    } catch (error) {
+      console.error('Error verifying magic link:', error);
+      return {
+        status: 500,
+        data: { error: 'Failed to verify magic link' }
+      };
+    }
+  }
+
   return Object.freeze({
     createTokenproofAddress,
     getTokenproofWalletForNonce,
-    sendMagicLink
+    sendMagicLink,
+    verifyMagicLink,
   });
 };
