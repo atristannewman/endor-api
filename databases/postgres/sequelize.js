@@ -61,6 +61,10 @@ function connectToLocal() {
 }
 
 function connectToDevelopment() {
+  console.log(
+    `Setting up a development database connection`
+  );
+  
   const sequelize = new Sequelize(
     credentials.DATABASE,
     credentials.USERNAME,

@@ -1,42 +1,60 @@
+/* eslint-disable no-useless-catch */
 const Sequelize = require('sequelize');
 const db = require('../sequelize');
+const makeMagicLink = require('../../../models/magicLink');
 
-const MagicLink = db.define('MagicLink', {
-  id: {
-    type: Sequelize.INTEGER,
-    autoIncrement: true,
-    primaryKey: true,
-  },
-  email: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  token: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  expires_at: {
-    type: Sequelize.DATE,
-    allowNull: false,
-  },
-}, {
-    tableName: 'MagicLinks',
-  timestamps: true,
-});
+// const User = db.define(
+//     'user',
+//     {
+//       uuid: {
+//         type: Sequelize.UUID,
+//         defaultValue: Sequelize.UUIDV1,
+//         primaryKey: true,
+//       },
+
+const MagicLink = db.define(
+    'magicLink', 
+    {
+        uuid: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV1,
+            primaryKey: true,
+        },
+        email: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        token: {
+            type: Sequelize.STRING,
+            allowNull: false,
+        },
+        expires_at: {
+            type: Sequelize.DATE,
+            allowNull: false,
+        },
+    },
+    {
+      timestamps: false,
+      freezeTableName: true,
+    }
+);
 
 const create = async (args) => {
+
     try {
         console.log('MagicLink.create:', JSON.stringify(args));
         return await MagicLink.create({
-        email: args.email,
-        token: args.token,
-        expires_at: args.expires_at,
+            email: args.email,
+            token: args.token,
+            expires_at: args.expires_at,
         });
     } catch (error) {
         console.error('Error creating MagicLink:', error);
         throw error;
     }
 };
+
+// TODO: Everything below
 
 const findByToken = async (token) => {
     try {

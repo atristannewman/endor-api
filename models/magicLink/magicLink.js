@@ -1,23 +1,18 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize(process.env.DATABASE_URL);
+/* eslint-disable no-useless-catch */
+module.exports = ({ validate }) => {
+  return (args) => {
+    try {
+      console.log('validating magicLink');
+      validate(args);
 
-const MagicLink = sequelize.define('MagicLink', {
-  email: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  token: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  expires_at: {
-    type: DataTypes.DATE,
-    allowNull: false,
-  },
-}, {
-  sequelize,
-  modelName: 'MagicLink',
-  timestamps: true,
-});
-
-module.exports = MagicLink;
+      return Object.freeze({
+        uuid: args.uuid,
+        email: args.email,
+        token: args.token,
+        expires_at: args.expires_at,
+      });
+    } catch (error) {
+      throw error;
+    }
+  };
+};

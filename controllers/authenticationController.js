@@ -1,9 +1,6 @@
 /* eslint-disable no-useless-catch */
-// const geolib = require("geolib");
-// const { sendMagicLinkToEmail } = require('../services/mailgunService');
 const { generateToken } = require('../utils/tokenGenerator');
-// const MagicLink = require('../databases/postgres/entity/magicLink');
-const MagicLink = require('../models/magiclink');  // Adjust path as necessary
+const magicLinkService = require('../databases/magicLinksService');
 
 
 module.exports = ({ DB, emailAuthenticationService }) => {
@@ -59,11 +56,13 @@ module.exports = ({ DB, emailAuthenticationService }) => {
       const token = generateToken();
       const expiresAt = new Date(Date.now() + 3600000) // Token expires in 1 hour
       const magicLinkUrl = `https://flockapp.xyz/magic-link?token=${token}`;
+      
       const magicLink = await DB.MagicLink.create({
         email,
         token,
         expires_at: expiresAt,
       })
+
 
       // Save the token in the database
       // await MagicLink.create({
@@ -73,8 +72,8 @@ module.exports = ({ DB, emailAuthenticationService }) => {
       // });
 
       // Send the magic link via email
-      // await emailAuthenticationService.sendMagicLinkToEmail(email, magicLink);
-      console.log("authenticationController ln 76 error")
+      await emailAuthenticationService.sendMagicLinkToEmail(email, magicLink);
+
       return {
         status: 200,
         data: {
