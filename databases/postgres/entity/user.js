@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const Sequelize = require('sequelize');
 const db = require('../sequelize');
-const makeUser = require('../../../model/user');
+const makeUser = require('../../../models/user');
 const { userAddressValidate } = require('../../../validation/userAddress.js');
 const {
   userAddressesValidate,

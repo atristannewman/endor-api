@@ -94,9 +94,6 @@ module.exports = ({ transactionService, DB, moralisService }) => {
       } = httpRequest.body;
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
-      console.log(`userController.js ln 100 cleanAddressesArray ${JSON.stringify(cleanAddressesArray)}`)
-      console.log(`userController.js ln 101 cleanAddressesArray.length ${JSON.stringify(cleanAddressesArray.length)}`)
-      console.log(`userController.js ln 102 cleanAddressesArray[0] ${JSON.stringify(cleanAddressesArray[0])}`)
 
       const addressesArrayWithoutTestWallet = cleanAddressesArray.filter(address =>{
         return address != "0xbebc733c64deba1c494e5b01b89ee16b5cafd2c5" // test wallet

@@ -1,7 +1,7 @@
 const appleNotification = require("../services/appleNotificationService");
 const geolib = require("geolib");
 const { INTEGER } = require("sequelize");
-const user = require("../model/user");
+const user = require("../models/user");
 const requestHandler = require("../requestHandler");
 
 module.exports.setNotificationToken = function (req, res, next) {

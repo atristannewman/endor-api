@@ -1,4 +1,4 @@
-# griph-api
+# flock-api
 
 HOW TO RUN SERVER:
 
