@@ -1,6 +1,5 @@
 /* eslint-disable no-useless-catch */
 const { generateToken } = require('../utils/tokenGenerator');
-const magicLinkService = require('../databases/magicLinksService');
 
 
 module.exports = ({ DB, emailAuthenticationService }) => {
@@ -63,16 +62,8 @@ module.exports = ({ DB, emailAuthenticationService }) => {
         expires_at: expiresAt,
       })
 
-
-      // Save the token in the database
-      // await MagicLink.create({
-      //   email,
-      //   token,
-      //   expires_at: expiresAt,
-      // });
-
       // Send the magic link via email
-      await emailAuthenticationService.sendMagicLinkToEmail(email, magicLink);
+      await emailAuthenticationService.sendMagicLinkToEmail(email, magicLinkUrl);
 
       return {
         status: 200,
@@ -81,7 +72,6 @@ module.exports = ({ DB, emailAuthenticationService }) => {
         }
       };
     } catch (error) {
-      console.log("authenticationController ln 84 error")
       console.error('Error sending magic link:', error);
       return {
         status: 500,
@@ -91,8 +81,19 @@ module.exports = ({ DB, emailAuthenticationService }) => {
   };
 
   const verifyMagicLink = async (httpRequest) => {
+    const { token } = httpRequest.query
+    if (!token) {
+      return {
+        status: 400,
+        data: { error: 'Token is required' },
+      };
+    }
+
     try {
-      const magicLink = await MagicLink.findOne({ where: { token } });
+      console.log('Verifying magic link with token: ', token);
+      // const magicLink = await DB.MagicLink.findByToken(token)
+      const magicLink = await DB.MagicLink.findOne({ where: { token } });
+      console.log('Verifyied token with magicLink: ', magicLink);
 
       if (!magicLink || new Date() > magicLink.expires_at) {
         return {
@@ -101,16 +102,24 @@ module.exports = ({ DB, emailAuthenticationService }) => {
         };
       }
 
-      // Token is valid, proceed with authentication or other logic
+      // Generate a new token for the user's session
+      // const userToken = generateToken(magicLink.email)
+
+      // Set the token in the user's session (this example uses a cookie)
+      // httpRequest.res.cookie('userToken', userToken, { httpOnly: true, secure: true });
+
+      // Optionally delete the magic link after use
+      await DB.MagicLink.deleteById(magicLink.id);
+
       return {
         status: 200,
-        data: { email: magicLink.email }
+        data: { message: 'Device verified and user token set', token: userToken },
       };
     } catch (error) {
       console.error('Error verifying magic link:', error);
       return {
         status: 500,
-        data: { error: 'Failed to verify magic link' }
+        data: { error: 'Failed to verify magic link' },
       };
     }
   }

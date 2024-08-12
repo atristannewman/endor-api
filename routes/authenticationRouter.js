@@ -18,6 +18,6 @@ authenticationRouter.post(
 authenticationRouter.get(
   '/verify-magic-link',
   requestHandler(authenticationController.verifyMagicLink)
-);
+)
 
 module.exports = authenticationRouter;
