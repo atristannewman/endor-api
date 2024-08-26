@@ -7,6 +7,7 @@ module.exports = (controller) => {
         params: req.params,
         path: req.path,
         method: req.method,
+        res: res
       };
 
       const response = await controller(httpRequest);
