@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const Sequelize = require('sequelize');
 const db = require('../sequelize');
-const makeHangout = require('../../../model/hangout');
+const makeHangout = require('../../../models/hangout');
 const { User } = require('./user');
 
 const Hangout = db.define(

@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
-const makeTokenproofAddress = require("../../../model/tokenproofAddress");
+const makeTokenproofAddress = require("../../../models/tokenproofAddress");
 const { userAddressValidate } = require("../../../validation/userAddress.js");
 
 const TokenproofAddress = db.define(

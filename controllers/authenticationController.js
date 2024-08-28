@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-catch */
-// const geolib = require("geolib");
+const { generateToken } = require('../utils/tokenGenerator');
 
 
 module.exports = ({ DB }) => {
@@ -91,6 +91,7 @@ module.exports = ({ DB }) => {
     });
   }
   
+
 
   return Object.freeze({
     createTokenproofAddress,

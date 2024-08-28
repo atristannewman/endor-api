@@ -1,7 +1,7 @@
 /* eslint-disable no-useless-catch */
 const Sequelize = require("sequelize");
 const db = require("../sequelize");
-const makeNotification = require("../../../model/notification");
+const makeNotification = require("../../../models/notification");
 
 const Notification = db.define("notifications", {
     uuid: {

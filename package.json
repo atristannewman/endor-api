@@ -24,6 +24,7 @@
     "express-openid-connect": "^2.9.0",
     "geolib": "^3.3.3",
     "joi": "^17.6.0",
+    "mailgun-js": "^0.22.0",
     "moralis": "^2.11.1",
     "node-geocoder": "^4.2.0",
     "pg": "^8.12.0",
