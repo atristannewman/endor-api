@@ -48,11 +48,10 @@ module.exports = ({ DB }) => {
     }
   };
 
-  const createMagicLink = async (httpRequest) => {
+  const createMagicLink = async (http) => {
     try {
-      const { email } = httpRequest.body;
+      const { email } = http.body;
       const resp = await stytchClient.magicLinks.email.loginOrCreate({email});
-      console.log("creating magic")
       resp.status = 200
       resp.message = "Magic link sent successfully"
       return resp
