@@ -12,12 +12,13 @@ authenticationRouter.get(
   requestHandler(authenticationController.getTokenproofWalletForNonce)
 );
 authenticationRouter.post(
-  '/send-magic-link',
-  requestHandler(authenticationController.sendMagicLink)
-)
+  '/magic-link',
+  requestHandler(authenticationController.createMagicLink)
+);
 authenticationRouter.get(
-  '/verify-magic-link',
-  requestHandler(authenticationController.verifyMagicLink)
-)
+  '/authenticate',
+  requestHandler(authenticationController.authenticateMagicLink)
+);
+
 
 module.exports = authenticationRouter;

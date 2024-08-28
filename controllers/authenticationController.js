@@ -2,7 +2,13 @@
 const { generateToken } = require('../utils/tokenGenerator');
 
 
-module.exports = ({ DB, emailAuthenticationService }) => {
+module.exports = ({ DB }) => {
+  const stytch = require("stytch");
+  const stytchClient = new stytch.Client({
+    project_id: process.env.STYTCH_TEST_PROJECT_ID,
+    secret: process.env.STYTCH_TEST_SECRET,
+  });
+
   const createTokenproofAddress = async (httpRequest) => {
     try {
       const nonce = httpRequest.body.nonce
@@ -42,92 +48,55 @@ module.exports = ({ DB, emailAuthenticationService }) => {
     }
   };
 
-  const sendMagicLink = async (httpRequest) => {
-    const { email } = httpRequest.body;
-    if (!email) {
-      return {
-        status: 400,
-        data: { error: 'Email is required' }
-      };
-    }
-  
+  const createMagicLink = async (http) => {
     try {
-      const token = generateToken();
-      const expiresAt = new Date(Date.now() + 3600000) // Token expires in 1 hour
-      const magicLinkUrl = `https://flockapp.xyz/magic-link?token=${token}`;
-      
-      const magicLink = await DB.MagicLink.create({
-        email,
-        token,
-        expires_at: expiresAt,
-      })
+      const { email } = http.body;
+      const resp = await stytchClient.magicLinks.email.loginOrCreate({email});
+      resp.status = 200
+      resp.message = "Magic link sent successfully"
+      return resp
 
-      // Send the magic link via email
-      await emailAuthenticationService.sendMagicLinkToEmail(email, magicLinkUrl);
-
-      return {
-        status: 200,
-        data: {
-          magicLink
-        }
-      };
     } catch (error) {
-      console.error('Error sending magic link:', error);
-      return {
-        status: 500,
-        data: { error: 'Failed to send magic link' }
-      };
+      console.error("Error creating magic link:", error);
+      throw error;
     }
   };
 
-  const verifyMagicLink = async (httpRequest) => {
-    const { token } = httpRequest.query
-    if (!token) {
-      return {
-        status: 400,
-        data: { error: 'Token is required' },
-      };
-    }
+  const authenticateMagicLink = async (httpRequest) => {
+    const { token } = httpRequest.query;
 
-    try {
-      console.log('Verifying magic link with token: ', token);
-      // const magicLink = await DB.MagicLink.findByToken(token)
-      const magicLink = await DB.MagicLink.findOne({ where: { token } });
-      console.log('Verifyied token with magicLink: ', magicLink);
+    const client = new stytch.Client({
+      project_id: process.env.STYTCH_TEST_PROJECT_ID,
+      secret: process.env.STYTCH_TEST_SECRET,
+    });
 
-      if (!magicLink || new Date() > magicLink.expires_at) {
-        return {
-          status: 400,
-          data: { error: 'Invalid or expired token' }
-        };
-      }
-
-      // Generate a new token for the user's session
-      // const userToken = generateToken(magicLink.email)
-
-      // Set the token in the user's session (this example uses a cookie)
-      // httpRequest.res.cookie('userToken', userToken, { httpOnly: true, secure: true });
-
-      // Optionally delete the magic link after use
-      await DB.MagicLink.deleteById(magicLink.id);
-
+    const response = await client.magicLinks
+    .authenticate(token)
+    .then((response) => {
       return {
         status: 200,
-        data: { message: 'Device verified and user token set', token: userToken },
+        data: {
+          message: "Magic link authenticated successfully",
+          user: response.user,
+        }
       };
-    } catch (error) {
-      console.error('Error verifying magic link:', error);
+    })
+    .catch((error) => {
       return {
-        status: 500,
-        data: { error: 'Failed to verify magic link' },
+        status: 400,
+        data: {
+        message: "Magic link authentication failed",
+        }
       };
-    }
+    });
   }
+  
+
 
   return Object.freeze({
     createTokenproofAddress,
     getTokenproofWalletForNonce,
-    sendMagicLink,
-    verifyMagicLink,
+    createMagicLink,
+    authenticateMagicLink
   });
 };
