@@ -1,11 +1,12 @@
 require('dotenv').config();
+const config = require('./index');
 
 module.exports = {
-    username: process.env.HEROKU_DB_USER,
-    password: process.env.HEROKU_DB_PASSWORD,
-    database: process.env.HEROKU_DB_NAME,
-    port: process.env.DB_PORT,
-    host: process.env.HEROKU_DB_HOST,
+    username: config.db.user,
+    password: config.db.password,
+    database: config.db.name,
+    port: config.db.port,
+    host: config.db.host,
     dialect: 'postgres',
     dialectOptions: {
       ssl: {
