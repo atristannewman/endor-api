@@ -14,6 +14,20 @@ const returnUrl = () => {
     }
 }
 
+async function paymentMethods(customerId) {
+    try {
+        const paymentMethods = await stripe.paymentMethods.list({
+            customer: customerId,
+            type: 'card',
+        });
+        return paymentMethods;
+    } catch (error) {
+        console.error('Error fetching payment methods:', error);
+        throw error;
+    }
+}
+
+/**
 /**
  * Creates a new payment intent with Stripe and saves card details.
  * @param {number} amount - The amount to charge in cents.
@@ -65,7 +79,62 @@ async function confirmPaymentIntent(client_secret) {
     }
 }
 
+/**
+ * Creates a new payment method with Stripe and associates it with a user.
+ * @param {string} paymentMethodId - The ID of the payment method.
+ * @param {string} userId - The UUID of the user to associate the payment method with.
+ * @returns {Promise<object>} - The created payment method object.
+ */
+async function createPaymentMethod(paymentMethodId, userId) {
+    try {
+        const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+            customer: userId,
+        });
+
+        // Save payment method details to your database
+        // await DB.PaymentMethod.create({
+        //     userId,
+        //     paymentMethodId: paymentMethod.id,
+        //     last4: paymentMethod.card.last4,
+        //     brand: paymentMethod.card.brand,
+        //     expMonth: paymentMethod.card.exp_month,
+        //     expYear: paymentMethod.card.exp_year,
+        // });
+
+        return paymentMethod;
+    } catch (error) {
+        console.error('Error creating payment method:', error);
+        throw error;
+    }
+}
+
+async function createACustomer() {
+    try {
+        const customer = await stripe.customers.create();
+        return customer;
+    } catch (error) {
+        console.error('Error creating customer:', error);
+        throw error;
+    }
+}
+
+async function createSetupIntent(intentDetails) {
+  try {
+    console.log(`intent details: ${intentDetails}`)
+    console.log(`stripe: ${stripe}`)
+      const clientSecret = await stripe.setupIntents.create(intentDetails)
+      return clientSecret;
+  } catch (error) {
+      console.error('Error creating customer:', error);
+      throw error;
+  }
+}
+
 module.exports = {
     createPaymentIntent,
     confirmPaymentIntent,
+    createPaymentMethod,
+    createACustomer,
+    createSetupIntent,
+    paymentMethods
 };

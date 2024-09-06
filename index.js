@@ -11,6 +11,7 @@ const authenticationRouter = require('./routes/authenticationRouter');
 const availabilityRouter = require('./routes/availabilityRouter');
 const paymentRouter = require('./routes/paymentRouter');
 const { auth, requiresAuth } = require('express-openid-connect');
+const webhookRouter = express.Router();
 
 require('dotenv').config();
 
@@ -29,6 +30,7 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/authentication', authenticationRouter);
 app.use('/api/availability', availabilityRouter);
 app.use('/api/payments', paymentRouter);
+app.use('/webhooks', webhookRouter);
 
 // ----- from Auth0 start ------ //
 const auth0Configuration = {
