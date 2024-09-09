@@ -38,6 +38,8 @@ module.exports = ({ DB, paymentService}) => {
     console.log("create payment method from payment controller called")
     try {
       const customer = await stripe.customers.create();
+      console.log("payment methods from payment controller called with customerId: ", customer.id)
+
       const setupIntent = await stripe.setupIntents.create({
         customer: customer.id,
         automatic_payment_methods: {
@@ -62,7 +64,8 @@ module.exports = ({ DB, paymentService}) => {
     const { customerId } = httpRequest.body;
 
     try {
-      const paymentMethods = await paymentService.paymentMethods(customerId);
+      const paymentMethods = await paymentService.paymentMethods("cus_QnZr4xLq8fBCMK");
+      console.log("payment methods from payment controller: ", paymentMethods)
       return {
         status: 200,
         data: {
