@@ -12,4 +12,5 @@ userRouter.get("/all",requestHandler(userController.getAllUsers));
 
 userRouter.put("/update-notification-prefs", requestHandler(userController.updateUserPreferences))
 
+userRouter.post("/create-customer", requestHandler(userController.createCustomer))
 module.exports = userRouter;

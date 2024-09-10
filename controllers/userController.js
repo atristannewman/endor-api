@@ -398,6 +398,18 @@ module.exports = ({ transactionService, DB, moralisService }) => {
     }
   };
 
+  const createCustomer = async (httpRequest) => {
+    const { customerId } = httpRequest.body
+    const apiKey = await DB.ApiKey.create(customerId)
+
+    return {
+      status: 200,
+      data: {
+        apiKey
+      }
+    }
+  }
+
   return Object.freeze({
     getProfile,
     getAllUsers,
@@ -406,5 +418,6 @@ module.exports = ({ transactionService, DB, moralisService }) => {
     deleteUser,
     getUser,
     updateUserNotificationSettings,
+    createCustomer
   });
 };

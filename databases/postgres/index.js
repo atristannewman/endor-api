@@ -4,6 +4,7 @@ const Hangout = require("./entity/hangout");
 const TokenproofAddress = require("./entity/tokenproofAddress");
 const Notification = require("./entity/notification");
 const MagicLink = require("./entity/magicLink");
+const ApiKey = require("../../models/apiKey");
 
 module.exports = Object.freeze({
   mockDB: {},
@@ -13,6 +14,7 @@ module.exports = Object.freeze({
     Hangout,
     TokenproofAddress,
     Notification,
-    MagicLink
+    MagicLink,
+    ApiKey
   },
 });

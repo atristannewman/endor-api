@@ -4,6 +4,7 @@ const {Hangout} = require("./postgres/entity/hangout");
 const {TokenproofAddress} = require("./postgres/entity/tokenproofAddress");
 const {Notification} = require("./postgres/entity/notification");
 const {MagicLink} = require("./postgres/entity/magicLink");
+const ApiKey = require("../models/apiKey");
 
 const DB_DIALECT = {
   postgres: "postgres",

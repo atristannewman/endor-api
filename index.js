@@ -12,6 +12,8 @@ const availabilityRouter = require('./routes/availabilityRouter');
 const paymentRouter = require('./routes/paymentRouter');
 const { auth, requiresAuth } = require('express-openid-connect');
 const webhookRouter = express.Router();
+const apiKeyAuth = require('./middleware/apiKeyAuth');
+
 
 require('dotenv').config();
 
@@ -28,7 +30,7 @@ app.use('/api/vendors', vendorRouter);
 app.use('/api/hangouts', hangoutsRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/authentication', authenticationRouter);
-app.use('/api/availability', availabilityRouter);
+app.use('/api/availability', apiKeyAuth,availabilityRouter);
 app.use('/api/payments', paymentRouter);
 app.use('/webhooks', webhookRouter);
 
