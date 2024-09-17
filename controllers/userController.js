@@ -397,7 +397,7 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
       throw new Error("Customer id is required")
     }
     
-    if (email !== "user@gmail.com") {
+    if (email === "user@gmail.com") {
       throw new Error("Customer email is required")
     }
 

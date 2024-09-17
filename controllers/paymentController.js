@@ -14,8 +14,6 @@ module.exports = ({ DB, paymentService}) => {
         }
       });
 
-      console.log("returning clients secret")
-
       return {
         status: 200,
         data: {
@@ -30,12 +28,10 @@ module.exports = ({ DB, paymentService}) => {
   }
 
   const paymentMethods = async (httpRequest) => {
-    console.log("params from payment controller: ", JSON.stringify(httpRequest.query));
     const { email } = httpRequest.query;
 
     try {
       const paymentMethods = await paymentService.paymentMethods(email);
-      console.log("payment methods from payment controller: ", paymentMethods)
       let customer = await userController.getCustomer({ query: { email } });
 
       if (!customer) {
