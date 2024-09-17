@@ -3,13 +3,10 @@ const db = require('../../databases/postgres/sequelize');
 const { generateToken } = require('../../utils/tokenGenerator');
 
 const ApiKey = db.define('apiKeys', {
-  customerId: {
+  email: {
     type: Sequelize.STRING,
     allowNull: false,
-    primaryKey: true,
-    references: {
-      key: 'customerId',
-    },
+    primaryKey: true
   },
   apiKey: {
     type: Sequelize.STRING,
@@ -18,14 +15,15 @@ const ApiKey = db.define('apiKeys', {
   }
 });
 
-const create = async (customerId) => {
+const create = async (email) => {
   try {
     const apiKey = generateToken(); // Make sure to pass the email as an argument
     console.log(`apiKey ${apiKey}`)
     console.log('creating api key in db')
+    console.log("creating customer with email", email)
     return await ApiKey.create({ 
-        customerId, 
-        apiKey 
+        email,
+        apiKey
     });
   } catch (error) {
     console.error('Error creating API key:', error);
@@ -55,11 +53,34 @@ const findByCustomerId = async (customerId) => {
   }
 };
 
+const findByEmail = async (email) => {
+  try {
+    console.log("findByEmail", email)
+    return await ApiKey.findOne({
+      where: { email }
+    });
+  } catch (error) {
+    console.error('Error finding API key by email:', error);
+    throw error;
+  }
+};
 
+const destroyByEmail = async (email) => {
+  try {
+    return await ApiKey.destroy({
+      where: { email }
+    });
+  } catch (error) {
+    console.error('Error deleting API key by email:', error);
+    throw error;
+  }
+};
 
 module.exports = {
   ApiKey,
   create,
   findByApiKey,
-  findByCustomerId
+  findByCustomerId,
+  findByEmail,
+  destroyByEmail
 };

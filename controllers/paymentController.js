@@ -1,44 +1,11 @@
 module.exports = ({ DB, paymentService}) => {
   const stripe = require('stripe')(process.env.STRIPE_SECRET);
-  const createPaymentIntent = async (httpRequest) => {
-    try {
-      console.log("create payment intent from payment controller called")
-      const client_secret = await paymentService.createPaymentIntent();
-      console.log(`paymentController.js ln 6 client_secret: ${client_secret}`)
+  const userController = require('./userController');
 
-      return {
-          status: 200,
-        data: {
-          clientSecret: client_secret,
-        },
-      };
-    } catch(error) {
-      console.log("create payment intent from payment controller error thrown")
-      throw(error)
-    }
-  }
-  
-  const confirmPaymentIntent = async (httpRequest) => {
-    const { client_secret } = httpRequest.body;
-    try {
-      const intent = await paymentService.confirmPaymentIntent(client_secret);
-      return {
-          status: 200,
-        data: {
-          test: 'confirm payment intent from payment controller response',
-        },
-      };
-    } catch(error) {
-      console.log("confirm payment intent from payment controller error thrown")
-      throw(error)
-    }
-  }
   
   const stripeClientSecret = async (httpRequest) => {
-    console.log("create payment method from payment controller called")
     try {
       const customer = await stripe.customers.create();
-      console.log("payment methods from payment controller called with customerId: ", customer.id)
 
       const setupIntent = await stripe.setupIntents.create({
         customer: customer.id,
@@ -46,12 +13,14 @@ module.exports = ({ DB, paymentService}) => {
           enabled: true,
         }
       });
-      console.log('returning stripe client secret ', setupIntent.client_secret)
+
+      console.log("returning clients secret")
 
       return {
         status: 200,
         data: {
-          clientSecret: setupIntent.client_secret
+          clientSecret: setupIntent.client_secret,
+          customerId: setupIntent.customer
         }
       };
     } catch (error) {
@@ -61,11 +30,20 @@ module.exports = ({ DB, paymentService}) => {
   }
 
   const paymentMethods = async (httpRequest) => {
-    const { customerId } = httpRequest.body;
+    console.log("params from payment controller: ", JSON.stringify(httpRequest.query));
+    const { email } = httpRequest.query;
 
     try {
-      const paymentMethods = await paymentService.paymentMethods("cus_QnZr4xLq8fBCMK");
+      const paymentMethods = await paymentService.paymentMethods(email);
       console.log("payment methods from payment controller: ", paymentMethods)
+      let customer = await userController.getCustomer({ query: { email } });
+
+      if (!customer) {
+        // User not found, create a new customer
+        const customerId = paymentMethods[0].customer
+        userController.createCustomer({ email, customerId })
+      }
+
       return {
         status: 200,
         data: {
@@ -73,8 +51,8 @@ module.exports = ({ DB, paymentService}) => {
         }
       };
     } catch (error) {
-      console.log("payment methods from payment controller error thrown")
-      throw (error)
+      console.log("payment methods from payment controller error thrown");
+      throw error;
     }
   }
   
@@ -82,8 +60,6 @@ module.exports = ({ DB, paymentService}) => {
 
 
   return Object.freeze({
-    createPaymentIntent,
-    confirmPaymentIntent,
     stripeClientSecret,
     paymentMethods
   });

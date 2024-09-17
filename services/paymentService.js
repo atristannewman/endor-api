@@ -14,18 +14,6 @@ const returnUrl = () => {
     }
 }
 
-async function paymentMethods(customerId) {
-    try {
-        const paymentMethods = await stripe.paymentMethods.list({
-            customer: customerId,
-            type: 'card',
-        });
-        return paymentMethods;
-    } catch (error) {
-        console.error('Error fetching payment methods:', error);
-        throw error;
-    }
-}
 
 /**
 /**
@@ -128,6 +116,25 @@ async function createSetupIntent(intentDetails) {
       console.error('Error creating customer:', error);
       throw error;
   }
+}
+
+async function paymentMethods(customerId) {
+    try {
+        console.log("customerId in paymentMethods before sending to stripe", customerId)
+        const paymentMethods = await stripe.paymentMethods.list({
+            customer: customerId,
+            type: 'card',
+        }).then((paymentMethodsResponse) => {
+            console.log("returned json.response ln 128", paymentMethodsResponse.data)
+            return paymentMethodsResponse.data
+        });
+
+        console.log("paymentMethods in paymentService", paymentMethods)
+        return paymentMethods
+    } catch (error) {
+        console.error('Error fetching payment methods:', error);
+        throw error;
+    }
 }
 
 module.exports = {
