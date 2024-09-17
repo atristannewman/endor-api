@@ -3,7 +3,7 @@ const paymentRouter = express.Router();
 const { paymentController } = require('../controllers');
 const requestHandler = require("../requestHandler");
 
-paymentRouter.post('/intent', requestHandler(paymentController.createPaymentIntent));
-paymentRouter.post('/confirm-intent', requestHandler(paymentController.confirmPaymentIntent));
+paymentRouter.get('/stripe-customer-client-secret', requestHandler(paymentController.stripeClientSecret));
+paymentRouter.get('/payment-methods/', requestHandler(paymentController.paymentMethods));
 
 module.exports = paymentRouter;

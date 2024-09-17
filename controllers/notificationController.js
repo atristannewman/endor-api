@@ -23,9 +23,7 @@ module.exports = ({ DB }) => {
 
   const createNotificationQueue = async (httpRequest) => {
     try{
-      console.log(`httpRequest ${JSON.stringify(httpRequest)}`)
       const {topic, deviceTokenQueue, subscriberDeviceTokens, topicId} = httpRequest.body
-      console.log(`httpRequest.body ${JSON.stringify(httpRequest.body)}`)
       createNotificationQueueForHangout({
         topic,
         deviceTokenQueue,
@@ -47,7 +45,6 @@ module.exports = ({ DB }) => {
   const getNotificationQueues = async () => {
     try{
       const notifications = await DB.Notification.findAll();
-      console.log(`notifications ${JSON.stringify(notifications)}`)
 
       return {
         status: 200,
@@ -63,7 +60,6 @@ module.exports = ({ DB }) => {
   const addNotificationSubscriber = async ({query, body}) => {
     try{
       let deviceToken = ""
-      console.log(`query ${JSON.stringify(query)}`)
 
       if (query.queuer) {
         throw("Must send subscriber to update instead of queuer")
@@ -94,7 +90,6 @@ module.exports = ({ DB }) => {
   const removeNotificationSubscriber = async ({query, body}) => { 
     try{
       let deviceToken = ""
-      console.log(`query ${JSON.stringify(query)}`)
 
       if (query.queuer) {
         throw("Must send subscriber to update instead of queuer")

@@ -24,6 +24,7 @@ const userController = makeUserController({
   transactionService,
   DB,
   moralisService,
+  paymentService
 });
 const vendorController = makeVendorController({ DB });
 const notificationController = makeNotificationController({ DB });

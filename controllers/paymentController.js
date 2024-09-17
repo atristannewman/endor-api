@@ -1,40 +1,66 @@
 module.exports = ({ DB, paymentService}) => {
-  const createPaymentIntent = async (httpRequest) => {
+  const stripe = require('stripe')(process.env.STRIPE_SECRET);
+  const userController = require('./userController');
+
+  
+  const stripeClientSecret = async (httpRequest) => {
     try {
-      console.log("create payment intent from payment controller called")
-      const client_secret = await paymentService.createPaymentIntent();
-      console.log(`paymentController.js ln 6 client_secret: ${client_secret}`)
+      const customer = await stripe.customers.create();
+
+      const setupIntent = await stripe.setupIntents.create({
+        customer: customer.id,
+        automatic_payment_methods: {
+          enabled: true,
+        }
+      });
+
+      console.log("returning clients secret")
 
       return {
-          status: 200,
+        status: 200,
         data: {
-          clientSecret: client_secret,
-        },
+          clientSecret: setupIntent.client_secret,
+          customerId: setupIntent.customer
+        }
       };
-    } catch(error) {
-      console.log("create payment intent from payment controller error thrown")
-      throw(error)
+    } catch (error) {
+      console.log("create payment method from payment controller error thrown")
+      throw (error)
     }
   }
-  
-  const confirmPaymentIntent = async (httpRequest) => {
-    const { client_secret } = httpRequest.body;
+
+  const paymentMethods = async (httpRequest) => {
+    console.log("params from payment controller: ", JSON.stringify(httpRequest.query));
+    const { email } = httpRequest.query;
+
     try {
-      const intent = await paymentService.confirmPaymentIntent(client_secret);
+      const paymentMethods = await paymentService.paymentMethods(email);
+      console.log("payment methods from payment controller: ", paymentMethods)
+      let customer = await userController.getCustomer({ query: { email } });
+
+      if (!customer) {
+        // User not found, create a new customer
+        const customerId = paymentMethods[0].customer
+        userController.createCustomer({ email, customerId })
+      }
+
       return {
-          status: 200,
+        status: 200,
         data: {
-          test: 'confirm payment intent from payment controller response',
-        },
+          paymentMethods: paymentMethods
+        }
       };
-    } catch(error) {
-      console.log("confirm payment intent from payment controller error thrown")
-      throw(error)
+    } catch (error) {
+      console.log("payment methods from payment controller error thrown");
+      throw error;
     }
   }
   
+  
+
+
   return Object.freeze({
-    createPaymentIntent,
-    confirmPaymentIntent
+    stripeClientSecret,
+    paymentMethods
   });
 };

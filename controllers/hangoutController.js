@@ -18,16 +18,13 @@ module.exports = ({ DB, notificationController }) => {
         tags,
         host
       });
-      console.log(`notificationController ${notificationController}`)
       // Create notification for new hangouts chat
-      console.log(`hangout.id ${hangout.id}`)
       const newNotification = {
         topic: "chat", 
         deviceTokenQueue: [], 
         subscriberDeviceTokens: [], 
         topicId: hangout.id
       }
-      console.log(`newNotification ${newNotification}`)
       notificationController.createNotificationQueueForHangout(newNotification)
 
       const location = await googleServices.geoCoding(address);
@@ -52,8 +49,6 @@ module.exports = ({ DB, notificationController }) => {
           );
 
           distance = geolib.convertDistance(distance, "mi");
-          console.log(`user prefered distance from hangout: ${users[i].notificationPreferences.distanceFromPossibleAttendees} 
-          distance hangout is from user ${distance}`)
           if (distance <= users[i].notificationPreferences.distanceFromPossibleAttendees) {
             potentialUserArray.push({
               address: users[i].address,
@@ -142,23 +137,19 @@ module.exports = ({ DB, notificationController }) => {
 
   const getHangoutsForUUID = async (uuid) => {
     try {
-      console.log(`hangoutController.js ln 136 uuid ${uuid}`)
       const user = await User.findOne({
         where: {
           uuid
         }
       });
-      // console.log(`hangoutController.js ln 140 user ${JSON.stringify(user)}`)
 
       const userWallets = user.walletAddresses
-      console.log(`hangoutController.js ln 146 userWallets ${JSON.stringify(userWallets)}`)
       const testAddresses = ["0x4038f1a494f8ec245cf85Ea385E53FA111958b01", 
       "0x7d22aF94809C95324c81CbBcFd7C26C9d4B665d8"]
       var nFTContracts = []
       var index = 0
 
       do {
-        console.log(`hangoutController.js ln 154 testAddresses[index] ${testAddresses[index]}`)
         const nFTContracts = await moralisService.getNFTsForAddress(testAddresses[index])
         const eRC721Contracts = nFTContracts.filter(function (nft) {
           return nft.contract_type === "ERC721"
@@ -174,7 +165,6 @@ module.exports = ({ DB, notificationController }) => {
       //     contractAddress === contract
       //   }))
       // })
-      console.log(`hangoutController.js ln 169 nFTContracts ${nFTContracts}`)
 
       return {
         status: 200,
