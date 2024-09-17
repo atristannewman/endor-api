@@ -18,9 +18,7 @@ const ApiKey = db.define('apiKeys', {
 const create = async (email) => {
   try {
     const apiKey = generateToken(); // Make sure to pass the email as an argument
-    console.log(`apiKey ${apiKey}`)
-    console.log('creating api key in db')
-    console.log("creating customer with email", email)
+    
     return await ApiKey.create({ 
         email,
         apiKey

@@ -42,7 +42,6 @@ const MagicLink = db.define(
 const create = async (args) => {
 
     try {
-        console.log('MagicLink.create:', JSON.stringify(args));
         return await MagicLink.create({
             email: args.email,
             token: args.token,

@@ -128,9 +128,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
           },
         };
       }
-
-      // const usersNFTs = await getNFTCollectionsForWallets(cleanAddressesArray)
-      // console.log(`usersNFTs ${usersNFTs}`)
       
       const user = await DB.User.create({
         auth0Id,
@@ -164,7 +161,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
 
   const getNFTCollectionsForWallets = async (walletAddresses) => {
     const nFTCollections = await moralisService.getNFTCollectionsForWallet(walletAddresses[0])
-    console.log(`userController ln168 nFTCollections ${nFTCollections}`)
     return nFTCollections
   }
 
@@ -182,8 +178,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
         auth0Id,
         blockedUserIds
       } = httpRequest.body;
-
-      console.log(`userController ln 174 updateUser ${JSON.stringify(httpRequest.body)}`)
 
       const cleanAddressesArray = await urlencodedToRawAddressesArray(walletAddresses)
       const cleanBlockedUserIdsArray = await urlencodedToRawAddressesArray(blockedUserIds)
@@ -203,7 +197,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
       })
 
       const userByAddresses = await DB.User.findByAddresses(addressesArrayWithoutTestWallet);
-      console.log(`userController.js ln 1 userByAddresses: ${JSON.stringify(userByAddresses)}`)
       if (userByAddresses && userByAddresses.auth0Id != auth0Id) {
         return {
           status: 409,
@@ -404,7 +397,7 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
       throw new Error("Customer id is required")
     }
     
-    if (!email === "user@gmail.com") {
+    if (email !== "user@gmail.com") {
       throw new Error("Customer email is required")
     }
 
@@ -429,7 +422,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
       }); 
 
     const savedCustomerId = await DB.CustomerId.create(email, customerId)
-    console.log("userController ln 428 savedCustomerId", savedCustomerId)
 
     return {
       status: 200,
@@ -466,7 +458,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
         }
       }
 
-      console.log("userController paymentMethods ln 489", paymentMethods)
       return {
         status: 200,
         data: {
@@ -490,8 +481,16 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
     const { email } = httpRequest.body
 
     try {
-      await DB.ApiKey.destroyByEmail(email)
-      await DB.CustomerId.destroyByEmail(email)
+          // Start of Selection
+          const customer = await DB.CustomerId.findByEmail(email);
+          const apiKey = await DB.ApiKey.findByEmail(email);
+          if (!customer || !apiKey) {
+            throw new Error('Customer or API key does not exist.');
+          } else {
+            await DB.ApiKey.destroyByEmail(email);
+            await DB.CustomerId.destroyByEmail(email);
+          }
+          
       return {
         status: 200,
         data: {
