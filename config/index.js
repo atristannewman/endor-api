@@ -11,7 +11,15 @@ let site = {
     port: process.env.WEB_LOCAL_PORT
 };
 
-let env = process.env.ENV || 'development';
+let services = {
+    stytch: {
+        projectId: process.env.STYTCH_TEST_PROJECT_ID,
+        secret: process.env.STYTCH_TEST_SECRET,
+        publicToken: process.env.STYTCH_TEST_PUBLIC_TOKEN
+    }
+}
+
+let env = process.env.ENV;
 switch (env) {
     case 'development':
         db.host = process.env.HEROKU_DEVELOPMENT_DB_HOST;
@@ -23,9 +31,14 @@ switch (env) {
         site.port = process.env.WEB_LOCAL_PORT
         break;
     case 'production':
+        site.url = process.env.PRODUCTION_URL;
+        site.port = process.env.WEB_LOCAL_PORT
+        services.stytch.projectId = process.env.STYTCH_LIVE_PROJECT_ID;
+        services.stytch.secret = process.env.STYTCH_LIVE_SECRET;
+        services.stytch.publicToken = process.env.STYTCH_LIVE_PUBLIC_TOKEN;
         break;
     default:
         break
 }
 
-module.exports = { db, site };
+module.exports = { db, site, services };
