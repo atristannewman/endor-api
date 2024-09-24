@@ -1,13 +1,16 @@
 /* eslint-disable no-useless-catch */
 const { generateToken } = require('../utils/tokenGenerator');
+const config = require('../config');
 
 
 module.exports = ({ DB }) => {
   const stytch = require("stytch");
+  console.log("config.services.stytch", config.services.stytch)
   const stytchClient = new stytch.Client({
-    project_id: process.env.STYTCH_TEST_PROJECT_ID,
-    secret: process.env.STYTCH_TEST_SECRET,
+    project_id: config.services.stytch.projectId,
+    secret: config.services.stytch.secret,
   });
+  console.log("stytchClient", stytchClient)
 
   const createTokenproofAddress = async (httpRequest) => {
     try {
@@ -51,6 +54,8 @@ module.exports = ({ DB }) => {
   const createMagicLink = async (http) => {
     try {
       const { email } = http.body;
+      console.log("config.services.stytch", config.services.stytch)
+
       const resp = await stytchClient.magicLinks.email.loginOrCreate({email});
       resp.status = 200
       resp.message = "Magic link sent successfully"
@@ -66,9 +71,11 @@ module.exports = ({ DB }) => {
     const { token } = httpRequest.query;
 
     const client = new stytch.Client({
-      project_id: process.env.STYTCH_TEST_PROJECT_ID,
-      secret: process.env.STYTCH_TEST_SECRET,
+      project_id: config.services.stytch.projectId,
+      secret: config.services.stytch.secret,
     });
+
+    console.log("stytch client", client)
 
     const response = await client.magicLinks
     .authenticate(token)
