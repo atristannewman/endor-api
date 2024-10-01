@@ -39,6 +39,10 @@ const availabilityController = makeAvailabilityController({
 });
 const paymentController = makePaymentController({ DB, paymentService });
 
+const makeIntakeController = require('./intakeController');
+
+const intakeController = makeIntakeController({ DB });
+
 module.exports = Object.freeze({
   transactionController,
   userController,
@@ -47,5 +51,6 @@ module.exports = Object.freeze({
   notificationController,
   authenticationController,
   availabilityController,
-  paymentController
+  paymentController,
+  intakeController
 });

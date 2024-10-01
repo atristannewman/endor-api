@@ -10,6 +10,7 @@ const notificationsRouter = require('./routes/notificationsRouter');
 const authenticationRouter = require('./routes/authenticationRouter');
 const availabilityRouter = require('./routes/availabilityRouter');
 const paymentRouter = require('./routes/paymentRouter');
+const intakeRouter = require('./routes/intakeRouter');
 const { auth, requiresAuth } = require('express-openid-connect');
 const webhookRouter = express.Router();
 const apiKeyAuth = require('./middleware/apiKeyAuth');
@@ -32,6 +33,7 @@ app.use('/api/notifications', notificationsRouter);
 app.use('/api/authentication', authenticationRouter);
 app.use('/api/availability', apiKeyAuth,availabilityRouter);
 app.use('/api/payments', paymentRouter);
+app.use('/api/intake', intakeRouter);
 app.use('/webhooks', webhookRouter);
 
 // ----- from Auth0 start ------ //
@@ -73,5 +75,5 @@ app.get('/profile', requiresAuth(), (req, res) => {
 // ----- from Auth0 end ----- //
 
 app.listen(LOCAL_PORT, () => {
-  console.log(`Server listening on the port::${LOCAL_PORT}`);
+  console.log(`Server listening on the port: ${LOCAL_PORT}`);
 });

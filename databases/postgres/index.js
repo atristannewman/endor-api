@@ -6,6 +6,8 @@ const Notification = require("./entity/notification");
 const MagicLink = require("./entity/magicLink");
 const ApiKey = require("../../models/apiKey");
 const CustomerId = require("../../models/customerId");
+const Context = require("../../models/context");
+const Coordinates = require("../../models/coordinates");
 
 module.exports = Object.freeze({
   mockDB: {},
@@ -17,6 +19,8 @@ module.exports = Object.freeze({
     Notification,
     MagicLink,
     ApiKey,
-    CustomerId
+    CustomerId,
+    Context,
+    Coordinates
   },
 });
