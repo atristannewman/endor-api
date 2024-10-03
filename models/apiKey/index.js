@@ -53,7 +53,6 @@ const findByCustomerId = async (customerId) => {
 
 const findByEmail = async (email) => {
   try {
-    console.log("findByEmail", email)
     return await ApiKey.findOne({
       where: { email }
     });

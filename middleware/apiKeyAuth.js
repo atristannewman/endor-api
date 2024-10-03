@@ -1,4 +1,4 @@
-const { ApiKey } = require('../models/apiKey');
+const ApiKey = require('../models/apiKey');
 
 const apiKeyAuth = async (req, res, next) => {
   const apiKey = req.header('X-API-Key');

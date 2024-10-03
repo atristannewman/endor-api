@@ -7,7 +7,7 @@ userRouter.get("/getProfile", requestHandler(userController.getProfile));
 userRouter.post("/",requestHandler(userController.createUser));
 userRouter.put("/",requestHandler(userController.updateUser));
 userRouter.delete("/",requestHandler(userController.deleteUser));
-userRouter.get("/customer",requestHandler(userController.getCustomer));
+userRouter.get("/customer", requestHandler(userController.getCustomer));
 userRouter.delete("/customer",requestHandler(userController.deleteCustomer));
 userRouter.get("/all",requestHandler(userController.getAllUsers));
 userRouter.get("/", requestHandler(userController.get));
