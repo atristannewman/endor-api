@@ -1,3 +1,5 @@
+const { apiKey } = require("../config/mailgun");
+
 module.exports = ({ transactionService, DB, moralisService, paymentService }) => {
   const urlencodedToRawAddressesArray = async (walletAddresses) => {
     if (!walletAddresses) {
@@ -273,7 +275,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
       const { email } = httpRequest.query;
       // Return user with this auth0Id
       if (auth0Id) {
-        console.log("auth0Id sent")
         const user = await DB.User.findByAuth0Id(auth0Id);
         if (user) {
           return {
@@ -294,7 +295,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
 
       // Return user with this address
       if (address) {
-        console.log("address sent")
         const user = await DB.User.findByAddresses([address]);
 
         if (user) {
@@ -442,7 +442,6 @@ module.exports = ({ transactionService, DB, moralisService, paymentService }) =>
 
   const getCustomer = async (httpRequest) => {
     try {
-      console.log("getting customer")
       const email = httpRequest.query.email
 
       const apiKeyProfile = await DB.ApiKey.findByEmail(email);

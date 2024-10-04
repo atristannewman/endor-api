@@ -5,12 +5,10 @@ const config = require('../config');
 
 module.exports = ({ DB }) => {
   const stytch = require("stytch");
-  console.log("config.services.stytch", config.services.stytch)
   const stytchClient = new stytch.Client({
     project_id: config.services.stytch.projectId,
     secret: config.services.stytch.secret,
   });
-  console.log("stytchClient", stytchClient)
 
   const createTokenproofAddress = async (httpRequest) => {
     try {
@@ -54,7 +52,6 @@ module.exports = ({ DB }) => {
   const createMagicLink = async (http) => {
     try {
       const { email } = http.body;
-      console.log("config.services.stytch", config.services.stytch)
 
       const resp = await stytchClient.magicLinks.email.loginOrCreate({email});
       resp.status = 200
@@ -75,7 +72,6 @@ module.exports = ({ DB }) => {
       secret: config.services.stytch.secret,
     });
 
-    console.log("stytch client", client)
 
     const response = await client.magicLinks
     .authenticate(token)
