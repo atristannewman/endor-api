@@ -15,7 +15,6 @@ const makeAuthenticationController = require('./authenticationController');
 const makeAvailabilityController = require('./availabilityController');
 const makePaymentController = require('./paymentController');
 
-
 const DB = connectDatabase({ db: 'postgres', isMock: false });
 
 const locationService = makeLocationService({ DB });
@@ -43,6 +42,8 @@ const makeIntakeController = require('./intakeController');
 
 const intakeController = makeIntakeController({ DB });
 
+const operatingAreaController = require('./operatingAreaController')();
+
 module.exports = Object.freeze({
   transactionController,
   userController,
@@ -52,5 +53,6 @@ module.exports = Object.freeze({
   authenticationController,
   availabilityController,
   paymentController,
-  intakeController
+  intakeController,
+  operatingAreaController
 });

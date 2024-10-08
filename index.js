@@ -14,7 +14,7 @@ const intakeRouter = require('./routes/intakeRouter');
 const { auth, requiresAuth } = require('express-openid-connect');
 const webhookRouter = express.Router();
 const apiKeyAuth = require('./middleware/apiKeyAuth');
-
+const operatingAreaRouter = require('./routes/operatingAreaRouter');
 
 require('dotenv').config();
 
@@ -31,10 +31,11 @@ app.use('/api/vendors', vendorRouter);
 app.use('/api/hangouts', hangoutsRouter);
 app.use('/api/notifications', notificationsRouter);
 app.use('/api/authentication', authenticationRouter);
-app.use('/api/availability', apiKeyAuth,availabilityRouter);
+app.use('/api/availability', apiKeyAuth, availabilityRouter);
 app.use('/api/payments', paymentRouter);
 app.use('/api/intake', intakeRouter);
 app.use('/webhooks', webhookRouter);
+app.use('/api/operating-areas', apiKeyAuth, operatingAreaRouter);
 
 // ----- from Auth0 start ------ //
 const auth0Configuration = {
