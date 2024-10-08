@@ -1,3 +1,5 @@
+const turf = require('@turf/turf');
+
 module.exports = () => {
   const getOperatingArea = async (httpRequest) => {
     try {
@@ -15,15 +17,16 @@ module.exports = () => {
         Longitude: ${longitude}
         Radius: ${radius} miles`);
 
-      // TODO: Implement the logic to process and return the operating area
+      // Create a circular polygon using Turf.js
+      const center = turf.point([parseFloat(longitude), parseFloat(latitude)]);
+      const options = { steps: 64, units: 'miles' };
+      const circle = turf.circle(center, parseFloat(radius), options);
 
       return {
         status: 200,
         data: {
-          message: 'Operating area request received successfully.',
-          latitude,
-          longitude,
-          radius,
+          message: 'Operating area generated successfully.',
+          geoJson: circle,
         },
       };
     } catch (error) {
