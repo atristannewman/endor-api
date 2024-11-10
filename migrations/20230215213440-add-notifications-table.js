@@ -1,0 +1,45 @@
+'use strict';
+
+module.exports = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.createTable('notifications', {
+      uuid: {
+        type: Sequelize.UUID,
+        defaultValue: Sequelize.UUIDV1,
+        primaryKey: true
+      },
+      topic: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: false,
+        primaryKey: false
+      },
+      deviceTokenQueue: {
+        type: Sequelize.ARRAY({
+          type: Sequelize.STRING,
+          unique: true,
+          allowNull: false
+        }),
+        defaultValue: []
+      },
+      subscriberDeviceTokens: {
+        type: Sequelize.ARRAY({
+          type: Sequelize.STRING,
+          unique: true,
+          allowNull: false
+        }),
+        defaultValue: []
+      },
+      topicId: {
+        type: Sequelize.STRING,
+        defaultValue: null,
+        primaryKey: false,
+        unique: false
+      }
+    })
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.dropTable("notifications");
+  },
+};

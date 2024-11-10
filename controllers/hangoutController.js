@@ -1,0 +1,236 @@
+/* eslint-disable no-useless-catch */
+const geolib = require("geolib");
+const appleNotification = require("../services/appleNotificationService");
+const googleServices = require("../services/googleServices");
+const moralisService = require("../services/moralisService");
+const {User} = require("../databases/postgres/entity/user");
+
+module.exports = ({ DB, notificationController }) => {
+  // CREATE
+  const createHangout = async (httpRequest) => {
+    try {
+      const { name, startTime, endTime, address, tags, host } = httpRequest.body;
+      const hangout = await DB.Hangout.create({
+        name,
+        startTime,
+        endTime,
+        address,
+        tags,
+        host
+      });
+      // Create notification for new hangouts chat
+      const newNotification = {
+        topic: "chat", 
+        deviceTokenQueue: [], 
+        subscriberDeviceTokens: [], 
+        topicId: hangout.id
+      }
+      notificationController.createNotificationQueueForHangout(newNotification)
+
+      const location = await googleServices.geoCoding(address);
+
+      if (hangout) {
+        const usersWithLocation = await DB.User.findAllWithLocation({ raw: true });
+        const h = 0; let k = 0; let l = 0; const potentialUserArray = []; let potentialUserCount = 0;
+        let potentialUser;
+        let notifiedUserArray = [];
+        let potentialNotificationPreferences;
+        let potentialDistanceFromPossibleAttendees;
+        let user;
+        const users = usersWithLocation;
+
+        // Geo Location or lat, long
+        let i = 0;
+        while (i < users.length) {
+          let distance = geolib.getDistance(
+            { latitude: location.latitude, longitude: location.longitude },
+            { latitude: users[i].location.latitude, longitude: users[i].location.longitude },
+            0.1
+          );
+
+          distance = geolib.convertDistance(distance, "mi");
+          if (distance <= users[i].notificationPreferences.distanceFromPossibleAttendees) {
+            potentialUserArray.push({
+              address: users[i].address,
+              location: users[i].location,
+              notificationPreferences: users[i].notificationPreferences,
+              deviceToken: users[i].deviceToken
+            });
+          }
+
+          ++i;
+        }
+        i = 0;
+
+        while (k < potentialUserArray.length) {
+          potentialUser = potentialUserArray[k];
+          potentialNotificationPreferences = potentialUser.notificationPreferences;
+          potentialDistanceFromPossibleAttendees = potentialNotificationPreferences.distanceFromPossibleAttendees;
+          while (l < users.length) { // Iterate for each potential User found for Origin User
+            let distance = geolib.getDistance(
+              { latitude: potentialUser.location.latitude, longitude: potentialUser.location.longitude },
+              { latitude: users[l].location.latitude, longitude: users[l].location.longitude },
+              0.1
+            );
+            distance = geolib.convertDistance(distance, "mi");
+            if (distance <= potentialDistanceFromPossibleAttendees) {
+              ++potentialUserCount; // No need of array just keep count of attendees for potential user
+            }
+            ++l;
+          }
+          l = 0;
+          if (potentialUserCount >= (potentialNotificationPreferences.minPossibleAttendees)) {
+            notifiedUserArray.push({ address: potentialUser.address, location: potentialUser.location, notificationPreferences: potentialUser.notificationPreferences, deviceToken: potentialUser.deviceToken });
+          } else {
+            console.log("Attendees Not Found For Potential User: ", potentialUser.address);
+          }
+          potentialUserCount = 0;
+          ++k;
+        }
+        while (l < notifiedUserArray.length) {
+          const createdHangoutPayload = {
+            "navigation": "goToHangoutDetails",
+            "hangoutId": hangout.id
+          }
+          user = notifiedUserArray[l];
+          console.log("Sending Notifications");
+          appleNotification.sendNotification(user.deviceToken, "A Proof Hangout has been scheduled near by.", createdHangoutPayload);
+          ++l;
+        }
+        k = 0;
+        notifiedUserArray = notifiedUserArray.map(a => a.address);
+      }
+      // const hangouts = await DB.Hangout.findAll();
+      return {
+        status: 200,
+        data: {
+          hangout
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // READ
+  const getHangouts = async (httpRequest) => {
+    try {
+      const uuid = httpRequest.query.uuid
+      var hangouts = null
+
+      if(uuid) {
+        hangouts = await getHangoutsForUUID(uuid)
+      } else {
+        hangouts = await DB.Hangout.findAll();
+      } 
+
+      return {
+        status: 200,
+        data: {
+          hangouts
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  const getHangoutsForUUID = async (uuid) => {
+    try {
+      const user = await User.findOne({
+        where: {
+          uuid
+        }
+      });
+
+      const userWallets = user.walletAddresses
+      const testAddresses = ["0x4038f1a494f8ec245cf85Ea385E53FA111958b01", 
+      "0x7d22aF94809C95324c81CbBcFd7C26C9d4B665d8"]
+      var nFTContracts = []
+      var index = 0
+
+      do {
+        const nFTContracts = await moralisService.getNFTsForAddress(testAddresses[index])
+        const eRC721Contracts = nFTContracts.filter(function (nft) {
+          return nft.contract_type === "ERC721"
+        });
+        nFTContracts.push.bind(eRC721Contracts)
+
+        index++
+      } while (testAddresses.length > index)
+      // const nFTContracts = moralis.getNFTContracts(userWallets)
+      // var hangouts = []
+      // nFTContracts.forEach((contract) => {
+      //   hangouts.push(DB.Hangout.where({
+      //     contractAddress === contract
+      //   }))
+      // })
+
+      return {
+        status: 200,
+        data: {
+          hangouts
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // UPDATE
+  const updateHangout = async (httpRequest) => {
+    try {
+      const {
+        id,
+        name,
+        startTime,
+        endTime,
+        address,
+        tags
+      } = httpRequest.body;
+
+      await DB.Hangout.updateById(id, {
+        name,
+        startTime,
+        endTime,
+        address,
+        tags
+      });
+      const hangout = await DB.Hangout.findById(id);
+      return {
+        status: 200,
+        data: {
+          hangout
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // DELETE
+  const deleteHangout = async (httpRequest) => {
+    try {
+      const { id } = httpRequest.query;
+
+      await DB.Hangout.deleteById(id)
+
+      return {
+        status: 200,
+        data: {
+          message: "Hangout removed."
+        }
+      };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  return Object.freeze({
+    createHangout,
+    updateHangout,
+    deleteHangout,
+    getHangouts,
+    getHangoutsForUUID
+  });
+};
